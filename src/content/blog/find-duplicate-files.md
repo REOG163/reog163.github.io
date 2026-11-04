@@ -1,6 +1,6 @@
 ---
 title: '别急着清理硬盘：用 Python 找出真正重复的文件'
-description: '文件名不同，不代表内容不同。用文件大小、SHA-256 和逐块比较筛选重复文件，生成可检查的 CSV 清单，全程不删除原文件。'
+description: '用文件大小、SHA-256 和逐块比较筛选重复文件，生成可检查的 CSV 清单。'
 pubDate: 'Nov 04 2026'
 heroImage: '../../assets/cover.jpg'
 category: '方法笔记'
