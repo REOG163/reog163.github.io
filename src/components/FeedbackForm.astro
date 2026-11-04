@@ -1,0 +1,186 @@
+---
+// 复制到你的 Astro 项目 src/components/FeedbackForm.astro
+
+interface Props {
+  /** 你的 Vercel 域名，例如 https://your-project.vercel.app */
+  apiUrl: string;
+  /** 在 Vercel 环境变量里设置的 API_KEY（可选但推荐） */
+  apiKey?: string;
+  source?: string;
+  showVersion?: boolean;
+  defaultType?: 'feedback' | 'bug' | 'feature' | 'other';
+}
+
+const {
+  apiUrl,
+  apiKey = '',
+  source = 'website',
+  showVersion = false,
+  defaultType = 'feedback',
+} = Astro.props;
+---
+
+<div class="feedback-form-wrapper">
+  <form id="feedback-form" class="feedback-form">
+    <div class="form-group">
+      <label for="fb-type">类型</label>
+      <select id="fb-type" name="type" required>
+        <option value="feedback" selected={defaultType === 'feedback'}>一般反馈</option>
+        <option value="bug" selected={defaultType === 'bug'}>Bug 报告</option>
+        <option value="feature" selected={defaultType === 'feature'}>功能建议</option>
+        <option value="other" selected={defaultType === 'other'}>其他</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="fb-title">标题（可选）</label>
+      <input type="text" id="fb-title" name="title" placeholder="简短描述" maxlength="120" />
+    </div>
+
+    <div class="form-group">
+      <label for="fb-message">内容 <span class="required">*</span></label>
+      <textarea id="fb-message" name="message" rows="5" required minlength="5" maxlength="5000" placeholder="请详细描述你的问题或建议..."></textarea>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="fb-name">姓名（可选）</label>
+        <input type="text" id="fb-name" name="name" maxlength="80" />
+      </div>
+      <div class="form-group">
+        <label for="fb-email">邮箱（可选）</label>
+        <input type="email" id="fb-email" name="email" maxlength="120" />
+      </div>
+    </div>
+
+    {showVersion && (
+      <div class="form-group">
+        <label for="fb-version">当前版本</label>
+        <input type="text" id="fb-version" name="version" placeholder="例如 1.2.3" />
+      </div>
+    )}
+
+    <div class="form-actions">
+      <button type="submit" id="fb-submit">提交反馈</button>
+    </div>
+
+    <div id="fb-status" class="status" aria-live="polite"></div>
+  </form>
+</div>
+
+<style>
+  .feedback-form-wrapper {
+    max-width: 520px;
+    margin: 0 auto;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+  .feedback-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  label {
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  .required { color: #e11d48; }
+  input, select, textarea {
+    padding: 0.55rem 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    font-size: 0.95rem;
+    background: #fff;
+    color: #111;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 1px;
+  }
+  textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+  button[type="submit"] {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 0.7rem 1.4rem;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  button[type="submit"]:hover:not(:disabled) {
+    background: #1d4ed8;
+  }
+  button[type="submit"]:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  .status { font-size: 0.9rem; min-height: 1.4em; }
+  .status.success { color: #16a34a; }
+  .status.error { color: #dc2626; }
+  @media (max-width: 480px) {
+    .form-row { grid-template-columns: 1fr; }
+  }
+</style>
+
+<script define:vars={{ apiUrl, apiKey, source }}>
+  const form = document.getElementById('feedback-form');
+  const statusEl = document.getElementById('fb-status');
+  const submitBtn = document.getElementById('fb-submit');
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    statusEl.textContent = '';
+    statusEl.className = 'status';
+    submitBtn.disabled = true;
+    submitBtn.textContent = '提交中...';
+
+    const formData = new FormData(form);
+    const body = {
+      type: formData.get('type'),
+      title: formData.get('title') || '',
+      message: formData.get('message'),
+      name: formData.get('name') || '',
+      email: formData.get('email') || '',
+      version: formData.get('version') || '',
+      source: source,
+      platform: navigator.userAgent,
+    };
+
+    try {
+      const headers = { 'Content-Type': 'application/json' };
+      if (apiKey) headers['x-api-key'] = apiKey;
+
+      const res = await fetch(`${apiUrl.replace(/\/$/, '')}/api/feedback`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(body),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || '提交失败');
+
+      statusEl.textContent = data.message || '感谢你的反馈！';
+      statusEl.className = 'status success';
+      form.reset();
+    } catch (err) {
+      statusEl.textContent = err.message || '网络错误，请稍后重试';
+      statusEl.className = 'status error';
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = '提交反馈';
+    }
+  });
+</script>
