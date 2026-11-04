@@ -1,0 +1,148 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_TITLE } from '../consts';
+---
+
+<html lang="zh-CN">
+	<head>
+		<BaseHead title={`页面未找到 | ${SITE_TITLE}`} description="你访问的页面不存在" />
+		<style>
+			main.nf {
+				width: 100%;
+				max-width: 560px;
+				margin: 0 auto;
+				padding: 40px 20px 64px;
+				box-sizing: border-box;
+				text-align: center;
+			}
+			.art {
+				width: 220px;
+				max-width: 70%;
+				margin: 0 auto 8px;
+			}
+			.art svg {
+				width: 100%;
+				height: auto;
+				display: block;
+			}
+			.drift {
+				animation: drift 6s ease-in-out infinite;
+			}
+			@keyframes drift {
+				0%,
+				100% {
+					transform: translate(0, 0);
+				}
+				50% {
+					transform: translate(10px, -8px);
+				}
+			}
+			@media (prefers-reduced-motion: reduce) {
+				.drift {
+					animation: none;
+				}
+			}
+			.code {
+				margin: 0;
+				font-size: 64px;
+				line-height: 1.1;
+				font-weight: 800;
+				letter-spacing: 0.06em;
+				color: var(--accent);
+			}
+			h1 {
+				margin: 8px 0 8px;
+				font-size: 26px;
+				color: rgb(var(--black));
+			}
+			p.msg {
+				margin: 0 0 24px;
+				font-size: 16px;
+				line-height: 1.8;
+				color: rgb(var(--gray));
+			}
+			form {
+				display: flex;
+				gap: 8px;
+				margin-bottom: 18px;
+			}
+			input {
+				flex: 1;
+				min-width: 0;
+				padding: 11px 14px;
+				font-size: 16px;
+				border-radius: 10px;
+				border: 1px solid rgba(var(--gray), 0.45);
+				background: transparent;
+				color: rgb(var(--gray-dark));
+				outline: none;
+			}
+			input:focus {
+				border-color: var(--accent);
+			}
+			button {
+				padding: 0 18px;
+				border: 0;
+				border-radius: 10px;
+				background: var(--accent);
+				color: #fff;
+				font-size: 15px;
+				font-weight: 600;
+				cursor: pointer;
+			}
+			:global(html[data-theme='dark']) button,
+			:global(html[data-theme='dark']) .btn.primary {
+				color: #0b1020;
+			}
+			.cta {
+				display: flex;
+				justify-content: center;
+				flex-wrap: wrap;
+				gap: 12px;
+			}
+			.btn {
+				padding: 10px 22px;
+				border-radius: 10px;
+				font-size: 15px;
+				font-weight: 600;
+				text-decoration: none;
+				border: 1px solid var(--accent);
+				color: var(--accent);
+			}
+			.btn.primary {
+				background: var(--accent);
+				color: #fff;
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main class="nf">
+			<div class="art" aria-hidden="true">
+				<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+					<circle cx="100" cy="100" r="78" fill="none" stroke="currentColor" stroke-opacity="0.25" stroke-width="1.5" style="color: var(--accent)" />
+					<circle cx="100" cy="100" r="50" fill="none" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5" stroke-dasharray="4 6" style="color: var(--accent)" />
+					<circle cx="100" cy="100" r="14" fill="currentColor" style="color: var(--accent)" />
+					<g class="drift">
+						<circle cx="170" cy="40" r="8" fill="#5eead4" />
+						<circle cx="170" cy="40" r="14" fill="none" stroke="#5eead4" stroke-opacity="0.4" />
+					</g>
+				</svg>
+			</div>
+			<p class="code">404</p>
+			<h1>这个页面走丢了</h1>
+			<p class="msg">你访问的地址不存在，可能是链接写错了，或者文章已经被移动。<br />试试搜索，或者回到首页。</p>
+			<form action="/search" method="get">
+				<input type="search" name="q" placeholder="搜索文章关键词" autocomplete="off" />
+				<button type="submit">搜索</button>
+			</form>
+			<div class="cta">
+				<a class="btn primary" href="/">返回首页</a>
+				<a class="btn" href="/blog">浏览博客</a>
+			</div>
+		</main>
+		<Footer />
+	</body>
+</html>

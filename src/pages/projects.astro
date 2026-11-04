@@ -1,0 +1,220 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_TITLE } from '../consts';
+
+// ===== 在这里添加你的作品，复制一段 { ... } 即可 =====
+// image 可选：把图片放进 public 文件夹，例如 '/my-project.jpg'；不填则自动生成封面
+const projects = [
+	{
+		title: '本站：REOG 个人网站',
+		desc: '基于 Astro 构建的中文个人博客，支持深色模式、站内搜索、标签分类、RSS 订阅与评论，通过 GitHub Actions 自动部署到 GitHub Pages。',
+		tags: ['Astro', 'GitHub Actions', 'GitHub Pages', 'Giscus'],
+		status: '运行中',
+		image: '',
+		links: [
+			{ label: '访问网站', href: 'https://reog163.github.io' },
+			{ label: '查看源码', href: 'https://github.com/REOG163/reog163.github.io' },
+		],
+	},
+];
+// ==================================================
+
+const palettes = [
+	['#14204a', '#3b5bdb', '#5eead4'],
+	['#1d2f6b', '#7c5cff', '#8fa8ff'],
+	['#0b3b4a', '#14b8a6', '#a7f3d0'],
+];
+---
+
+<html lang="zh-CN">
+	<head>
+		<BaseHead title={`作品集 | ${SITE_TITLE}`} description="我做过的项目与作品" />
+		<style>
+			main.pj {
+				width: 100%;
+				max-width: 960px;
+				margin: 0 auto;
+				padding: 28px 18px 56px;
+				box-sizing: border-box;
+			}
+			.label {
+				margin: 0 0 4px;
+				font-size: 13px;
+				letter-spacing: 0.18em;
+				font-weight: 600;
+				color: var(--accent);
+			}
+			h1 {
+				margin: 0 0 6px;
+				font-size: 30px;
+				color: rgb(var(--black));
+			}
+			.lead {
+				margin: 0 0 24px;
+				font-size: 16px;
+				color: rgb(var(--gray));
+			}
+			.grid {
+				display: grid;
+				grid-template-columns: 1fr;
+				gap: 18px;
+			}
+			.card {
+				display: flex;
+				flex-direction: column;
+				overflow: hidden;
+				border-radius: 14px;
+				border: 1px solid rgba(var(--gray), 0.3);
+				background: rgba(var(--gray-light), 0.35);
+			}
+			.cover {
+				display: block;
+				width: 100%;
+				height: auto;
+				aspect-ratio: 2 / 1;
+				object-fit: cover;
+			}
+			.body {
+				padding: 16px 18px 18px;
+				display: flex;
+				flex-direction: column;
+				gap: 8px;
+				flex: 1;
+			}
+			.head {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				gap: 8px;
+			}
+			.card h2 {
+				margin: 0;
+				font-size: 19px;
+				line-height: 1.4;
+				color: rgb(var(--black));
+			}
+			.status {
+				flex: none;
+				font-size: 12px;
+				padding: 1px 10px;
+				border-radius: 999px;
+				background: rgba(94, 234, 212, 0.2);
+				color: #0f9d8a;
+			}
+			:global(html[data-theme='dark']) .status {
+				color: #5eead4;
+			}
+			.card p {
+				margin: 0;
+				font-size: 15px;
+				line-height: 1.75;
+				color: rgb(var(--gray-dark));
+			}
+			.tags {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 6px;
+			}
+			.tags span {
+				font-size: 12px;
+				padding: 1px 10px;
+				border-radius: 999px;
+				background: rgb(var(--gray-light));
+				color: rgb(var(--gray-dark));
+			}
+			.links {
+				display: flex;
+				gap: 14px;
+				margin-top: auto;
+				padding-top: 6px;
+			}
+			.links a {
+				font-size: 14px;
+				font-weight: 600;
+				color: var(--accent);
+				text-decoration: none;
+			}
+			.soon {
+				align-items: center;
+				justify-content: center;
+				text-align: center;
+				border-style: dashed;
+				padding: 36px 20px;
+				background: transparent;
+			}
+			.soon b {
+				font-size: 17px;
+				color: rgb(var(--black));
+			}
+			.soon span {
+				font-size: 14px;
+				color: rgb(var(--gray));
+			}
+			@media (min-width: 720px) {
+				.grid {
+					grid-template-columns: repeat(2, 1fr);
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main class="pj">
+			<p class="label">PROJECTS · 作品集</p>
+			<h1>我做过的东西</h1>
+			<p class="lead">每个项目都是一次完整的实践：从想法到上线。</p>
+
+			<div class="grid">
+				{
+					projects.map((p, i) => {
+						const c = palettes[i % palettes.length];
+						return (
+							<div class="card">
+								{p.image ? (
+									<img class="cover" src={p.image} alt={p.title} loading="lazy" />
+								) : (
+									<svg class="cover" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+										<defs>
+											<linearGradient id={`g${i}`} x1="0" y1="0" x2="1" y2="1">
+												<stop offset="0" stop-color={c[0]} />
+												<stop offset="1" stop-color={c[1]} />
+											</linearGradient>
+										</defs>
+										<rect width="400" height="200" fill={`url(#g${i})`} />
+										<g fill="none" stroke="#fff" stroke-opacity="0.18">
+											<circle cx="320" cy="100" r="90" />
+											<circle cx="320" cy="100" r="56" />
+											<circle cx="320" cy="100" r="24" />
+										</g>
+										<circle cx="230" cy="100" r="6" fill={c[2]} />
+										<text x="28" y="116" font-size="44" font-weight="800" fill="#fff" font-family="system-ui, sans-serif" letter-spacing="2">{String(i + 1).padStart(2, '0')}</text>
+									</svg>
+								)}
+								<div class="body">
+									<div class="head">
+										<h2>{p.title}</h2>
+										{p.status && <span class="status">{p.status}</span>}
+									</div>
+									<p>{p.desc}</p>
+									<div class="tags">{p.tags.map((t) => <span>{t}</span>)}</div>
+									<div class="links">
+										{p.links.map((l) => (
+											<a href={l.href} target="_blank" rel="noopener">{l.label} →</a>
+										))}
+									</div>
+								</div>
+							</div>
+						);
+					})
+				}
+				<div class="card soon">
+					<b>下一个作品筹备中</b>
+					<span>有新项目上线后会在这里更新</span>
+				</div>
+			</div>
+		</main>
+		<Footer />
+	</body>
+</html>
