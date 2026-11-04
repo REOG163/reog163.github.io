@@ -1,63 +1,428 @@
 ---
-import AboutHeroImage from '../assets/blog-placeholder-about.jpg';
-import Layout from '../layouts/BlogPost.astro';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+
+// ===== 在这里修改你的联系信息 =====
+const NAME = 'REOG';
+const EMAIL = 'reogadg@gmail.com';
+const WEBSITE = 'https://你的网站地址.vercel.app'; // ← 改成你自己的网站地址
+// ================================
+
+const title = `关于 ${NAME}`;
+const description = `${NAME} 的个人介绍、工作方式与联系方式。`;
+
+const habits = [
+	{ t: '先定义问题', d: '动手前，把目标、约束和验收标准写清楚。清晰的问题，是一半的答案。' },
+	{ t: '追求可持续', d: '比起一时的爆发，更看重能长期稳定运转的系统与节奏。' },
+	{ t: '用事实说话', d: '观点必须能被验证。数据、实验与复盘，优先于直觉和口号。' },
+	{ t: '公开地学习', d: '把过程写下来，既是整理自己，也让别人少走弯路。' },
+];
+
+const doing = [
+	{ t: '构建', d: '把想法做成真正能用的网站、工具与自动化流程。' },
+	{ t: '研究', d: '持续关注系统设计、AI 工具与效率方法，筛出真正有效的部分。' },
+	{ t: '写作', d: '在博客里沉淀实践与思考，保持清晰、简短、可复用。' },
+];
 ---
 
-<Layout
-	title="About Me"
-	description="Lorem ipsum dolor sit amet"
-	pubDate={new Date('August 08 2021')}
-	heroImage={AboutHeroImage}
->
-	<p>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-		labore et dolore magna aliqua. Vitae ultricies leo integer malesuada nunc vel risus commodo
-		viverra. Adipiscing enim eu turpis egestas pretium. Euismod elementum nisi quis eleifend quam
-		adipiscing. In hac habitasse platea dictumst vestibulum. Sagittis purus sit amet volutpat. Netus
-		et malesuada fames ac turpis egestas. Eget magna fermentum iaculis eu non diam phasellus
-		vestibulum lorem. Varius sit amet mattis vulputate enim. Habitasse platea dictumst quisque
-		sagittis. Integer quis auctor elit sed vulputate mi. Dictumst quisque sagittis purus sit amet.
-	</p>
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<BaseHead title={title} description={description} />
+		<style>
+			main.about {
+				width: 100%;
+				max-width: none;
+				margin: 0;
+				padding: 0;
+				font-size: 16px;
+				line-height: 1.8;
+				color: #0f172a;
+			}
+			.wrap {
+				width: 100%;
+				max-width: 880px;
+				margin: 0 auto;
+				padding: 0 20px;
+				box-sizing: border-box;
+			}
 
-	<p>
-		Morbi tristique senectus et netus. Id semper risus in hendrerit gravida rutrum quisque non
-		tellus. Habitasse platea dictumst quisque sagittis purus sit amet. Tellus molestie nunc non
-		blandit massa. Cursus vitae congue mauris rhoncus. Accumsan tortor posuere ac ut. Fringilla urna
-		porttitor rhoncus dolor. Elit ullamcorper dignissim cras tincidunt lobortis. In cursus turpis
-		massa tincidunt dui ut ornare lectus. Integer feugiat scelerisque varius morbi enim nunc.
-		Bibendum neque egestas congue quisque egestas diam. Cras ornare arcu dui vivamus arcu felis
-		bibendum. Dignissim suspendisse in est ante in nibh mauris. Sed tempus urna et pharetra pharetra
-		massa massa ultricies mi.
-	</p>
+			/* Hero */
+			.hero {
+				background: linear-gradient(160deg, #0b1020 0%, #14204a 60%, #1d2f6b 100%);
+				color: #fff;
+				text-align: center;
+				padding: 48px 0 44px;
+				overflow: hidden;
+			}
+			.avatar {
+				width: 150px;
+				height: 150px;
+				margin: 0 auto 18px;
+			}
+			.avatar svg {
+				width: 100%;
+				height: 100%;
+				display: block;
+			}
+			.spin {
+				transform-origin: 100px 100px;
+				animation: spin 30s linear infinite;
+			}
+			@keyframes spin {
+				to {
+					transform: rotate(360deg);
+				}
+			}
+			@media (prefers-reduced-motion: reduce) {
+				.spin {
+					animation: none;
+				}
+			}
+			.tag {
+				margin: 0 0 6px;
+				font-size: 13px;
+				letter-spacing: 0.2em;
+				color: #8fa8ff;
+			}
+			.hero h1 {
+				margin: 0;
+				font-size: 44px;
+				line-height: 1.15;
+				letter-spacing: 0.05em;
+				color: #fff;
+			}
+			.hero .tagline {
+				margin: 12px auto 0;
+				max-width: 520px;
+				font-size: 17px;
+				line-height: 1.6;
+				color: #d6defc;
+			}
 
-	<p>
-		Mollis nunc sed id semper risus in. Convallis a cras semper auctor neque. Diam sit amet nisl
-		suscipit. Lacus viverra vitae congue eu consequat ac felis donec. Egestas integer eget aliquet
-		nibh praesent tristique magna sit amet. Eget magna fermentum iaculis eu non diam. In vitae
-		turpis massa sed elementum. Tristique et egestas quis ipsum suspendisse ultrices. Eget lorem
-		dolor sed viverra ipsum. Vel turpis nunc eget lorem dolor sed viverra. Posuere ac ut consequat
-		semper viverra nam. Laoreet suspendisse interdum consectetur libero id faucibus. Diam phasellus
-		vestibulum lorem sed risus ultricies tristique. Rhoncus dolor purus non enim praesent elementum
-		facilisis. Ultrices tincidunt arcu non sodales neque. Tempus egestas sed sed risus pretium quam
-		vulputate. Viverra suspendisse potenti nullam ac tortor vitae purus faucibus ornare. Fringilla
-		urna porttitor rhoncus dolor purus non. Amet dictum sit amet justo donec enim.
-	</p>
+			/* 联系方式条 */
+			.contact-bar {
+				display: flex;
+				flex-direction: column;
+				gap: 12px;
+				margin: 26px auto 0;
+				max-width: 520px;
+			}
+			.chip {
+				display: flex;
+				align-items: center;
+				gap: 12px;
+				padding: 12px 16px;
+				border-radius: 12px;
+				background: rgba(255, 255, 255, 0.1);
+				border: 1px solid rgba(255, 255, 255, 0.28);
+				color: #fff;
+				text-decoration: none;
+				text-align: left;
+			}
+			.chip svg {
+				flex: none;
+				width: 22px;
+				height: 22px;
+			}
+			.chip small {
+				display: block;
+				font-size: 12px;
+				color: #9fb2f5;
+				line-height: 1.3;
+			}
+			.chip b {
+				display: block;
+				font-size: 15px;
+				line-height: 1.4;
+				word-break: break-all;
+				font-weight: 600;
+			}
 
-	<p>
-		Mattis ullamcorper velit sed ullamcorper morbi tincidunt. Tortor posuere ac ut consequat semper
-		viverra. Tellus mauris a diam maecenas sed enim ut sem viverra. Venenatis urna cursus eget nunc
-		scelerisque viverra mauris in. Arcu ac tortor dignissim convallis aenean et tortor at. Curabitur
-		gravida arcu ac tortor dignissim convallis aenean et tortor. Egestas tellus rutrum tellus
-		pellentesque eu. Fusce ut placerat orci nulla pellentesque dignissim enim sit amet. Ut enim
-		blandit volutpat maecenas volutpat blandit aliquam etiam. Id donec ultrices tincidunt arcu. Id
-		cursus metus aliquam eleifend mi.
-	</p>
+			/* Sections */
+			.block {
+				padding: 52px 0 4px;
+			}
+			.label {
+				margin: 0 0 6px;
+				font-size: 13px;
+				letter-spacing: 0.18em;
+				font-weight: 600;
+				color: #3b5bdb;
+			}
+			.block h2 {
+				margin: 0 0 14px;
+				font-size: 26px;
+				line-height: 1.3;
+				color: #0f172a;
+			}
+			.block p.text {
+				margin: 0 0 12px;
+				color: #334155;
+			}
 
-	<p>
-		Tempus quam pellentesque nec nam aliquam sem. Risus at ultrices mi tempus imperdiet. Id porta
-		nibh venenatis cras sed felis eget velit. Ipsum a arcu cursus vitae. Facilisis magna etiam
-		tempor orci eu lobortis elementum. Tincidunt dui ut ornare lectus sit. Quisque non tellus orci
-		ac. Blandit libero volutpat sed cras. Nec tincidunt praesent semper feugiat nibh sed pulvinar
-		proin gravida. Egestas integer eget aliquet nibh praesent tristique magna.
-	</p>
-</Layout>
+			.grid {
+				display: grid;
+				grid-template-columns: 1fr;
+				gap: 14px;
+				margin-top: 18px;
+			}
+			.item {
+				padding: 20px;
+				border-radius: 14px;
+				border: 1px solid #e2e8f0;
+				background: #fff;
+			}
+			.item svg {
+				width: 26px;
+				height: 26px;
+				margin-bottom: 8px;
+			}
+			.item h3 {
+				margin: 0 0 4px;
+				font-size: 17px;
+				color: #0f172a;
+			}
+			.item p {
+				margin: 0;
+				font-size: 15px;
+				line-height: 1.7;
+				color: #475569;
+			}
+
+			/* 引言 */
+			.quote {
+				margin: 52px 0 0;
+				padding: 44px 0;
+				text-align: center;
+				background: #0b1020;
+				color: #e6ebff;
+			}
+			.quote p {
+				margin: 0 auto;
+				max-width: 600px;
+				font-size: 19px;
+				line-height: 1.8;
+				font-weight: 600;
+			}
+
+			/* 底部联系 */
+			.reach {
+				padding: 52px 0 64px;
+				text-align: center;
+			}
+			.reach h2 {
+				margin: 0 0 6px;
+				font-size: 26px;
+			}
+			.reach p {
+				margin: 0 0 22px;
+				color: #475569;
+			}
+			.reach-grid {
+				display: grid;
+				grid-template-columns: 1fr;
+				gap: 12px;
+				max-width: 560px;
+				margin: 0 auto;
+			}
+			.reach-card {
+				display: block;
+				padding: 18px;
+				border-radius: 14px;
+				background: #f1f5ff;
+				border: 1px solid #dbe4ff;
+				text-decoration: none;
+				color: #0f172a;
+			}
+			.reach-card small {
+				display: block;
+				font-size: 12px;
+				letter-spacing: 0.12em;
+				color: #3b5bdb;
+			}
+			.reach-card b {
+				display: block;
+				margin-top: 2px;
+				font-size: 16px;
+				word-break: break-all;
+			}
+			.copy {
+				margin-top: 14px;
+				padding: 10px 22px;
+				border: 0;
+				border-radius: 10px;
+				background: #14204a;
+				color: #fff;
+				font-size: 15px;
+				font-weight: 600;
+				cursor: pointer;
+			}
+
+			@media (min-width: 720px) {
+				.hero {
+					padding: 72px 0 60px;
+				}
+				.hero h1 {
+					font-size: 60px;
+				}
+				.contact-bar {
+					flex-direction: row;
+					max-width: 640px;
+				}
+				.chip {
+					flex: 1;
+				}
+				.grid.two {
+					grid-template-columns: repeat(2, 1fr);
+				}
+				.grid.three {
+					grid-template-columns: repeat(3, 1fr);
+				}
+				.reach-grid {
+					grid-template-columns: 1fr 1fr;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main class="about">
+			<!-- Hero + 联系方式 -->
+			<section class="hero">
+				<div class="wrap">
+					<div class="avatar" aria-hidden="true">
+						<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+							<defs>
+								<linearGradient id="ag" x1="0" y1="0" x2="1" y2="1">
+									<stop offset="0%" stop-color="#8fa8ff" />
+									<stop offset="100%" stop-color="#5eead4" />
+								</linearGradient>
+							</defs>
+							<circle cx="100" cy="100" r="94" fill="none" stroke="url(#ag)" stroke-width="1.5" stroke-opacity="0.8" />
+							<circle cx="100" cy="100" r="74" fill="#14204a" stroke="#8fa8ff" stroke-opacity="0.35" />
+							<g class="spin">
+								<circle cx="100" cy="6" r="6" fill="#5eead4" />
+								<circle cx="194" cy="100" r="4" fill="#fff" />
+							</g>
+							<text x="100" y="122" text-anchor="middle" font-size="68" font-weight="700" fill="#fff" font-family="system-ui, sans-serif">R</text>
+						</svg>
+					</div>
+					<p class="tag">ABOUT · 关于我</p>
+					<h1>{NAME}</h1>
+					<p class="tagline">做事讲逻辑，写字求简洁。用工程的方式，把想法落地成可靠的成果。</p>
+
+					<div class="contact-bar">
+						<a class="chip" href={`mailto:${EMAIL}`}>
+							<svg viewBox="0 0 24 24" fill="none" stroke="#8fa8ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+								<rect x="3" y="5" width="18" height="14" rx="2" />
+								<path d="m3 7 9 6 9-6" />
+							</svg>
+							<span><small>邮箱</small><b>{EMAIL}</b></span>
+						</a>
+						<a class="chip" href={WEBSITE} target="_blank" rel="noopener">
+							<svg viewBox="0 0 24 24" fill="none" stroke="#5eead4" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+								<circle cx="12" cy="12" r="9" />
+								<path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9S14.500 18.300 12 21c-2.500-2.700-3.800-5.700-3.800-9S9.500 5.700 12 3Z" />
+							</svg>
+							<span><small>个人网站</small><b>{WEBSITE.replace(/^https?:\/\//, '')}</b></span>
+						</a>
+					</div>
+				</div>
+			</section>
+
+			<!-- 简介 -->
+			<section class="block">
+				<div class="wrap">
+					<p class="label">INTRO · 简介</p>
+					<h2>我是谁</h2>
+					<p class="text">我是 {NAME}，一个喜欢把复杂问题拆解清楚、再亲手做出来的人。</p>
+					<p class="text">我相信，好的作品来自清晰的思考与持续的打磨，而不是一时的灵感。所以我习惯把想法写下来、做成原型、再用结果修正方向。</p>
+					<p class="text">这个博客是我的公开笔记：记录实践、整理方法，也希望对同路的人有一点用。</p>
+				</div>
+			</section>
+
+			<!-- 做什么 -->
+			<section class="block">
+				<div class="wrap">
+					<p class="label">WHAT I DO · 我在做什么</p>
+					<h2>三件持续做的事</h2>
+					<div class="grid three">
+						{
+							doing.map((d) => (
+								<div class="item">
+									<svg viewBox="0 0 24 24" fill="none" stroke="#3b5bdb" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+										<path d="M12 3 3 8l9 5 9-5-9-5Z" />
+										<path d="m3 13 9 5 9-5" />
+									</svg>
+									<h3>{d.t}</h3>
+									<p>{d.d}</p>
+								</div>
+							))
+						}
+					</div>
+				</div>
+			</section>
+
+			<!-- 工作方式 -->
+			<section class="block">
+				<div class="wrap">
+					<p class="label">HOW I WORK · 工作方式</p>
+					<h2>我的做事习惯</h2>
+					<div class="grid two">
+						{
+							habits.map((h) => (
+								<div class="item">
+									<h3>{h.t}</h3>
+									<p>{h.d}</p>
+								</div>
+							))
+						}
+					</div>
+				</div>
+			</section>
+
+			<!-- 引言 -->
+			<section class="quote">
+				<div class="wrap">
+					<p>少一点喧哗，多一点交付。时间会替认真的人说话。</p>
+				</div>
+			</section>
+
+			<!-- 底部联系 -->
+			<section class="reach">
+				<div class="wrap">
+					<h2>保持联系</h2>
+					<p>合作、交流或只是打个招呼，都欢迎来信。</p>
+					<div class="reach-grid">
+						<a class="reach-card" href={`mailto:${EMAIL}`}>
+							<small>EMAIL · 邮箱</small>
+							<b>{EMAIL}</b>
+						</a>
+						<a class="reach-card" href={WEBSITE} target="_blank" rel="noopener">
+							<small>WEBSITE · 个人网站</small>
+							<b>{WEBSITE.replace(/^https?:\/\//, '')}</b>
+						</a>
+					</div>
+					<button class="copy" id="copy-email" data-email={EMAIL}>复制邮箱</button>
+				</div>
+			</section>
+		</main>
+		<Footer />
+
+		<script>
+			const btn = document.getElementById('copy-email');
+			btn?.addEventListener('click', async () => {
+				const email = btn.getAttribute('data-email') || '';
+				try {
+					await navigator.clipboard.writeText(email);
+					btn.textContent = '已复制 ✓';
+					setTimeout(() => (btn.textContent = '复制邮箱'), 2000);
+				} catch {
+					btn.textContent = email;
+				}
+			});
+		</script>
+	</body>
+</html>
