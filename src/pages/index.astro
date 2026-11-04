@@ -293,6 +293,22 @@ const fields = [
 					font-size: 30px;
 				}
 			}
+					/* 深色模式 */
+			:global(html[data-theme='dark']) main.home { color: #e2e8f0; }
+			:global(html[data-theme='dark']) .block h2,
+			:global(html[data-theme='dark']) .card h3,
+			:global(html[data-theme='dark']) .field b,
+			:global(html[data-theme='dark']) .end h2 { color: #f1f5f9; }
+			:global(html[data-theme='dark']) .lead,
+			:global(html[data-theme='dark']) .card p,
+			:global(html[data-theme='dark']) .field span,
+			:global(html[data-theme='dark']) .end p { color: #aab6d3; }
+			:global(html[data-theme='dark']) .card { background: #111a33; border-color: #26335c; }
+			:global(html[data-theme='dark']) .field { background: #14204a; }
+			:global(html[data-theme='dark']) .label,
+			:global(html[data-theme='dark']) .card .no { color: #8fa8ff; }
+			:global(html[data-theme='dark']) .manifesto { background: #070b18; }
+			:global(html[data-theme='dark']) .end .btn.primary { background: #8fa8ff; color: #0b1020; }
 		</style>
 	</head>
 	<body>

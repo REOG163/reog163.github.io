@@ -6,7 +6,7 @@ import Header from '../components/Header.astro';
 // ===== 在这里修改你的联系信息 =====
 const NAME = 'REOG';
 const EMAIL = 'reogadg@gmail.com';
-const WEBSITE = 'reog163.github.io'; // ← 改成你自己的网站地址
+const WEBSITE = 'https://reog163.github.io'; // ← 改成你自己的网站地址
 // ================================
 
 const title = `关于 ${NAME}`;
@@ -284,6 +284,20 @@ const doing = [
 					grid-template-columns: 1fr 1fr;
 				}
 			}
+					/* 深色模式 */
+			:global(html[data-theme='dark']) main.about { color: #e2e8f0; }
+			:global(html[data-theme='dark']) .block h2,
+			:global(html[data-theme='dark']) .item h3,
+			:global(html[data-theme='dark']) .reach h2 { color: #f1f5f9; }
+			:global(html[data-theme='dark']) .block p.text,
+			:global(html[data-theme='dark']) .item p,
+			:global(html[data-theme='dark']) .reach p { color: #aab6d3; }
+			:global(html[data-theme='dark']) .item { background: #111a33; border-color: #26335c; }
+			:global(html[data-theme='dark']) .label,
+			:global(html[data-theme='dark']) .reach-card small { color: #8fa8ff; }
+			:global(html[data-theme='dark']) .reach-card { background: #14204a; border-color: #26335c; color: #f1f5f9; }
+			:global(html[data-theme='dark']) .quote { background: #070b18; }
+			:global(html[data-theme='dark']) .copy { background: #8fa8ff; color: #0b1020; }
 		</style>
 	</head>
 	<body>
@@ -401,7 +415,7 @@ const doing = [
 							<b>{EMAIL}</b>
 						</a>
 						<a class="reach-card" href={WEBSITE} target="_blank" rel="noopener">
-							<small>WEBSITE · 永久网址</small>
+							<small>WEBSITE · 个人网站</small>
 							<b>{WEBSITE.replace(/^https?:\/\//, '')}</b>
 						</a>
 					</div>

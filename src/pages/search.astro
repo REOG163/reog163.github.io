@@ -1,0 +1,206 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_TITLE } from '../consts';
+---
+
+<html lang="zh-CN">
+	<head>
+		<BaseHead title={`搜索 | ${SITE_TITLE}`} description="站内搜索" />
+		<style is:global>
+			.sr-wrap {
+				width: 100%;
+				max-width: 720px;
+				margin: 0 auto;
+				padding: 28px 18px 56px;
+				box-sizing: border-box;
+			}
+			.sr-wrap h1 {
+				margin: 0 0 16px;
+				font-size: 30px;
+				color: rgb(var(--black));
+			}
+			.sr-input {
+				width: 100%;
+				box-sizing: border-box;
+				padding: 12px 16px;
+				font-size: 17px;
+				border-radius: 12px;
+				border: 1px solid rgba(var(--gray), 0.45);
+				background: transparent;
+				color: rgb(var(--gray-dark));
+				outline: none;
+			}
+			.sr-input:focus {
+				border-color: var(--accent);
+			}
+			.sr-status {
+				margin: 12px 0;
+				font-size: 14px;
+				color: rgb(var(--gray));
+			}
+			.sr-list {
+				list-style: none;
+				margin: 0;
+				padding: 0;
+			}
+			.sr-list li {
+				margin-bottom: 14px;
+			}
+			.sr-item {
+				display: block;
+				padding: 14px 16px;
+				border-radius: 12px;
+				border: 1px solid rgba(var(--gray), 0.3);
+				text-decoration: none;
+				color: inherit;
+			}
+			.sr-item:hover {
+				border-color: var(--accent);
+			}
+			.sr-item h2 {
+				margin: 0 0 4px;
+				font-size: 18px;
+				color: rgb(var(--black));
+			}
+			.sr-item p {
+				margin: 0 0 6px;
+				font-size: 14px;
+				line-height: 1.7;
+				color: rgb(var(--gray-dark));
+			}
+			.sr-item span {
+				font-size: 12px;
+				color: rgb(var(--gray));
+			}
+			.sr-item mark {
+				background: rgba(143, 168, 255, 0.35);
+				color: inherit;
+				border-radius: 3px;
+				padding: 0 1px;
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main class="sr-wrap">
+			<h1>搜索</h1>
+			<input
+				id="q"
+				class="sr-input"
+				type="search"
+				placeholder="输入关键词，搜索标题、标签和正文"
+				autocomplete="off"
+			/>
+			<p id="status" class="sr-status"></p>
+			<ul id="results" class="sr-list"></ul>
+		</main>
+		<Footer />
+
+		<script>
+			type Item = {
+				title: string;
+				description: string;
+				category: string;
+				tags: string[];
+				date: string;
+				url: string;
+				text: string;
+			};
+			const input = document.getElementById('q') as HTMLInputElement;
+			const statusEl = document.getElementById('status') as HTMLElement;
+			const results = document.getElementById('results') as HTMLElement;
+			let data: Item[] = [];
+
+			const esc = (s: string) =>
+				s.replace(/[&<>"']/g, (c) => {
+					const map: Record<string, string> = {
+						'&': '&amp;',
+						'<': '&lt;',
+						'>': '&gt;',
+						'"': '&quot;',
+						"'": '&#39;',
+					};
+					return map[c];
+				});
+			const hl = (s: string, terms: string[]) => {
+				let out = esc(s);
+				for (const t of terms) {
+					const e = esc(t).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+					out = out.replace(new RegExp(e, 'gi'), (m) => `<mark>${m}</mark>`);
+				}
+				return out;
+			};
+
+			function run() {
+				const raw = input.value.trim();
+				const q = new URLSearchParams();
+				if (raw) q.set('q', raw);
+				history.replaceState(null, '', q.toString() ? '?' + q.toString() : location.pathname);
+
+				if (!raw) {
+					results.innerHTML = '';
+					statusEl.textContent = data.length ? `共 ${data.length} 篇文章，输入关键词开始搜索` : '';
+					return;
+				}
+				const terms = raw.toLowerCase().split(/\s+/).filter(Boolean);
+				const hits: { it: Item; score: number }[] = [];
+				for (const it of data) {
+					const title = it.title.toLowerCase();
+					const desc = it.description.toLowerCase();
+					const tags = it.tags.join(' ').toLowerCase();
+					const cat = it.category.toLowerCase();
+					const text = it.text.toLowerCase();
+					let score = 0;
+					let ok = true;
+					for (const t of terms) {
+						let s = 0;
+						if (title.includes(t)) s += 5;
+						if (tags.includes(t)) s += 3;
+						if (cat.includes(t)) s += 2;
+						if (desc.includes(t)) s += 2;
+						if (text.includes(t)) s += 1;
+						if (!s) {
+							ok = false;
+							break;
+						}
+						score += s;
+					}
+					if (ok) hits.push({ it, score });
+				}
+				hits.sort((a, b) => b.score - a.score);
+				statusEl.textContent = hits.length ? `找到 ${hits.length} 篇相关文章` : '没有找到相关文章，换个关键词试试';
+				results.innerHTML = hits
+					.map(({ it }) => {
+						const lower = it.text.toLowerCase();
+						let idx = -1;
+						for (const t of terms) {
+							idx = lower.indexOf(t);
+							if (idx >= 0) break;
+						}
+						const snippet =
+							idx >= 0
+								? (idx > 30 ? '…' : '') + it.text.slice(Math.max(0, idx - 30), idx + 90) + '…'
+								: it.description;
+						const meta = [it.date, it.category, ...it.tags.map((t) => '#' + t)].filter(Boolean).join(' · ');
+						return `<li><a class="sr-item" href="${it.url}"><h2>${hl(it.title, terms)}</h2><p>${hl(snippet, terms)}</p><span>${esc(meta)}</span></a></li>`;
+					})
+					.join('');
+			}
+
+			input.addEventListener('input', run);
+			input.value = new URLSearchParams(location.search).get('q') || '';
+			fetch('/search.json')
+				.then((r) => r.json())
+				.then((d: Item[]) => {
+					data = d;
+					run();
+				})
+				.catch(() => {
+					statusEl.textContent = '搜索数据加载失败，请刷新重试';
+				});
+			input.focus();
+		</script>
+	</body>
+</html>
