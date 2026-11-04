@@ -5,6 +5,7 @@ const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
 const links = [
 	{ href: '/', label: '首页' },
 	{ href: '/blog', label: '博客' },
+	{ href: '/projects', label: '作品' },
 	{ href: '/about', label: '关于' },
 ];
 const isActive = (href: string) =>
@@ -157,13 +158,23 @@ const isActive = (href: string) =>
 		color: #fff;
 		background: #1d2a52;
 	}
-	@media (max-width: 380px) {
+	@media (max-width: 430px) {
+		nav {
+			padding: 0 10px;
+			gap: 6px;
+		}
 		.brand {
 			font-size: 15px;
 		}
+		.links {
+			gap: 0;
+		}
 		.links a {
-			padding: 6px 6px;
+			padding: 6px 5px;
 			font-size: 14px;
+		}
+		.icon-btn {
+			width: 32px;
 		}
 	}
 </style>

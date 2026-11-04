@@ -1,4 +1,5 @@
 ---
+import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import { Image } from 'astro:assets';
 import BaseHead from '../components/BaseHead.astro';
@@ -12,6 +13,16 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 const { tags = [], category } = Astro.props as any;
 const fmt = (d: Date) =>
 	d.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+
+// 上一篇 = 更早发布，下一篇 = 更新发布
+const slugOf = (p: any) => p.slug ?? p.id;
+const all = (await getCollection('blog')).sort(
+	(a: any, b: any) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf(),
+);
+const cur = Astro.url.pathname.replace(/\/+$/, '');
+const idx = all.findIndex((p: any) => `/blog/${slugOf(p)}` === cur);
+const prev: any = idx > 0 ? all[idx - 1] : null;
+const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 ---
 
 <html lang="zh-CN">
@@ -146,9 +157,91 @@ const fmt = (d: Date) =>
 				font-size: 14px;
 				line-height: 1.6;
 			}
+			#progress {
+				position: fixed;
+				top: 0;
+				left: 0;
+				height: 3px;
+				width: 0;
+				background: var(--accent);
+				z-index: 100;
+			}
+			.totop {
+				position: fixed;
+				right: 18px;
+				bottom: 22px;
+				width: 44px;
+				height: 44px;
+				border: 0;
+				border-radius: 50%;
+				background: var(--accent);
+				color: #fff;
+				cursor: pointer;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				opacity: 0;
+				pointer-events: none;
+				transform: translateY(8px);
+				transition: opacity 0.2s, transform 0.2s;
+				z-index: 60;
+				box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+			}
+			.totop.show {
+				opacity: 1;
+				pointer-events: auto;
+				transform: none;
+			}
+			:global(html[data-theme='dark']) .totop {
+				color: #0b1020;
+			}
+			.pn {
+				display: grid;
+				grid-template-columns: 1fr;
+				gap: 12px;
+				margin-top: 40px;
+			}
+			.pn a {
+				display: block;
+				padding: 14px 16px;
+				border-radius: 12px;
+				border: 1px solid rgba(var(--gray), 0.3);
+				text-decoration: none;
+				color: inherit;
+			}
+			.pn a:hover {
+				border-color: var(--accent);
+			}
+			.pn small {
+				display: block;
+				font-size: 13px;
+				color: var(--accent);
+				margin-bottom: 2px;
+			}
+			.pn b {
+				display: block;
+				font-size: 16px;
+				line-height: 1.5;
+				color: rgb(var(--black));
+			}
+			.pn .next {
+				text-align: right;
+			}
+			.pn span:empty {
+				display: none;
+			}
+			@media (min-width: 720px) {
+				.pn {
+					grid-template-columns: 1fr 1fr;
+				}
+				.pn span:empty {
+					display: block;
+				}
+			}
 		</style>
 	</head>
 	<body>
+		<div id="progress"></div>
 		<Header />
 		<main class="post">
 			<article>
@@ -175,8 +268,33 @@ const fmt = (d: Date) =>
 				</details>
 				<div class="prose" id="prose"><slot /></div>
 			</article>
+			{
+				(prev || next) && (
+					<nav class="pn" aria-label="文章导航">
+						{prev ? (
+							<a class="prev" href={`/blog/${slugOf(prev)}/`}>
+								<small>← 上一篇</small>
+								<b>{prev.data.title}</b>
+							</a>
+						) : (
+							<span />
+						)}
+						{next ? (
+							<a class="next" href={`/blog/${slugOf(next)}/`}>
+								<small>下一篇 →</small>
+								<b>{next.data.title}</b>
+							</a>
+						) : (
+							<span />
+						)}
+					</nav>
+				)
+			}
 			<Comments />
 		</main>
+		<button class="totop" id="totop" type="button" aria-label="回到顶部">
+			<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 15 6-6 6 6" /></svg>
+		</button>
 		<Footer />
 
 		<script>
@@ -211,6 +329,20 @@ const fmt = (d: Date) =>
 					}
 				}
 			}
+
+			// 阅读进度条 + 回到顶部
+			const bar = document.getElementById('progress');
+			const top = document.getElementById('totop');
+			function onScroll() {
+				const doc = document.documentElement;
+				const max = doc.scrollHeight - doc.clientHeight;
+				const pct = max > 0 ? (window.scrollY / max) * 100 : 0;
+				if (bar) bar.style.width = Math.min(100, pct) + '%';
+				top?.classList.toggle('show', window.scrollY > 600);
+			}
+			window.addEventListener('scroll', onScroll, { passive: true });
+			top?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+			onScroll();
 		</script>
 	</body>
 </html>
