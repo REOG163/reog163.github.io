@@ -4,6 +4,9 @@ import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 
+// Windows 桌面版下载地址（由 GitHub Actions 自动发布到 Releases）
+const DOWNLOAD_URL = 'https://github.com/REOG163/reog163.github.io/releases/latest/download/REOG-Setup.exe';
+
 const principles = [
 	{
 		no: '01',
@@ -113,6 +116,16 @@ const fields = [
 			.btn.ghost {
 				border: 1px solid rgba(255, 255, 255, 0.4);
 				color: #fff;
+			}
+			.btn.dl {
+				display: inline-flex;
+				align-items: center;
+				gap: 6px;
+				border: 1px solid #5eead4;
+				color: #5eead4;
+			}
+			.btn.dl:hover {
+				background: rgba(94, 234, 212, 0.12);
 			}
 			.art {
 				width: 100%;
@@ -325,6 +338,10 @@ const fields = [
 						<div class="cta">
 							<a class="btn primary" href="/blog">阅读文章</a>
 							<a class="btn ghost" href="/about">关于我</a>
+							<a class="btn dl" id="dl-app" href={DOWNLOAD_URL} rel="noopener" title="下载 Windows 桌面版">
+								<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0-4-4m4 4 4-4M5 20h14" /></svg>
+								下载 App
+							</a>
 						</div>
 					</div>
 					<div class="art" aria-hidden="true">
@@ -424,5 +441,13 @@ const fields = [
 			</section>
 		</main>
 		<Footer />
+
+		<script>
+			// 在桌面版 App 内不再显示「下载 App」
+			if (/REOGApp/.test(navigator.userAgent)) {
+				const el = document.getElementById('dl-app');
+				if (el) el.style.display = 'none';
+			}
+		</script>
 	</body>
 </html>
