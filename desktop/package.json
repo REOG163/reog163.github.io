@@ -1,0 +1,34 @@
+{
+  "name": "reog-lab-desktop",
+  "version": "1.0.0",
+  "description": "REOG Lab 桌面版：与网站内容实时同步",
+  "author": "REOG",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win --x64 --publish never"
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "io.github.reog163.desktop",
+    "productName": "REOG Lab",
+    "directories": { "output": "dist" },
+    "files": ["main.js", "offline.html", "build/icon.png", "package.json"],
+    "win": {
+      "target": [{ "target": "nsis", "arch": ["x64"] }],
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "perMachine": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "REOG Lab",
+      "artifactName": "REOG-Setup.${ext}"
+    }
+  }
+}
