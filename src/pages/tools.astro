@@ -1,0 +1,280 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_TITLE } from '../consts';
+
+const title = `小工具 · ${SITE_TITLE}`;
+const description = '浏览器内可用的小工具：SHA-256、时间戳、文本去重。数据不离开本机。';
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <BaseHead title={title} description={description} />
+    <style>
+      main.tools {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 48px 20px 64px;
+      }
+      .label {
+        font-size: 13px;
+        letter-spacing: 0.18em;
+        color: var(--accent);
+        font-weight: 600;
+        margin: 0 0 10px;
+      }
+      h1 {
+        margin: 0 0 8px;
+        font-size: 32px;
+        color: rgb(var(--black));
+      }
+      .lead {
+        margin: 0 0 28px;
+        color: rgb(var(--gray));
+        font-size: 16px;
+      }
+      .panel {
+        margin-bottom: 28px;
+        padding: 20px;
+        border-radius: 14px;
+        border: 1px solid rgba(var(--gray), 0.3);
+        background: rgba(var(--gray-light), 0.35);
+      }
+      .panel h2 {
+        margin: 0 0 6px;
+        font-size: 18px;
+        color: rgb(var(--black));
+      }
+      .panel .desc {
+        margin: 0 0 14px;
+        font-size: 14px;
+        color: rgb(var(--gray));
+      }
+      textarea, input[type='text'], input[type='number'] {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid rgba(var(--gray), 0.35);
+        background: rgba(255, 255, 255, 0.7);
+        color: rgb(var(--gray-dark));
+        font: inherit;
+        font-size: 14px;
+        resize: vertical;
+      }
+      :global(html[data-theme='dark']) textarea,
+      :global(html[data-theme='dark']) input[type='text'],
+      :global(html[data-theme='dark']) input[type='number'] {
+        background: #111a33;
+        border-color: #26335c;
+        color: #e2e8f0;
+      }
+      textarea { min-height: 120px; }
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 10px;
+      }
+      button, .btn {
+        padding: 8px 14px;
+        border-radius: 10px;
+        border: 0;
+        background: var(--accent);
+        color: #fff;
+        font: inherit;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      :global(html[data-theme='dark']) button {
+        color: #0b1020;
+      }
+      button.ghost {
+        background: transparent;
+        border: 1px solid rgba(var(--gray), 0.4);
+        color: rgb(var(--gray-dark));
+      }
+      .out {
+        margin-top: 12px;
+        padding: 12px;
+        border-radius: 10px;
+        background: rgba(var(--gray-light), 0.8);
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 13px;
+        line-height: 1.6;
+        color: rgb(var(--gray-dark));
+        word-break: break-all;
+        white-space: pre-wrap;
+        min-height: 1.6em;
+      }
+      .tabs {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+      }
+      .tabs button {
+        background: transparent;
+        border: 1px solid rgba(var(--gray), 0.35);
+        color: rgb(var(--gray-dark));
+      }
+      .tabs button.on {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #fff;
+      }
+      :global(html[data-theme='dark']) .tabs button.on {
+        color: #0b1020;
+      }
+      .tool[hidden] { display: none; }
+    </style>
+  </head>
+  <body>
+    <Header />
+    <main class="tools">
+      <p class="label">TOOLS · 小工具</p>
+      <h1>浏览器里就能用</h1>
+      <p class="lead">计算与文本处理都在本地完成，不会上传到服务器。</p>
+
+      <div class="tabs" role="tablist">
+        <button type="button" class="on" data-tab="hash">SHA-256</button>
+        <button type="button" data-tab="ts">时间戳</button>
+        <button type="button" data-tab="dedupe">文本去重</button>
+      </div>
+
+      <!-- Hash -->
+      <section class="tool panel" id="tool-hash">
+        <h2>SHA-256</h2>
+        <p class="desc">对文本计算哈希。适合校验、去重实验（与博客里重复文件思路对应）。</p>
+        <textarea id="hash-in" placeholder="输入任意文本…"></textarea>
+        <div class="row">
+          <button type="button" id="hash-run">计算</button>
+          <button type="button" class="ghost" id="hash-copy">复制结果</button>
+        </div>
+        <div class="out" id="hash-out">—</div>
+      </section>
+
+      <!-- Timestamp -->
+      <section class="tool panel" id="tool-ts" hidden>
+        <h2>时间戳转换</h2>
+        <p class="desc">Unix 秒 / 毫秒 ↔ 本地时间。</p>
+        <input type="text" id="ts-in" placeholder="例如 1730764800 或 2026-11-05 12:00:00" />
+        <div class="row">
+          <button type="button" id="ts-to-date">时间戳 → 日期</button>
+          <button type="button" id="ts-to-unix">日期 → 时间戳</button>
+          <button type="button" class="ghost" id="ts-now">填入现在</button>
+        </div>
+        <div class="out" id="ts-out">—</div>
+      </section>
+
+      <!-- Dedupe -->
+      <section class="tool panel" id="tool-dedupe" hidden>
+        <h2>文本行去重</h2>
+        <p class="desc">按行去除完全相同的内容，保留首次出现顺序。</p>
+        <textarea id="dedupe-in" placeholder="每行一条…"></textarea>
+        <div class="row">
+          <button type="button" id="dedupe-run">去重</button>
+          <button type="button" class="ghost" id="dedupe-copy">复制结果</button>
+        </div>
+        <div class="out" id="dedupe-out">—</div>
+      </section>
+    </main>
+    <Footer />
+
+    <script>
+      // tabs
+      const tabs = document.querySelectorAll<HTMLButtonElement>('.tabs button');
+      const tools = {
+        hash: document.getElementById('tool-hash'),
+        ts: document.getElementById('tool-ts'),
+        dedupe: document.getElementById('tool-dedupe'),
+      };
+      tabs.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          tabs.forEach((b) => b.classList.remove('on'));
+          btn.classList.add('on');
+          const id = btn.dataset.tab as keyof typeof tools;
+          Object.entries(tools).forEach(([k, el]) => {
+            if (el) el.hidden = k !== id;
+          });
+        });
+      });
+
+      // SHA-256
+      async function sha256(text: string) {
+        const data = new TextEncoder().encode(text);
+        const buf = await crypto.subtle.digest('SHA-256', data);
+        return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
+      }
+      const hashIn = document.getElementById('hash-in') as HTMLTextAreaElement;
+      const hashOut = document.getElementById('hash-out')!;
+      document.getElementById('hash-run')?.addEventListener('click', async () => {
+        hashOut.textContent = hashIn.value ? await sha256(hashIn.value) : '—';
+      });
+      document.getElementById('hash-copy')?.addEventListener('click', async () => {
+        const t = hashOut.textContent || '';
+        if (t && t !== '—') await navigator.clipboard.writeText(t);
+      });
+
+      // timestamp
+      const tsIn = document.getElementById('ts-in') as HTMLInputElement;
+      const tsOut = document.getElementById('ts-out')!;
+      document.getElementById('ts-now')?.addEventListener('click', () => {
+        const n = Date.now();
+        tsIn.value = String(Math.floor(n / 1000));
+        tsOut.textContent = `${Math.floor(n / 1000)} (秒)\n${n} (毫秒)\n${new Date(n).toLocaleString('zh-CN')}`;
+      });
+      document.getElementById('ts-to-date')?.addEventListener('click', () => {
+        let n = Number(tsIn.value.trim());
+        if (!Number.isFinite(n)) {
+          tsOut.textContent = '请输入数字时间戳';
+          return;
+        }
+        if (n < 1e12) n *= 1000; // seconds → ms
+        const d = new Date(n);
+        if (Number.isNaN(d.getTime())) {
+          tsOut.textContent = '无效时间戳';
+          return;
+        }
+        tsOut.textContent = `${d.toLocaleString('zh-CN')}\nISO: ${d.toISOString()}`;
+      });
+      document.getElementById('ts-to-unix')?.addEventListener('click', () => {
+        const d = new Date(tsIn.value.trim().replace(/-/g, '/'));
+        if (Number.isNaN(d.getTime())) {
+          tsOut.textContent = '无法解析日期，试试 2026-11-05 12:00:00';
+          return;
+        }
+        const ms = d.getTime();
+        tsOut.textContent = `${Math.floor(ms / 1000)} (秒)\n${ms} (毫秒)`;
+      });
+
+      // dedupe
+      const dedupeIn = document.getElementById('dedupe-in') as HTMLTextAreaElement;
+      const dedupeOut = document.getElementById('dedupe-out')!;
+      document.getElementById('dedupe-run')?.addEventListener('click', () => {
+        const lines = dedupeIn.value.split(/\r?\n/);
+        const seen = new Set<string>();
+        const out: string[] = [];
+        let dup = 0;
+        for (const line of lines) {
+          if (seen.has(line)) {
+            dup++;
+            continue;
+          }
+          seen.add(line);
+          out.push(line);
+        }
+        dedupeOut.textContent = out.join('\n') + (lines.length ? `\n\n— 原 ${lines.length} 行，去重后 ${out.length} 行，去掉 ${dup} 行` : '—');
+      });
+      document.getElementById('dedupe-copy')?.addEventListener('click', async () => {
+        const raw = dedupeOut.textContent || '';
+        const cut = raw.lastIndexOf('\n\n—');
+        const t = cut >= 0 ? raw.slice(0, cut) : raw;
+        if (t && t !== '—') await navigator.clipboard.writeText(t);
+      });
+    </script>
+  </body>
+</html>
