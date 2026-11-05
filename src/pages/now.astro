@@ -1,0 +1,83 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { NOW } from '../data/now';
+import { SITE_TITLE } from '../consts';
+
+const title = `此刻 · ${SITE_TITLE}`;
+const description = `REOG 正在做什么：${NOW.text}`;
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <BaseHead title={title} description={description} />
+    <style>
+      main.now {
+        max-width: 640px;
+        margin: 0 auto;
+        padding: 48px 20px 64px;
+      }
+      .label {
+        font-size: 13px;
+        letter-spacing: 0.18em;
+        color: var(--accent);
+        font-weight: 600;
+        margin: 0 0 10px;
+      }
+      h1 {
+        margin: 0 0 8px;
+        font-size: 32px;
+        color: rgb(var(--black));
+      }
+      .updated {
+        margin: 0 0 28px;
+        font-size: 14px;
+        color: rgb(var(--gray));
+      }
+      .card {
+        padding: 22px 24px;
+        border-radius: 14px;
+        border: 1px solid rgba(var(--gray), 0.3);
+        background: rgba(var(--gray-light), 0.45);
+        font-size: 18px;
+        line-height: 1.7;
+        color: rgb(var(--gray-dark));
+      }
+      .dot {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #22c55e;
+        margin-right: 8px;
+        box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.25);
+      }
+      .hint {
+        margin-top: 28px;
+        font-size: 14px;
+        color: rgb(var(--gray));
+      }
+      .hint a { color: var(--accent); }
+    </style>
+  </head>
+  <body>
+    <Header />
+    <main class="now">
+      <p class="label">NOW · 此刻</p>
+      <h1>我在做什么</h1>
+      <p class="updated">更新于 {NOW.updated}</p>
+      <div class="card">
+        <span class="dot" aria-hidden="true"></span>
+        {NOW.text}
+      </div>
+      <p class="hint">
+        这是一个会随时间改写的状态页。历史迭代见
+        <a href="/changelog">建站日志</a>，写作数据见
+        <a href="/stats">写作仪表盘</a>。
+      </p>
+    </main>
+    <Footer />
+  </body>
+</html>
