@@ -1,0 +1,48 @@
+---
+import { NOW } from '../data/now';
+---
+
+<a class="now-badge" href="/now" title={`更新于 ${NOW.updated}`}>
+  <span class="dot" aria-hidden="true"></span>
+  <span class="label">此刻</span>
+  <span class="text">{NOW.text}</span>
+</a>
+
+<style>
+  .now-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 100%;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(var(--gray), 0.35);
+    background: rgba(var(--gray-light), 0.5);
+    color: rgb(var(--gray-dark));
+    text-decoration: none;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  .now-badge:hover {
+    border-color: var(--accent);
+  }
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.25);
+    flex: none;
+  }
+  .label {
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    flex: none;
+  }
+  .text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+</style>
