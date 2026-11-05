@@ -1,0 +1,106 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { CHANGELOG } from '../data/changelog';
+import { SITE_TITLE } from '../consts';
+
+const title = `建站日志 · ${SITE_TITLE}`;
+const description = 'Northilne / REOG 个人站的迭代记录。';
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <BaseHead title={title} description={description} />
+    <style>
+      main.cl {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 48px 20px 64px;
+      }
+      .label {
+        font-size: 13px;
+        letter-spacing: 0.18em;
+        color: var(--accent);
+        font-weight: 600;
+        margin: 0 0 10px;
+      }
+      h1 {
+        margin: 0 0 8px;
+        font-size: 32px;
+        color: rgb(var(--black));
+      }
+      .lead {
+        margin: 0 0 36px;
+        color: rgb(var(--gray));
+        font-size: 16px;
+      }
+      .item {
+        display: grid;
+        grid-template-columns: 110px 1fr;
+        gap: 12px 20px;
+        padding: 0 0 28px;
+        border-left: 2px solid rgba(var(--gray), 0.25);
+        margin-left: 6px;
+        padding-left: 22px;
+        position: relative;
+      }
+      .item::before {
+        content: '';
+        position: absolute;
+        left: -6px;
+        top: 6px;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--accent);
+      }
+      .date {
+        font-size: 13px;
+        color: rgb(var(--gray));
+        padding-top: 2px;
+      }
+      .item h2 {
+        margin: 0 0 8px;
+        font-size: 18px;
+        color: rgb(var(--black));
+      }
+      .item ul {
+        margin: 0;
+        padding: 0 0 0 18px;
+        color: rgb(var(--gray-dark));
+        font-size: 15px;
+        line-height: 1.7;
+      }
+      .item li { margin: 4px 0; }
+      @media (max-width: 560px) {
+        .item { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <Header />
+    <main class="cl">
+      <p class="label">CHANGELOG · 建站日志</p>
+      <h1>这个网站怎么长出来的</h1>
+      <p class="lead">把站点本身当成产品迭代。新功能、修复与设计取舍都记在这里。</p>
+      {
+        CHANGELOG.map((c) => (
+          <article class="item">
+            <div class="date">{c.date}</div>
+            <div>
+              <h2>{c.title}</h2>
+              <ul>
+                {c.items.map((x) => (
+                  <li>{x}</li>
+                ))}
+              </ul>
+            </div>
+          </article>
+        ))
+      }
+    </main>
+    <Footer />
+  </body>
+</html>
