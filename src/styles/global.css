@@ -180,3 +180,34 @@ html[data-theme='dark'] hr {
 html[data-theme='dark'] a {
 	color: var(--accent);
 }
+/* 每个页面的弹出动画：页面主体淡入 + 上浮 + 轻微放大 */
+main {
+  animation: page-pop 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* 主体内的卡片/文章依次弹出（错开 60ms） */
+main > *,
+main article,
+main li {
+  animation: item-pop 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+main > *:nth-child(1) { animation-delay: 0.05s; }
+main > *:nth-child(2) { animation-delay: 0.11s; }
+main > *:nth-child(3) { animation-delay: 0.17s; }
+main > *:nth-child(4) { animation-delay: 0.23s; }
+main > *:nth-child(5) { animation-delay: 0.29s; }
+main > *:nth-child(n+6) { animation-delay: 0.35s; }
+
+@keyframes page-pop {
+  from { opacity: 0; transform: translateY(24px) scale(0.98); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes item-pop {
+  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  main, main > *, main article, main li { animation: none; }
+}
