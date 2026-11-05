@@ -302,6 +302,41 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 			:global(html[data-theme='dark']) .pn b {
 				color: #f1f5f9;
 			}
+
+			.focus-btn {
+				position: fixed;
+				right: 18px;
+				bottom: 78px;
+				z-index: 60;
+				padding: 8px 12px;
+				border-radius: 999px;
+				border: 1px solid rgba(var(--gray), 0.35);
+				background: rgba(255, 255, 255, 0.92);
+				color: rgb(var(--gray-dark));
+				font: inherit;
+				font-size: 13px;
+				cursor: pointer;
+				box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+			}
+			:global(html[data-theme='dark']) .focus-btn {
+				background: rgba(17, 26, 51, 0.95);
+				border-color: #26335c;
+				color: #e2e8f0;
+			}
+			:global(body.focus-mode) .site-header,
+			:global(body.focus-mode) footer,
+			:global(body.focus-mode) .share-end,
+			:global(body.focus-mode) .pn,
+			:global(body.focus-mode) .totop {
+				display: none !important;
+			}
+			:global(body.focus-mode) main.post {
+				max-width: 760px;
+				padding-top: 36px;
+			}
+			:global(body.focus-mode) .focus-btn {
+				bottom: 22px;
+			}
 		</style>
 	</head>
 	<body>
@@ -364,6 +399,7 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 			}
 			<Comments />
 		</main>
+		<button class="focus-btn" id="focus-mode" type="button" aria-pressed="false">专注模式</button>
 		<button class="totop" id="totop" type="button" aria-label="回到顶部">
 			<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 15 6-6 6 6" /></svg>
 		</button>
@@ -415,6 +451,15 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 			window.addEventListener('scroll', onScroll, { passive: true });
 			top?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 			onScroll();
+		
+			// 专注模式
+			const focusBtn = document.getElementById('focus-mode');
+			focusBtn?.addEventListener('click', () => {
+				const on = document.body.classList.toggle('focus-mode');
+				focusBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+				focusBtn.textContent = on ? '退出专注' : '专注模式';
+			});
+
 		</script>
 	</body>
 </html>
