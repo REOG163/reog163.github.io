@@ -141,10 +141,23 @@ hr {
 }
 
 /* ========== 深色模式全局 ========== */
+html[data-theme='dark'] {
+	--accent: #8fa8ff;
+	--accent-dark: #6d8bff;
+	--black: 241, 245, 249;       /* 标题文字 → 浅色 */
+	--gray: 148, 163, 184;        /* 次要文字 */
+	--gray-light: 26, 36, 64;     /* 卡片/标签背景 */
+	--gray-dark: 203, 213, 225;   /* 正文文字 → 浅色 */
+	--gray-gradient: #0b1020, #0b1020;
+	--box-shadow:
+		0 2px 6px rgba(0, 0, 0, 40%), 0 8px 24px rgba(0, 0, 0, 35%),
+		0 16px 32px rgba(0, 0, 0, 30%);
+}
+
 html[data-theme='dark'] body {
 	background: #0b1020;
 	background-image: none;
-	color: #c8d0e7;
+	color: rgb(var(--gray-dark));
 }
 
 html[data-theme='dark'] h1,
@@ -153,13 +166,17 @@ html[data-theme='dark'] h3,
 html[data-theme='dark'] h4,
 html[data-theme='dark'] h5,
 html[data-theme='dark'] h6 {
-	color: #f1f5f9;
+	color: rgb(var(--black));
 }
 
 html[data-theme='dark'] code {
-	background-color: #1a2440;
+	background-color: rgb(var(--gray-light));
 }
 
 html[data-theme='dark'] hr {
 	border-top-color: #26335c;
+}
+
+html[data-theme='dark'] a {
+	color: var(--accent);
 }
