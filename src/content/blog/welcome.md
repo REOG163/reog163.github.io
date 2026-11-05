@@ -1,11 +1,11 @@
 ---
-pinned: true
 title: '新站启航：为什么我要写这个博客'
 description: '关于这个网站的定位、内容规划，以及我的第一篇笔记：一个可复用的笔记模板。'
 pubDate: 'Nov 04 2026'
 heroImage: '../../assets/cover.jpg'
 category: '随笔'
 tags: ['网站', '笔记方法']
+pinned: true
 ---
 
 ## 一、这个网站是什么
