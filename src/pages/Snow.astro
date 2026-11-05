@@ -1,0 +1,111 @@
+---
+// src/components/Snow.astro
+// 主页下雪特效（轻量、可关闭、尊重减少动效偏好）
+---
+
+<div class="snow" id="snow" aria-hidden="true"></div>
+
+<style>
+  .snow {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 40;
+    overflow: hidden;
+  }
+
+  .flake {
+    position: absolute;
+    top: -12px;
+    border-radius: 50%;
+    background: #fff;
+    opacity: 0.85;
+    will-change: transform;
+    animation-name: fall;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  /* 部分雪花带轻微左右摆动 */
+  .flake.wobble {
+    animation-name: fall-wobble;
+  }
+
+  @keyframes fall {
+    to {
+      transform: translateY(110vh);
+    }
+  }
+
+  @keyframes fall-wobble {
+    0% {
+      transform: translateY(0) translateX(0);
+    }
+    25% {
+      transform: translateY(27.5vh) translateX(12px);
+    }
+    50% {
+      transform: translateY(55vh) translateX(-8px);
+    }
+    75% {
+      transform: translateY(82.5vh) translateX(10px);
+    }
+    100% {
+      transform: translateY(110vh) translateX(0);
+    }
+  }
+
+  /* 用户开启「减少动效」时直接隐藏 */
+  @media (prefers-reduced-motion: reduce) {
+    .snow {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  function initSnow() {
+    const root = document.getElementById('snow');
+    if (!root) return;
+
+    // 尊重系统减少动效设置
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      root.remove();
+      return;
+    }
+
+    const COUNT = 48; // 雪花数量，可改大/改小
+    const frag = document.createDocumentFragment();
+
+    for (let i = 0; i < COUNT; i++) {
+      const flake = document.createElement('span');
+      flake.className = 'flake' + (Math.random() > 0.55 ? ' wobble' : '');
+
+      const size = 2 + Math.random() * 5; // 2~7px
+      const left = Math.random() * 100; // %
+      const duration = 8 + Math.random() * 14; // 8~22s
+      const delay = -Math.random() * duration; // 负延迟让一开始就有雪
+
+      flake.style.width = size + 'px';
+      flake.style.height = size + 'px';
+      flake.style.left = left + '%';
+      flake.style.opacity = String(0.35 + Math.random() * 0.55);
+      flake.style.animationDuration = duration + 's';
+      flake.style.animationDelay = delay + 's';
+
+      // 大一点的雪花略微模糊，更自然
+      if (size > 4.5) {
+        flake.style.filter = 'blur(0.6px)';
+      }
+
+      frag.appendChild(flake);
+    }
+
+    root.appendChild(frag);
+  }
+
+  initSnow();
+
+  // 兼容 Astro View Transitions
+  document.addEventListener('astro:page-load', initSnow);
+</script>
