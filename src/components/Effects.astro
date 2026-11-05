@@ -1,0 +1,61 @@
+---
+// Effects.astro：黄金 Logo + 页面弹出动画，一个文件搞定，不依赖 global.css
+---
+
+<style is:global>
+  /* ===== 页面弹出动画 ===== */
+  body {
+    animation: page-pop 0.6s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  }
+  @keyframes page-pop {
+    from { opacity: 0; transform: translateY(24px) scale(0.985); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  /* ===== 黄金质感 Logo ===== */
+  .site-logo {
+    display: inline-block;
+    background: linear-gradient(
+      110deg,
+      #8a6a1f 0%,
+      #f5d76e 25%,
+      #fff3b0 40%,
+      #d4a017 55%,
+      #f5d76e 75%,
+      #8a6a1f 100%
+    );
+    background-size: 250% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent !important;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 1px 0 rgba(120, 80, 0, 0.35));
+    animation: gold-shine 4s linear infinite;
+  }
+  @keyframes gold-shine {
+    0%   { background-position: 150% 0; }
+    100% { background-position: -50% 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    body, .site-logo { animation: none; }
+  }
+</style>
+
+<script is:inline>
+  // 自动找到文字为 "Northilne" 的元素并加上 site-logo，不需要手动改 class
+  (function () {
+    function mark() {
+      var els = document.querySelectorAll('a, span, div, h1, p');
+      for (var i = 0; i < els.length; i++) {
+        var el = els[i];
+        if (el.children.length === 0 && el.textContent.trim() === 'Northilne') {
+          el.classList.add('site-logo');
+          break;
+        }
+      }
+    }
+    mark();
+    document.addEventListener('astro:page-load', mark);
+  })();
+</script>
