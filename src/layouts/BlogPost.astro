@@ -157,6 +157,46 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 				font-size: 14px;
 				line-height: 1.6;
 			}
+			.share-mini {
+				margin-left: auto;
+				padding: 0;
+				border: 0;
+				background: none;
+				font: inherit;
+				font-size: 14px;
+				color: var(--accent);
+				cursor: pointer;
+			}
+			.share-end {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				gap: 12px;
+				margin-top: 36px;
+				padding: 14px 18px;
+				border-radius: 12px;
+				background: rgb(var(--gray-light));
+				font-size: 15px;
+				color: rgb(var(--gray-dark));
+			}
+			.share-btn {
+				display: inline-flex;
+				align-items: center;
+				gap: 6px;
+				padding: 8px 18px;
+				border: 0;
+				border-radius: 10px;
+				background: var(--accent);
+				color: #fff;
+				font: inherit;
+				font-size: 15px;
+				font-weight: 600;
+				cursor: pointer;
+				flex: none;
+			}
+			:global(html[data-theme='dark']) .share-btn {
+				color: #0b1020;
+			}
 			#progress {
 				position: fixed;
 				top: 0;
@@ -251,6 +291,7 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 					<span>{fmt(pubDate)}</span>
 					{updatedDate && <span>更新于 {fmt(updatedDate)}</span>}
 					<span id="reading-time"></span>
+					<button class="share-mini" type="button" data-share data-share-scope="article" aria-label="分享这篇文章">分享</button>
 				</div>
 				<h1 class="title">{title}</h1>
 				{
@@ -267,6 +308,13 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 					<ul id="toc-list"></ul>
 				</details>
 				<div class="prose" id="prose"><slot /></div>
+				<div class="share-end">
+					<span>觉得有用？分享给朋友吧</span>
+					<button class="share-btn" type="button" data-share data-share-scope="article">
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4" /></svg>
+						分享
+					</button>
+				</div>
 			</article>
 			{
 				(prev || next) && (
