@@ -85,7 +85,7 @@ const links = [
   .brand {
     font-weight: 700;
     font-size: 17px;
-    color: inherit;
+    color: rgb(15, 23, 42);
     text-decoration: none;
     letter-spacing: -0.02em;
   }
@@ -186,6 +186,10 @@ const links = [
   :global(html[data-theme='dark']) .site-header {
     background: rgba(11, 16, 32, 0.92);
     border-bottom-color: rgb(38, 51, 92);
+  }
+
+  :global(html[data-theme='dark']) .brand {
+    color: #e6ebff;
   }
 
   :global(html[data-theme='dark']) .links a,
