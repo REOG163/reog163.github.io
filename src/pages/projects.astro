@@ -157,6 +157,15 @@ const palettes = [
 					grid-template-columns: repeat(2, 1fr);
 				}
 			}
+
+			:global(html[data-theme='dark']) .card {
+				background: rgba(26, 36, 64, 0.95);
+				border-color: #26335c;
+			}
+			:global(html[data-theme='dark']) .tag {
+				background: #1a2440;
+				color: #aab6d3;
+			}
 		</style>
 	</head>
 	<body>
