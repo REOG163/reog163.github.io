@@ -278,6 +278,30 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 					display: block;
 				}
 			}
+
+			:global(html[data-theme='dark']) .prose {
+				color: #c8d0e7;
+			}
+			:global(html[data-theme='dark']) h1.title {
+				color: #f1f5f9;
+			}
+			:global(html[data-theme='dark']) .tags a {
+				background: #1a2440;
+				color: #aab6d3;
+			}
+			:global(html[data-theme='dark']) .toc {
+				border-color: #26335c;
+			}
+			:global(html[data-theme='dark']) .share-end {
+				background: #1a2440;
+				color: #c8d0e7;
+			}
+			:global(html[data-theme='dark']) .pn a {
+				border-color: #26335c;
+			}
+			:global(html[data-theme='dark']) .pn b {
+				color: #f1f5f9;
+			}
 		</style>
 	</head>
 	<body>
