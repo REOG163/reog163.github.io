@@ -1,15 +1,23 @@
 ---
 import Share from './Share.astro';
+import NowBadge from './NowBadge.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 
 const year = new Date().getFullYear();
 ---
 
 <footer>
+	<div class="now-wrap">
+		<NowBadge />
+	</div>
 	<div>© {year} REOG · 保留所有权利</div>
 	<div class="links">
 		<a href="/rss.xml">RSS 订阅</a>
 		<a href="/search">站内搜索</a>
+		<a href="/stats">写作仪表盘</a>
+		<a href="/tools">小工具</a>
+		<a href="/changelog">建站日志</a>
+		<a href="/now">此刻</a>
 		<a href="/about">联系我</a>
 		<button
 			type="button"
@@ -32,6 +40,11 @@ const year = new Date().getFullYear();
 		color: rgb(var(--gray));
 		font-size: 14px;
 		line-height: 1.9;
+	}
+	.now-wrap {
+		display: flex;
+		justify-content: center;
+		margin-bottom: 16px;
 	}
 	.links {
 		display: flex;
