@@ -1,4 +1,5 @@
 ---
+import Effects from './Effects.astro';
 import { SITE_TITLE } from '../consts';
 
 const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
@@ -50,6 +51,7 @@ const isActive = (href: string) =>
 		--gray-light: 30, 40, 70;
 		--gray-dark: 214, 222, 240;
 		--gray-gradient: rgba(30, 40, 70, 50%), #0b1020;
+<Effects />
 	}
 	html[data-theme='dark'] body {
 		background-color: #0b1020;
