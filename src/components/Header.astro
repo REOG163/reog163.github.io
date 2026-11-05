@@ -228,12 +228,52 @@ const links = [
 </style>
 
 <script>
+  // ========== 主题切换 ==========
+  function getTheme() {
+    return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+  }
+
+  function setTheme(theme) {
+    if (theme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+    try {
+      localStorage.setItem('theme', theme);
+    } catch (_) {}
+  }
+
+  function bindThemeToggle() {
+    const btn = document.getElementById('theme-toggle');
+    if (!btn || btn.dataset.bound === '1') return;
+    btn.dataset.bound = '1';
+    btn.addEventListener('click', () => {
+      setTheme(getTheme() === 'dark' ? 'light' : 'dark');
+    });
+  }
+
+  // 首次进入：读取本地偏好（没有则跟随系统）
+  (function initTheme() {
+    let theme = null;
+    try {
+      theme = localStorage.getItem('theme');
+    } catch (_) {}
+    if (theme !== 'dark' && theme !== 'light') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    setTheme(theme);
+  })();
+
+  bindThemeToggle();
+
+  // ========== 导航胶囊 ==========
   function updateIndicator(immediate = false) {
     const linksEl = document.getElementById('nav-links');
-    const indicator = document.getElementById('nav-indicator') as HTMLElement | null;
+    const indicator = document.getElementById('nav-indicator');
     if (!linksEl || !indicator) return;
 
-    const active = linksEl.querySelector('a.active') as HTMLElement | null;
+    const active = linksEl.querySelector('a.active');
     if (!active) {
       indicator.style.opacity = '0';
       return;
@@ -258,24 +298,22 @@ const links = [
     }
   }
 
-  // 首次加载：无动画定位
   updateIndicator(true);
 
-  // 点击时先移动胶囊，再跳转
   document.querySelectorAll('[data-nav-link]').forEach((link) => {
     link.addEventListener('click', () => {
-      const target = link as HTMLElement;
       document.querySelectorAll('[data-nav-link]').forEach((a) =>
         a.classList.remove('active')
       );
-      target.classList.add('active');
+      link.classList.add('active');
       updateIndicator();
     });
   });
 
-  // 窗口尺寸变化时重新计算
   window.addEventListener('resize', () => updateIndicator(true));
 
-  // 兼容 Astro View Transitions
-  document.addEventListener('astro:page-load', () => updateIndicator(true));
+  document.addEventListener('astro:page-load', () => {
+    bindThemeToggle();
+    updateIndicator(true);
+  });
 </script>
