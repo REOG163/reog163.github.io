@@ -1,89 +1,346 @@
 ---
-// src/components/Share.astro
-const { title = "分享这篇文章" } = Astro.props;
+import { SITE_TITLE } from '../consts';
 ---
 
-<div class="share-wrapper">
-  <button id="native-share-btn" class="share-button" aria-label="分享">
-    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
-    <span>分享</span>
-  </button>
-  
-  <button id="copy-link-btn" class="share-button" aria-label="复制链接">
-    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-    <span class="copy-text">复制链接</span>
-  </button>
-</div>
+<dialog id="shr" class="shr-dialog" aria-label="分享" data-site={SITE_TITLE}>
+	<div class="shr-box">
+		<div class="shr-head">
+			<b id="shr-title">分享</b>
+			<button class="shr-x" id="shr-close" type="button" aria-label="关闭">×</button>
+		</div>
+		<p class="shr-sub" id="shr-sub"></p>
+		<div class="shr-url">
+			<input id="shr-url" readonly aria-label="分享链接" />
+			<button id="shr-copy" type="button">复制链接</button>
+		</div>
+		<div class="shr-grid" id="shr-grid"></div>
+		<div class="shr-extra" id="shr-extra"></div>
+	</div>
+</dialog>
 
-<style>
-  .share-wrapper {
-    display: flex;
-    gap: 12px;
-    margin: 24px 0;
-    flex-wrap: wrap;
-  }
-  .share-button {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 16px;
-    border-radius: 8px;
-    border: 1px solid var(--border-color, #e5e7eb);
-    background-color: var(--bg-color, #ffffff);
-    color: var(--text-color, #374151);
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  .share-button:hover {
-    background-color: #f3f4f6;
-    border-color: #d1d5db;
-  }
-  /* 适配你的深色模式 */
-  :global(.dark) .share-button {
-    border-color: #374151;
-    background-color: #1f2937;
-    color: #e5e7eb;
-  }
-  :global(.dark) .share-button:hover {
-    background-color: #374151;
-  }
+<style is:global>
+	.shr-dialog { border: 0; padding: 0; margin: auto auto 0; width: 100%; max-width: 520px; background: transparent; color: inherit; max-height: 92vh; overflow: visible; }
+	.shr-dialog::backdrop { background: rgba(2, 6, 23, 0.55); }
+	.shr-box { background: #fff; color: #0f172a; border-radius: 20px 20px 0 0; padding: 18px 18px 28px; max-height: 88vh; overflow: auto; box-sizing: border-box; text-align: left; }
+	html[data-theme='dark'] .shr-box { background: #111a33; color: #e6ebff; }
+	@media (min-width: 600px) { .shr-dialog { margin: auto; } .shr-box { border-radius: 20px; } }
+	.shr-head { display: flex; justify-content: space-between; align-items: center; }
+	.shr-head b { font-size: 18px; }
+	.shr-x { border: 0; background: transparent; font-size: 28px; line-height: 1; color: inherit; cursor: pointer; opacity: 0.6; padding: 0 4px; }
+	.shr-sub { margin: 4px 0 12px; font-size: 14px; line-height: 1.6; opacity: 0.7; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+	.shr-url { display: flex; gap: 8px; margin-bottom: 18px; }
+	.shr-url input { flex: 1; min-width: 0; padding: 9px 12px; border-radius: 10px; border: 1px solid rgba(100, 116, 139, 0.45); background: transparent; color: inherit; font-size: 14px; }
+	.shr-url button { padding: 0 16px; border: 0; border-radius: 10px; background: #3b5bdb; color: #fff; font-weight: 600; cursor: pointer; font-size: 14px; white-space: nowrap; }
+	html[data-theme='dark'] .shr-url button, html[data-theme='dark'] .shr-save { background: #8fa8ff; color: #0b1020; }
+	.shr-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px 6px; }
+	.shr-item, .shr-item:hover { display: flex; flex-direction: column; align-items: center; gap: 6px; border: 0; background: none; color: inherit; font: inherit; font-size: 13px; text-decoration: none; cursor: pointer; padding: 0; }
+	.shr-ico { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; font-weight: 700; }
+	.shr-extra { margin-top: 18px; text-align: center; }
+	.shr-extra canvas { border: 1px solid rgba(100, 116, 139, 0.3); border-radius: 10px; image-rendering: pixelated; }
+	.shr-hint { margin: 10px 0 0; font-size: 13px; opacity: 0.7; line-height: 1.7; }
+	.shr-poster { width: 100%; max-width: 320px; border-radius: 12px; box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25); }
+	.shr-save { display: inline-block; margin-top: 10px; padding: 8px 20px; border-radius: 10px; background: #3b5bdb; color: #fff; text-decoration: none; font-weight: 600; font-size: 14px; }
 </style>
 
 <script>
-  // 复制链接功能
-  const copyBtn = document.getElementById('copy-link-btn');
-  const copyText = copyBtn?.querySelector('.copy-text');
+	import { makeQr } from '../scripts/qr.mjs';
 
-  copyBtn?.addEventListener('click', async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      if (copyText) {
-        copyText.textContent = '已复制!';
-        setTimeout(() => { copyText.textContent = '复制链接'; }, 2000);
-      }
-    } catch (err) {
-      alert('复制失败，请手动复制浏览器地址栏链接。');
-    }
-  });
+	const dlg = document.getElementById('shr');
+	const $ = (id) => document.getElementById(id);
+	let info = null;
 
-  // 原生分享功能 (适配手机微信、QQ、系统分享等)
-  const shareBtn = document.getElementById('native-share-btn');
-  
-  shareBtn?.addEventListener('click', async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: document.title,
-          url: window.location.href,
-        });
-      } catch (err) {
-        console.log('分享被取消或失败', err);
-      }
-    } else {
-      // 如果浏览器不支持原生分享，则触发复制
-      copyBtn?.click();
-      alert('当前浏览器不支持原生分享，已为您复制链接！');
-    }
-  });
+	const meta = (sel) => (document.querySelector(sel) && document.querySelector(sel).getAttribute('content')) || '';
+	function pageInfo(el) {
+		const d = (el && el.dataset) || {};
+		const canon = document.querySelector('link[rel="canonical"]');
+		const isSite = d.shareScope === 'site';
+		const url = d.shareUrl ? new URL(d.shareUrl, location.origin).href : (canon && canon.href) || location.href.split('#')[0];
+		return {
+			scope: d.shareScope || 'article',
+			title: d.shareTitle || meta('meta[property="og:title"]') || document.title,
+			desc: d.shareDesc || meta('meta[property="og:description"]') || meta('meta[name="description"]'),
+			url,
+			image: isSite ? '' : d.shareImage || meta('meta[property="og:image"]'),
+			site: dlg.dataset.site || document.title,
+		};
+	}
+
+	// ---------- 二维码 ----------
+	function drawQr(canvas, text, size, margin = 2) {
+		const qr = makeQr(text);
+		const n = qr.size + margin * 2;
+		const scale = Math.max(2, Math.floor(size / n));
+		canvas.width = canvas.height = n * scale;
+		const g = canvas.getContext('2d');
+		g.fillStyle = '#ffffff';
+		g.fillRect(0, 0, canvas.width, canvas.height);
+		g.fillStyle = '#0f172a';
+		for (let y = 0; y < qr.size; y++)
+			for (let x = 0; x < qr.size; x++) if (qr.modules[y][x]) g.fillRect((x + margin) * scale, (y + margin) * scale, scale, scale);
+		canvas.style.width = canvas.style.height = size + 'px';
+		return canvas;
+	}
+
+	// ---------- 海报 ----------
+	const FONT = '"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif';
+	function loadImg(src) {
+		return new Promise((res) => {
+			const i = new Image();
+			i.crossOrigin = 'anonymous';
+			i.onload = () => res(i);
+			i.onerror = () => res(null);
+			i.src = src;
+		});
+	}
+	function wrap(g, text, maxW, maxLines) {
+		const lines = [];
+		let line = '';
+		for (const ch of Array.from(text.replace(/\s+/g, ' ').trim())) {
+			if (g.measureText(line + ch).width > maxW && line) {
+				lines.push(line);
+				line = ch;
+			} else line += ch;
+		}
+		if (line) lines.push(line);
+		if (lines.length > maxLines) {
+			lines.length = maxLines;
+			let last = lines[maxLines - 1];
+			while (last && g.measureText(last + '…').width > maxW) last = last.slice(0, -1);
+			lines[maxLines - 1] = last + '…';
+		}
+		return lines;
+	}
+	function roundRect(g, x, y, w, h, r) {
+		g.beginPath();
+		g.moveTo(x + r, y);
+		g.arcTo(x + w, y, x + w, y + h, r);
+		g.arcTo(x + w, y + h, x, y + h, r);
+		g.arcTo(x, y + h, x, y, r);
+		g.arcTo(x, y, x + w, y, r);
+		g.closePath();
+	}
+	async function buildPoster(useCover) {
+		const W = 750;
+		const H = 1180;
+		const c = document.createElement('canvas');
+		c.width = W;
+		c.height = H;
+		const g = c.getContext('2d');
+		const bg = g.createLinearGradient(0, 0, W, H);
+		bg.addColorStop(0, '#0b1020');
+		bg.addColorStop(1, '#1d2f6b');
+		g.fillStyle = bg;
+		g.fillRect(0, 0, W, H);
+
+		let hasCover = false;
+		if (useCover && info.image) {
+			const img = await loadImg(info.image);
+			if (img && img.naturalWidth) {
+				const s = Math.max(W / img.naturalWidth, 400 / img.naturalHeight);
+				const sw = W / s;
+				const sh = 400 / s;
+				g.drawImage(img, (img.naturalWidth - sw) / 2, (img.naturalHeight - sh) / 2, sw, sh, 0, 0, W, 400);
+				const fade = g.createLinearGradient(0, 240, 0, 400);
+				fade.addColorStop(0, 'rgba(11,16,32,0)');
+				fade.addColorStop(1, 'rgba(11,16,32,0.95)');
+				g.fillStyle = fade;
+				g.fillRect(0, 240, W, 160);
+				hasCover = true;
+			}
+		}
+		if (!hasCover) {
+			g.strokeStyle = 'rgba(143,168,255,0.35)';
+			g.lineWidth = 2;
+			[150, 100, 50].forEach((r) => {
+				g.beginPath();
+				g.arc(W / 2, 190, r, 0, Math.PI * 2);
+				g.stroke();
+			});
+			g.fillStyle = '#5eead4';
+			g.beginPath();
+			g.arc(W / 2 + 150, 190, 10, 0, Math.PI * 2);
+			g.fill();
+			g.fillStyle = '#ffffff';
+			g.font = `bold 56px ${FONT}`;
+			g.textAlign = 'center';
+			g.fillText('REOG', W / 2, 212);
+			g.textAlign = 'left';
+		}
+
+		// 白色卡片
+		g.fillStyle = '#ffffff';
+		roundRect(g, 40, 360, 670, 780, 28);
+		g.fill();
+
+		g.fillStyle = '#0f172a';
+		g.font = `bold 40px ${FONT}`;
+		const tl = wrap(g, info.title, 590, 4);
+		let y = 440;
+		tl.forEach((l) => {
+			g.fillText(l, 80, y);
+			y += 56;
+		});
+		y += 8;
+		g.fillStyle = '#475569';
+		g.font = `26px ${FONT}`;
+		if (info.desc) {
+			wrap(g, info.desc, 590, 4).forEach((l) => {
+				g.fillText(l, 80, y);
+				y += 40;
+			});
+		}
+
+		g.strokeStyle = '#e2e8f0';
+		g.lineWidth = 2;
+		g.beginPath();
+		g.moveTo(80, 870);
+		g.lineTo(670, 870);
+		g.stroke();
+
+		// 二维码
+		const qr = makeQr(info.url);
+		const n = qr.size + 4;
+		const cell = Math.floor(200 / n);
+		const total = cell * n;
+		const ox = 80 + (200 - total) / 2;
+		const oy = 900 + (200 - total) / 2;
+		g.fillStyle = '#ffffff';
+		g.fillRect(80, 900, 200, 200);
+		g.fillStyle = '#0f172a';
+		for (let yy = 0; yy < qr.size; yy++)
+			for (let xx = 0; xx < qr.size; xx++) if (qr.modules[yy][xx]) g.fillRect(ox + (xx + 2) * cell, oy + (yy + 2) * cell, cell, cell);
+
+		g.fillStyle = '#0f172a';
+		g.font = `bold 30px ${FONT}`;
+		g.fillText('扫码阅读全文', 312, 962);
+		g.fillStyle = '#3b5bdb';
+		g.font = `24px ${FONT}`;
+		g.fillText(info.site, 312, 1008);
+		g.fillStyle = '#64748b';
+		g.font = `22px ${FONT}`;
+		g.fillText(new URL(info.url).host, 312, 1044);
+
+		return c.toDataURL('image/png');
+	}
+
+	async function showPoster() {
+		const box = $('shr-extra');
+		box.innerHTML = '';
+		const loading = document.createElement('p');
+		loading.className = 'shr-hint';
+		loading.textContent = '正在生成海报…';
+		box.appendChild(loading);
+		let url;
+		try {
+			url = await buildPoster(true);
+		} catch (e) {
+			url = await buildPoster(false); // 封面跨域导致画布被污染时，退回无封面版本
+		}
+		box.innerHTML = '';
+		const img = document.createElement('img');
+		img.className = 'shr-poster';
+		img.src = url;
+		img.alt = '分享海报';
+		const hint = document.createElement('p');
+		hint.className = 'shr-hint';
+		hint.textContent = '长按图片可保存或发送给朋友';
+		const a = document.createElement('a');
+		a.className = 'shr-save';
+		a.href = url;
+		a.download = 'share-poster.png';
+		a.textContent = '保存图片';
+		box.append(img, hint, a);
+	}
+
+	function showWechat() {
+		const box = $('shr-extra');
+		box.innerHTML = '';
+		const c = document.createElement('canvas');
+		drawQr(c, info.url, 220);
+		const p = document.createElement('p');
+		p.className = 'shr-hint';
+		p.textContent = '打开微信「扫一扫」扫描二维码，或复制链接后在微信中粘贴发送';
+		box.append(c, p);
+	}
+
+	// ---------- 渲染分享入口 ----------
+	function renderGrid() {
+		const grid = $('shr-grid');
+		grid.innerHTML = '';
+		const t = encodeURIComponent(info.title);
+		const u = encodeURIComponent(info.url);
+		const d = encodeURIComponent(info.desc || info.title);
+		const items = [];
+		if (navigator.share) items.push({ key: 'native', label: '系统分享', ico: '↗', color: '#3b5bdb' });
+		items.push({ key: 'wechat', label: '微信', ico: '微', color: '#07c160' });
+		items.push({ href: `https://service.weibo.com/share/share.php?url=${u}&title=${t}`, label: '微博', ico: '博', color: '#e6162d' });
+		items.push({ href: `https://connect.qq.com/widget/shareqq/index.html?url=${u}&title=${t}&desc=${d}`, label: 'QQ', ico: 'Q', color: '#12b7f5' });
+		items.push({ href: `https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=${u}&title=${t}&desc=${d}`, label: 'QQ空间', ico: '空', color: '#f5a623' });
+		items.push({ href: `https://twitter.com/intent/tweet?url=${u}&text=${t}`, label: 'X', ico: 'X', color: '#111827' });
+		items.push({ href: `https://t.me/share/url?url=${u}&text=${t}`, label: 'Telegram', ico: 'T', color: '#27a7e7' });
+		items.push({ href: `mailto:?subject=${t}&body=${t}%0A${u}`, label: '邮件', ico: '✉', color: '#64748b', self: true });
+		items.push({ key: 'poster', label: '生成海报', ico: '▣', color: '#8b5cf6' });
+
+		items.forEach((it) => {
+			const el = it.href ? document.createElement('a') : document.createElement('button');
+			el.className = 'shr-item';
+			if (it.href) {
+				el.href = it.href;
+				if (!it.self) {
+					el.target = '_blank';
+					el.rel = 'noopener noreferrer';
+				}
+			} else {
+				el.type = 'button';
+				el.addEventListener('click', () => {
+					if (it.key === 'native') navigator.share({ title: info.title, text: info.desc, url: info.url }).catch(() => {});
+					else if (it.key === 'wechat') showWechat();
+					else if (it.key === 'poster') showPoster();
+				});
+			}
+			const ico = document.createElement('span');
+			ico.className = 'shr-ico';
+			ico.style.background = it.color;
+			ico.textContent = it.ico;
+			const label = document.createElement('span');
+			label.textContent = it.label;
+			el.append(ico, label);
+			grid.appendChild(el);
+		});
+	}
+
+	function openShare(el) {
+		info = pageInfo(el);
+		$('shr-title').textContent = info.scope === 'site' ? '分享本站' : '分享这篇文章';
+		$('shr-sub').textContent = info.title;
+		$('shr-url').value = info.url;
+		$('shr-extra').innerHTML = '';
+		$('shr-copy').textContent = '复制链接';
+		renderGrid();
+		if (dlg.showModal) dlg.showModal();
+		else dlg.setAttribute('open', '');
+	}
+
+	document.addEventListener('click', (e) => {
+		const t = e.target.closest && e.target.closest('[data-share]');
+		if (t) {
+			e.preventDefault();
+			openShare(t);
+		}
+	});
+	$('shr-close').addEventListener('click', () => dlg.close());
+	dlg.addEventListener('click', (e) => {
+		if (e.target === dlg) dlg.close();
+	});
+	$('shr-copy').addEventListener('click', async () => {
+		try {
+			await navigator.clipboard.writeText(info.url);
+		} catch (err) {
+			const i = $('shr-url');
+			i.select();
+			document.execCommand('copy');
+		}
+		$('shr-copy').textContent = '已复制 ✓';
+		setTimeout(() => ($('shr-copy').textContent = '复制链接'), 1800);
+	});
 </script>

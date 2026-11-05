@@ -1,4 +1,7 @@
 ---
+import Share from './Share.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+
 const year = new Date().getFullYear();
 ---
 
@@ -8,8 +11,17 @@ const year = new Date().getFullYear();
 		<a href="/rss.xml">RSS 订阅</a>
 		<a href="/search">站内搜索</a>
 		<a href="/about">联系我</a>
+		<button
+			type="button"
+			data-share
+			data-share-scope="site"
+			data-share-url="/"
+			data-share-title={SITE_TITLE}
+			data-share-desc={SITE_DESCRIPTION}>分享本站</button
+		>
 	</div>
 </footer>
+<Share />
 
 <style>
 	footer {
@@ -24,13 +36,21 @@ const year = new Date().getFullYear();
 	.links {
 		display: flex;
 		justify-content: center;
-		gap: 18px;
+		flex-wrap: wrap;
+		gap: 4px 18px;
 	}
-	.links a {
+	.links a,
+	.links button {
 		color: rgb(var(--gray));
 		text-decoration: none;
+		background: none;
+		border: 0;
+		padding: 0;
+		font: inherit;
+		cursor: pointer;
 	}
-	.links a:hover {
+	.links a:hover,
+	.links button:hover {
 		color: var(--accent);
 	}
 </style>
