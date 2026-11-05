@@ -171,36 +171,36 @@ const links = [
     height: 18px;
   }
 
-  /* 主题切换图标显示控制（需要配合你自己的 theme script） */
+  /* 主题切换图标显示控制 */
   .icon-btn .sun {
     display: none;
   }
-  :global(html[data-theme="dark"]) .icon-btn .moon {
+  :global(html[data-theme='dark']) .icon-btn .moon {
     display: none;
   }
-  :global(html[data-theme="dark"]) .icon-btn .sun {
+  :global(html[data-theme='dark']) .icon-btn .sun {
     display: block;
   }
 
   /* ========== 深色模式 ========== */
-  :global(html[data-theme="dark"]) .site-header {
+  :global(html[data-theme='dark']) .site-header {
     background: rgba(11, 16, 32, 0.92);
     border-bottom-color: rgb(38, 51, 92);
   }
 
-  :global(html[data-theme="dark"]) .links a,
-  :global(html[data-theme="dark"]) .icon-btn {
+  :global(html[data-theme='dark']) .links a,
+  :global(html[data-theme='dark']) .icon-btn {
     color: rgb(170, 182, 211);
   }
 
-  :global(html[data-theme="dark"]) .links a.active,
-  :global(html[data-theme="dark"]) .links a:hover,
-  :global(html[data-theme="dark"]) .icon-btn:hover {
+  :global(html[data-theme='dark']) .links a.active,
+  :global(html[data-theme='dark']) .links a:hover,
+  :global(html[data-theme='dark']) .icon-btn:hover {
     color: #fff;
   }
 
-  :global(html[data-theme="dark"]) .nav-indicator,
-  :global(html[data-theme="dark"]) .icon-btn:hover {
+  :global(html[data-theme='dark']) .nav-indicator,
+  :global(html[data-theme='dark']) .icon-btn:hover {
     background: rgb(29, 42, 82);
   }
 
@@ -253,7 +253,6 @@ const links = [
     indicator.style.opacity = '1';
 
     if (immediate) {
-      // 强制重绘后恢复过渡
       void indicator.offsetHeight;
       indicator.style.transition = '';
     }
@@ -264,8 +263,8 @@ const links = [
 
   // 点击时先移动胶囊，再跳转
   document.querySelectorAll('[data-nav-link]').forEach((link) => {
-    link.addEventListener('click', (e) => {
-      const target = e.currentTarget as HTMLElement;
+    link.addEventListener('click', () => {
+      const target = link as HTMLElement;
       document.querySelectorAll('[data-nav-link]').forEach((a) =>
         a.classList.remove('active')
       );
