@@ -6,9 +6,18 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import { SITE_TITLE } from '../../consts';
 
-const posts = (await getCollection('blog')).sort(
-	(a: any, b: any) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
+// 排序规则：置顶文章在前（pinOrder 数字小的靠前，没写的排最后），其余按发布时间从新到旧
+const posts = (await getCollection('blog')).sort((a: any, b: any) => {
+	const pa = a.data.pinned ? 1 : 0;
+	const pb = b.data.pinned ? 1 : 0;
+	if (pa !== pb) return pb - pa;
+	if (pa && pb) {
+		const oa = a.data.pinOrder ?? 9999;
+		const ob = b.data.pinOrder ?? 9999;
+		if (oa !== ob) return oa - ob;
+	}
+	return b.data.pubDate.valueOf() - a.data.pubDate.valueOf();
+});
 const categories = [...new Set(posts.map((p: any) => p.data.category).filter(Boolean))] as string[];
 const tags = [...new Set(posts.flatMap((p: any) => p.data.tags ?? []))] as string[];
 const slugOf = (p: any) => p.slug ?? p.id;
@@ -108,6 +117,23 @@ const fmt = (d: Date) =>
 			.card:hover {
 				border-color: var(--accent);
 			}
+			.card.pinned {
+				border-color: rgba(217, 165, 32, 0.7);
+				background: rgba(245, 198, 58, 0.08);
+			}
+			.pin {
+				display: inline-flex;
+				align-items: center;
+				gap: 4px;
+				padding: 0 8px;
+				border-radius: 999px;
+				background: rgba(245, 198, 58, 0.22);
+				color: #9a6b00;
+				font-weight: 600;
+			}
+			:global(html[data-theme='dark']) .pin {
+				color: #f5c63a;
+			}
 			.thumb {
 				display: block;
 				width: 100%;
@@ -155,15 +181,6 @@ const fmt = (d: Date) =>
 					grid-template-columns: repeat(2, 1fr);
 				}
 			}
-
-			:global(html[data-theme='dark']) .card {
-				background: rgba(26, 36, 64, 0.9);
-				border-color: #26335c;
-			}
-			:global(html[data-theme='dark']) .chip {
-				border-color: #26335c;
-				color: #aab6d3;
-			}
 		</style>
 	</head>
 	<body>
@@ -209,7 +226,7 @@ const fmt = (d: Date) =>
 				{
 					posts.map((p: any) => (
 						<a
-							class="card"
+							class={p.data.pinned ? 'card pinned' : 'card'}
 							href={`/blog/${slugOf(p)}/`}
 							data-category={p.data.category ?? ''}
 							data-tags={(p.data.tags ?? []).join('|')}
@@ -219,6 +236,12 @@ const fmt = (d: Date) =>
 							)}
 							<div class="body">
 								<div class="m">
+									{p.data.pinned && (
+										<span class="pin">
+											<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15.5 2.5a1 1 0 0 1 .7 1.7l-1.1 1.1 3.6 3.6 1.1-1.1a1 1 0 0 1 1.4 1.4l-3 3-.5 4.6-1.5 1.5-3.9-3.9-5.9 5.9a1 1 0 0 1-1.4-1.4l5.9-5.9-3.9-3.9 1.5-1.5 4.6-.5 3-3a1 1 0 0 1 .7-.3z"/></svg>
+											置顶
+										</span>
+									)}
 									{p.data.category && <b>{p.data.category}</b>}
 									<span>{fmt(p.data.pubDate)}</span>
 								</div>
