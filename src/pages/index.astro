@@ -308,7 +308,13 @@ const fields = [
 				}
 			}
 					/* 深色模式 */
-			:global(html[data-theme='dark']) main.home { color: #e2e8f0; }
+			:global(html[data-theme='dark']) main.home {
+				color: #e2e8f0;
+				background: #0b1020;
+			}
+			:global(html[data-theme='dark']) section.block {
+				background: #0b1020;
+			}
 			:global(html[data-theme='dark']) .block h2,
 			:global(html[data-theme='dark']) .card h3,
 			:global(html[data-theme='dark']) .field b,
@@ -322,6 +328,9 @@ const fields = [
 			:global(html[data-theme='dark']) .label,
 			:global(html[data-theme='dark']) .card .no { color: #8fa8ff; }
 			:global(html[data-theme='dark']) .manifesto { background: #070b18; }
+			:global(html[data-theme='dark']) .end {
+				background: #0b1020;
+			}
 			:global(html[data-theme='dark']) .end .btn.primary { background: #8fa8ff; color: #0b1020; }
 		</style>
 	</head>
