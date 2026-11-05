@@ -5,7 +5,7 @@
 
 <div class="snow" id="snow" aria-hidden="true"></div>
 
-<style>
+<style is:global>
   .snow {
     position: fixed;
     inset: 0;
@@ -14,51 +14,49 @@
     overflow: hidden;
   }
 
-  .flake {
+  .snow .flake {
     position: absolute;
     top: -12px;
     border-radius: 50%;
     background: #fff;
-    opacity: 0.85;
+    box-shadow: 0 0 4px rgba(255, 255, 255, 0.6);
     will-change: transform;
-    animation-name: fall;
+    animation-name: snow-fall;
     animation-timing-function: linear;
     animation-iteration-count: infinite;
   }
 
-  /* 部分雪花带轻微左右摆动 */
-  .flake.wobble {
-    animation-name: fall-wobble;
+  .snow .flake.wobble {
+    animation-name: snow-fall-wobble;
   }
 
-  @keyframes fall {
+  @keyframes snow-fall {
     to {
       transform: translateY(110vh);
     }
   }
 
-  @keyframes fall-wobble {
+  @keyframes snow-fall-wobble {
     0% {
       transform: translateY(0) translateX(0);
     }
     25% {
-      transform: translateY(27.5vh) translateX(12px);
+      transform: translateY(27.5vh) translateX(14px);
     }
     50% {
-      transform: translateY(55vh) translateX(-8px);
+      transform: translateY(55vh) translateX(-10px);
     }
     75% {
-      transform: translateY(82.5vh) translateX(10px);
+      transform: translateY(82.5vh) translateX(12px);
     }
     100% {
       transform: translateY(110vh) translateX(0);
     }
   }
 
-  /* 用户开启「减少动效」时直接隐藏 */
   @media (prefers-reduced-motion: reduce) {
     .snow {
-      display: none;
+      display: none !important;
     }
   }
 </style>
@@ -68,34 +66,36 @@
     const root = document.getElementById('snow');
     if (!root) return;
 
-    // 尊重系统减少动效设置
+    // 已经初始化过就跳过（防止 View Transitions 重复添加）
+    if (root.dataset.ready === '1') return;
+    root.dataset.ready = '1';
+
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       root.remove();
       return;
     }
 
-    const COUNT = 48; // 雪花数量，可改大/改小
+    const COUNT = 56;
     const frag = document.createDocumentFragment();
 
     for (let i = 0; i < COUNT; i++) {
       const flake = document.createElement('span');
-      flake.className = 'flake' + (Math.random() > 0.55 ? ' wobble' : '');
+      flake.className = 'flake' + (Math.random() > 0.5 ? ' wobble' : '');
 
-      const size = 2 + Math.random() * 5; // 2~7px
-      const left = Math.random() * 100; // %
-      const duration = 8 + Math.random() * 14; // 8~22s
-      const delay = -Math.random() * duration; // 负延迟让一开始就有雪
+      const size = 3 + Math.random() * 5; // 3~8px，更容易看见
+      const left = Math.random() * 100;
+      const duration = 7 + Math.random() * 12; // 7~19s
+      const delay = -Math.random() * duration;
 
       flake.style.width = size + 'px';
       flake.style.height = size + 'px';
       flake.style.left = left + '%';
-      flake.style.opacity = String(0.35 + Math.random() * 0.55);
+      flake.style.opacity = String(0.55 + Math.random() * 0.45);
       flake.style.animationDuration = duration + 's';
       flake.style.animationDelay = delay + 's';
 
-      // 大一点的雪花略微模糊，更自然
-      if (size > 4.5) {
-        flake.style.filter = 'blur(0.6px)';
+      if (size > 5) {
+        flake.style.filter = 'blur(0.5px)';
       }
 
       frag.appendChild(flake);
@@ -105,7 +105,5 @@
   }
 
   initSnow();
-
-  // 兼容 Astro View Transitions
   document.addEventListener('astro:page-load', initSnow);
 </script>
