@@ -139,3 +139,27 @@ hr {
 	/* added line to stop words getting smushed together (as they go onto separate lines and some screen readers do not understand line feeds as a space */
 	white-space: nowrap;
 }
+
+/* ========== 深色模式全局 ========== */
+html[data-theme='dark'] body {
+	background: #0b1020;
+	background-image: none;
+	color: #c8d0e7;
+}
+
+html[data-theme='dark'] h1,
+html[data-theme='dark'] h2,
+html[data-theme='dark'] h3,
+html[data-theme='dark'] h4,
+html[data-theme='dark'] h5,
+html[data-theme='dark'] h6 {
+	color: #f1f5f9;
+}
+
+html[data-theme='dark'] code {
+	background-color: #1a2440;
+}
+
+html[data-theme='dark'] hr {
+	border-top-color: #26335c;
+}
