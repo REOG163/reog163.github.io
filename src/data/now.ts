@@ -1,5 +1,5 @@
 // 修改这里即可更新全站「此刻」状态
 export const NOW = {
-  text: '移动端app即将上线',
+  text: '正在完善移动端app～',
   updated: '2026-11-05',
 };
