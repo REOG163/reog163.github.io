@@ -1,0 +1,28 @@
+/* 黄金质感 Logo —— 给 "Northilne" 标题使用 class="site-logo" */
+.site-logo {
+  background: linear-gradient(
+    110deg,
+    #8a6a1f 0%,
+    #f5d76e 25%,
+    #fff3b0 40%,
+    #d4a017 55%,
+    #f5d76e 75%,
+    #8a6a1f 100%
+  );
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 1px 0 rgba(120, 80, 0, 0.35));
+  animation: gold-shine 4s linear infinite;
+}
+
+@keyframes gold-shine {
+  0%   { background-position: 150% 0; }
+  100% { background-position: -50% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-logo { animation: none; }
+}
