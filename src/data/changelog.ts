@@ -19,7 +19,7 @@ export const CHANGELOG: ChangeItem[] = [
   },
   {
     date: '2026-11-04',
-    title: '导航动效 · 下雪 · 深色模式完善',
+    title: '桌面端app同步上线 · 下雪 · 深色模式完善',
     items: [
       '导航栏滑动胶囊点击动效',
       '主页下雪特效',
