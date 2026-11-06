@@ -47,21 +47,19 @@ const projects = [
 				transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease;
 			}
 
-			/* =======================================
-			   🚀 高对比度极光黄金流光 (绝对方块可见)
-			   ======================================= */
+			/* 黄金流光 */
 			.card::before {
 				content: '';
 				position: absolute;
-				inset: -1px; /* 稍微外扩一点 */
+				inset: -1px; 
 				border-radius: 15px;
-				padding: 3px; /* 流光更粗，更能看清 */
+				padding: 3px; 
 				background: conic-gradient(
 					from var(--angle),
 					rgba(191, 149, 63, 0.1) 0%,
 					rgba(191, 149, 63, 0.1) 60%,
 					#bf953f 80%,
-					#ffffff 90%, /* 刺眼的纯白高光 */
+					#ffffff 90%, 
 					#bf953f 100%
 				);
 				-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -107,27 +105,21 @@ const projects = [
 			@keyframes pulse-ring { 0% { transform: scale(0.6); opacity: 0.8; } 100% { transform: scale(1.8); opacity: 0; } }
 			.big-number { animation: number-breathe 3s ease-in-out infinite alternate; filter: drop-shadow(0 0 10px rgba(94, 234, 212, 0.8)); font-family: 'Impact', 'Arial Black', system-ui, sans-serif; }
 			@keyframes number-breathe { 0% { transform: scale(1); opacity: 0.85; } 100% { transform: scale(1.05); opacity: 1; } }
-			.particle { animation: float-up 5s linear infinite; }
-			@keyframes float-up { 0% { transform: translateY(0); opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(-80px); opacity: 0; } }
 
-			/* =======================================
-			   卡片右下角：印章 (加上了极其醒目的脉冲提示)
-			   ======================================= */
+			/* 卡片右下角印章 */
 			.seal-stamp-wrapper {
 				position: absolute; bottom: 15px; right: 18px; width: 95px; height: 95px; 
-				z-index: 999; /* 保证在最顶层 */
+				z-index: 999; 
 				cursor: pointer; 
 				animation: float-seal 3s ease-in-out infinite;
 				transition: transform 0.3s ease;
 			}
 			
-			/* 悬浮放大 */
 			.seal-stamp-wrapper:hover {
 				transform: scale(1.15) rotate(-5deg); 
 				filter: drop-shadow(0 0 25px rgba(255, 50, 50, 0.9));
 			}
 
-			/* 提示你可以点的脉冲红光 */
 			@keyframes float-seal {
 				0%, 100% { transform: translateY(0); filter: drop-shadow(0 10px 15px rgba(0,0,0,0.8)) drop-shadow(0 0 5px rgba(255,0,0,0.2)); }
 				50% { transform: translateY(-5px); filter: drop-shadow(0 15px 20px rgba(0,0,0,0.8)) drop-shadow(0 0 20px rgba(255,0,0,0.6)); }
@@ -175,27 +167,14 @@ const projects = [
 
 			@media (min-width: 720px) { .grid { grid-template-columns: repeat(2, 1fr); } }
 
-			/* =======================================
-			   💥 终极全屏检视 Modal (纯净版，保证能弹出来)
-			   ======================================= */
+			/* 终极全屏检视 Modal */
 			.modal-overlay {
-				position: fixed; 
-				inset: 0; 
-				background: rgba(0, 0, 0, 0.95);
-				z-index: 999999; /* 凌驾于一切 */
-				display: flex; 
-				align-items: center; 
-				justify-content: center;
-				opacity: 0; 
-				visibility: hidden; 
-				transition: all 0.5s ease;
+				position: fixed; inset: 0; background: rgba(0, 0, 0, 0.95);
+				z-index: 999999; display: flex; align-items: center; justify-content: center;
+				opacity: 0; visibility: hidden; transition: all 0.5s ease;
 			}
 			
-			/* 用类名控制显示 */
-			.modal-overlay.active { 
-				opacity: 1; 
-				visibility: visible; 
-			}
+			.modal-overlay.active { opacity: 1; visibility: visible; }
 
 			/* 神光射线 */
 			.modal-god-rays {
@@ -214,7 +193,7 @@ const projects = [
 			/* 核心放大 */
 			.modal-content {
 				width: 90vw; height: 90vw; max-width: 600px; max-height: 600px; position: relative; z-index: 10;
-				transform: scale(0.1) rotateZ(90deg); /* 初始很小且在翻滚 */
+				transform: scale(0.1) rotateZ(90deg); 
 				opacity: 0;
 				transition: all 0.8s cubic-bezier(0.1, 1.5, 0.2, 1);
 			}
@@ -245,7 +224,6 @@ const projects = [
 			<div class="grid">
 				{
 					projects.map((p, i) => {
-						const c = palettes[i % palettes.length];
 						return (
 							<div class="card">
 								
@@ -300,7 +278,7 @@ const projects = [
 									</div>
 								</div>
 
-								{/* 🚀 采用内联 onclick 暴力触发，防止任何 JS 失效 */}
+								{/* 纯 HTML 内联事件，绝对不失效 */}
 								{!p.video && !p.image && (
 									<div 
 										class="seal-stamp-wrapper" 
@@ -342,7 +320,7 @@ const projects = [
 		</main>
 		<Footer />
 
-		{/* 全屏弹窗 */}
+		{/* 全屏弹窗（纯内联事件关闭） */}
 		<div 
 			class="modal-overlay" 
 			id="seal-modal"
