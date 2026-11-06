@@ -17,6 +17,8 @@ const description = '浏览器内可用的小工具：SHA-256、时间戳、文�
         max-width: 720px;
         margin: 0 auto;
         padding: 48px 20px 64px;
+        box-sizing: border-box;
+        overflow-x: hidden;
       }
       .label {
         font-size: 13px;
@@ -41,6 +43,7 @@ const description = '浏览器内可用的小工具：SHA-256、时间戳、文�
         border-radius: 14px;
         border: 1px solid rgba(var(--gray), 0.3);
         background: rgba(var(--gray-light), 0.35);
+        box-sizing: border-box;
       }
       .panel h2 {
         margin: 0 0 6px;
@@ -61,7 +64,7 @@ const description = '浏览器内可用的小工具：SHA-256、时间戳、文�
         background: rgba(255, 255, 255, 0.7);
         color: rgb(var(--gray-dark));
         font: inherit;
-        font-size: 14px;
+        font-size: 16px;
         resize: vertical;
       }
       :global(html[data-theme='dark']) textarea,
@@ -78,7 +81,7 @@ const description = '浏览器内可用的小工具：SHA-256、时间戳、文�
         gap: 8px;
         margin-top: 10px;
       }
-      button, .btn {
+      button {
         padding: 8px 14px;
         border-radius: 10px;
         border: 0;
@@ -109,6 +112,7 @@ const description = '浏览器内可用的小工具：SHA-256、时间戳、文�
         word-break: break-all;
         white-space: pre-wrap;
         min-height: 1.6em;
+        overflow-x: auto;
       }
       .tabs {
         display: flex;
@@ -130,6 +134,21 @@ const description = '浏览器内可用的小工具：SHA-256、时间戳、文�
         color: #0b1020;
       }
       .tool[hidden] { display: none; }
+      @media (max-width: 640px) {
+        main.tools { padding: 28px 14px 48px; }
+        h1 { font-size: 26px; }
+        .panel { padding: 14px; margin-bottom: 20px; }
+        .tabs button {
+          flex: 1 1 auto;
+          min-width: 0;
+          padding: 8px 10px;
+          font-size: 13px;
+        }
+        textarea { min-height: 100px; }
+        .row { flex-direction: column; }
+        .row button { width: 100%; }
+        .out { font-size: 12px; }
+      }
     </style>
   </head>
   <body>
@@ -145,10 +164,9 @@ const description = '浏览器内可用的小工具：SHA-256、时间戳、文�
         <button type="button" data-tab="dedupe">文本去重</button>
       </div>
 
-      <!-- Hash -->
       <section class="tool panel" id="tool-hash">
         <h2>SHA-256</h2>
-        <p class="desc">对文本计算哈希。适合校验、去重实验（与博客里重复文件思路对应）。</p>
+        <p class="desc">对文本计算哈希。适合校验、去重实验。</p>
         <textarea id="hash-in" placeholder="输入任意文本…"></textarea>
         <div class="row">
           <button type="button" id="hash-run">计算</button>
@@ -157,7 +175,6 @@ const description = '浏览器内可用的小工具：SHA-256、时间戳、文�
         <div class="out" id="hash-out">—</div>
       </section>
 
-      <!-- Timestamp -->
       <section class="tool panel" id="tool-ts" hidden>
         <h2>时间戳转换</h2>
         <p class="desc">Unix 秒 / 毫秒 ↔ 本地时间。</p>
@@ -170,7 +187,6 @@ const description = '浏览器内可用的小工具：SHA-256、时间戳、文�
         <div class="out" id="ts-out">—</div>
       </section>
 
-      <!-- Dedupe -->
       <section class="tool panel" id="tool-dedupe" hidden>
         <h2>文本行去重</h2>
         <p class="desc">按行去除完全相同的内容，保留首次出现顺序。</p>
@@ -185,8 +201,7 @@ const description = '浏览器内可用的小工具：SHA-256、时间戳、文�
     <Footer />
 
     <script>
-      // tabs
-      const tabs = document.querySelectorAll<HTMLButtonElement>('.tabs button');
+      const tabs = document.querySelectorAll('.tabs button');
       const tools = {
         hash: document.getElementById('tool-hash'),
         ts: document.getElementById('tool-ts'),
@@ -196,21 +211,21 @@ const description = '浏览器内可用的小工具：SHA-256、时间戳、文�
         btn.addEventListener('click', () => {
           tabs.forEach((b) => b.classList.remove('on'));
           btn.classList.add('on');
-          const id = btn.dataset.tab as keyof typeof tools;
-          Object.entries(tools).forEach(([k, el]) => {
+          const id = btn.getAttribute('data-tab');
+          Object.keys(tools).forEach((k) => {
+            const el = tools[k];
             if (el) el.hidden = k !== id;
           });
         });
       });
 
-      // SHA-256
-      async function sha256(text: string) {
+      async function sha256(text) {
         const data = new TextEncoder().encode(text);
         const buf = await crypto.subtle.digest('SHA-256', data);
         return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
       }
-      const hashIn = document.getElementById('hash-in') as HTMLTextAreaElement;
-      const hashOut = document.getElementById('hash-out')!;
+      const hashIn = document.getElementById('hash-in');
+      const hashOut = document.getElementById('hash-out');
       document.getElementById('hash-run')?.addEventListener('click', async () => {
         hashOut.textContent = hashIn.value ? await sha256(hashIn.value) : '—';
       });
@@ -219,9 +234,8 @@ const description = '浏览器内可用的小工具：SHA-256、时间戳、文�
         if (t && t !== '—') await navigator.clipboard.writeText(t);
       });
 
-      // timestamp
-      const tsIn = document.getElementById('ts-in') as HTMLInputElement;
-      const tsOut = document.getElementById('ts-out')!;
+      const tsIn = document.getElementById('ts-in');
+      const tsOut = document.getElementById('ts-out');
       document.getElementById('ts-now')?.addEventListener('click', () => {
         const n = Date.now();
         tsIn.value = String(Math.floor(n / 1000));
@@ -233,7 +247,7 @@ const description = '浏览器内可用的小工具：SHA-256、时间戳、文�
           tsOut.textContent = '请输入数字时间戳';
           return;
         }
-        if (n < 1e12) n *= 1000; // seconds → ms
+        if (n < 1e12) n *= 1000;
         const d = new Date(n);
         if (Number.isNaN(d.getTime())) {
           tsOut.textContent = '无效时间戳';
@@ -251,13 +265,12 @@ const description = '浏览器内可用的小工具：SHA-256、时间戳、文�
         tsOut.textContent = `${Math.floor(ms / 1000)} (秒)\n${ms} (毫秒)`;
       });
 
-      // dedupe
-      const dedupeIn = document.getElementById('dedupe-in') as HTMLTextAreaElement;
-      const dedupeOut = document.getElementById('dedupe-out')!;
+      const dedupeIn = document.getElementById('dedupe-in');
+      const dedupeOut = document.getElementById('dedupe-out');
       document.getElementById('dedupe-run')?.addEventListener('click', () => {
         const lines = dedupeIn.value.split(/\r?\n/);
-        const seen = new Set<string>();
-        const out: string[] = [];
+        const seen = new Set();
+        const out = [];
         let dup = 0;
         for (const line of lines) {
           if (seen.has(line)) {
@@ -267,7 +280,9 @@ const description = '浏览器内可用的小工具：SHA-256、时间戳、文�
           seen.add(line);
           out.push(line);
         }
-        dedupeOut.textContent = out.join('\n') + (lines.length ? `\n\n— 原 ${lines.length} 行，去重后 ${out.length} 行，去掉 ${dup} 行` : '—');
+        dedupeOut.textContent =
+          out.join('\n') +
+          (lines.length ? `\n\n— 原 ${lines.length} 行，去重后 ${out.length} 行，去掉 ${dup} 行` : '—');
       });
       document.getElementById('dedupe-copy')?.addEventListener('click', async () => {
         const raw = dedupeOut.textContent || '';

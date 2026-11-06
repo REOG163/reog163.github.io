@@ -10,7 +10,6 @@ const posts = (await getCollection('blog')).sort(
 );
 
 function countChars(body: string) {
-  // 粗略：去 frontmatter 后的正文（Astro body 已是渲染前 markdown 时用 raw；这里用 entry.body）
   const text = body || '';
   const zh = (text.match(/[\u4e00-\u9fa5]/g) || []).length;
   const en = (text.replace(/[\u4e00-\u9fa5]/g, ' ').match(/[A-Za-z0-9]+/g) || []).length;
@@ -39,7 +38,6 @@ for (const r of rows) {
 }
 const topTags = [...tagMap.entries()].sort((a, b) => b[1] - a[1]).slice(0, 12);
 
-// 最近 16 周写作日历
 const weeks = 16;
 const today = new Date();
 today.setHours(0, 0, 0, 0);
@@ -71,6 +69,8 @@ const description = '字数、标签分布与写作日历。';
         max-width: 860px;
         margin: 0 auto;
         padding: 48px 20px 64px;
+        box-sizing: border-box;
+        overflow-x: hidden;
       }
       .label {
         font-size: 13px;
@@ -103,12 +103,14 @@ const description = '字数、标签分布与写作日历。';
         border-radius: 14px;
         border: 1px solid rgba(var(--gray), 0.3);
         background: rgba(var(--gray-light), 0.4);
+        min-width: 0;
       }
       .metric b {
         display: block;
         font-size: 28px;
         line-height: 1.2;
         color: rgb(var(--black));
+        word-break: break-all;
       }
       .metric span {
         font-size: 13px;
@@ -136,6 +138,7 @@ const description = '字数、标签分布与写作日历。';
         font-size: 13px;
         color: rgb(var(--gray-dark));
         text-decoration: none;
+        max-width: 100%;
       }
       .tag em {
         font-style: normal;
@@ -147,13 +150,11 @@ const description = '字数、标签分布与写作日历。';
         grid-template-columns: repeat(16, 1fr);
         gap: 4px;
       }
-      @media (max-width: 640px) {
-        .cal { grid-template-columns: repeat(8, 1fr); }
-      }
       .cell {
         aspect-ratio: 1;
         border-radius: 3px;
         background: rgba(var(--gray), 0.15);
+        min-width: 0;
       }
       .cell.c1 { background: rgba(143, 168, 255, 0.35); }
       .cell.c2 { background: rgba(143, 168, 255, 0.6); }
@@ -171,12 +172,28 @@ const description = '字数、标签分布与写作日历。';
         color: rgb(var(--black));
         text-decoration: none;
         font-weight: 600;
+        min-width: 0;
+        word-break: break-word;
       }
       .list a:hover { color: var(--accent); }
       .list .meta {
         flex: none;
         color: rgb(var(--gray));
         font-size: 13px;
+      }
+      @media (max-width: 640px) {
+        main.stats { padding: 28px 14px 48px; }
+        h1 { font-size: 26px; }
+        .grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+        .metric { padding: 14px 12px; }
+        .metric b { font-size: 22px; }
+        .cal { grid-template-columns: repeat(7, 1fr); gap: 3px; }
+        .list li {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 4px;
+        }
+        .list .meta { font-size: 12px; }
       }
     </style>
   </head>
