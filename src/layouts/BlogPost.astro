@@ -30,6 +30,9 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 	<head>
 		<BaseHead title={title} description={description} image={heroImage} />
 		<style>
+			:global([hidden]) {
+				display: none !important;
+			}
 			:global(html) {
 				scroll-padding-top: 80px;
 			}
@@ -39,32 +42,75 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 				}
 			}
 
+			/* ================= 页面外壳 ================= */
 			main.post {
+				position: relative;
 				width: 100%;
-				max-width: 720px;
+				max-width: 1120px;
 				margin: 0 auto;
-				padding: 28px 18px 56px;
+				padding: 32px 20px 64px;
 				box-sizing: border-box;
 				text-align: left;
 			}
+			main.post::before {
+				content: '';
+				position: absolute;
+				top: 0;
+				left: 50%;
+				width: 100%;
+				max-width: 960px;
+				height: 560px;
+				transform: translateX(-50%);
+				background: radial-gradient(ellipse at top, rgba(245, 198, 58, 0.1), transparent 62%);
+				pointer-events: none;
+				z-index: 0;
+			}
+			:global(html[data-theme='dark']) main.post::before {
+				background: radial-gradient(ellipse at top, rgba(245, 198, 58, 0.08), transparent 62%);
+			}
+			.post-layout {
+				position: relative;
+				z-index: 1;
+				display: block;
+				max-width: 720px;
+				margin: 0 auto;
+			}
+			@media (min-width: 1080px) {
+				.post-layout {
+					display: grid;
+					grid-template-columns: minmax(0, 720px) 240px;
+					gap: 52px;
+					max-width: 1012px;
+					align-items: start;
+					justify-content: center;
+				}
+				.post-layout:has(.post-aside[hidden]) {
+					grid-template-columns: minmax(0, 720px);
+				}
+			}
 
-			/* ===== 封面 ===== */
+			/* ================= Hero ================= */
+			.post-hero {
+				margin-bottom: 26px;
+			}
 			.cover-wrap {
 				position: relative;
-				margin-bottom: 20px;
-				border-radius: 16px;
+				margin-bottom: 22px;
+				border-radius: 18px;
 				overflow: hidden;
-				box-shadow: 0 12px 32px -14px rgba(0, 0, 0, 0.32), 0 2px 8px -4px rgba(0, 0, 0, 0.16);
+				box-shadow:
+					0 20px 40px -24px rgba(0, 0, 0, 0.35),
+					0 4px 12px -6px rgba(0, 0, 0, 0.14);
 				background: rgb(var(--gray-light));
 			}
 			.cover {
 				width: 100%;
 				height: auto;
 				display: block;
-				transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+				transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
 			}
 			.cover-wrap:hover .cover {
-				transform: scale(1.035);
+				transform: scale(1.04);
 			}
 			@media (prefers-reduced-motion: reduce) {
 				.cover,
@@ -74,7 +120,7 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 				}
 			}
 
-			/* ===== 元信息 ===== */
+			/* ================= 元信息 ================= */
 			.meta {
 				display: flex;
 				flex-wrap: wrap;
@@ -90,73 +136,80 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 				background: currentColor;
 				opacity: 0.5;
 			}
-			.listen-btn {
-				display: inline-flex;
-				align-items: center;
-				gap: 8px;
-				margin: 0 0 16px;
-				padding: 8px 16px;
-				border: 1px solid rgba(217, 165, 32, 0.8);
-				border-radius: 999px;
-				background: rgba(245, 198, 58, 0.12);
-				color: #9a6b00;
-				font: inherit;
-				font-size: 15px;
-				font-weight: 600;
-				cursor: pointer;
-				transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
-			}
-			.listen-btn[hidden] {
-				display: none;
-			}
-			.listen-btn small {
-				font-size: 13px;
-				font-weight: 400;
-				opacity: 0.8;
-			}
-			.listen-btn:hover {
-				background: rgba(245, 198, 58, 0.25);
-				transform: translateY(-1px);
-				box-shadow: 0 6px 16px -8px rgba(217, 165, 32, 0.7);
-			}
-			.listen-btn:active {
-				transform: translateY(0);
-			}
-			:global(html[data-theme='dark']) .listen-btn {
-				color: #f5c63a;
-			}
-			.pin {
+			.pin,
+			.cat {
 				display: inline-flex;
 				align-items: center;
 				gap: 4px;
-				padding: 0 8px;
+				padding: 1px 9px;
 				border-radius: 999px;
+				font-size: 12.5px;
+				font-weight: 600;
+			}
+			.pin {
 				background: rgba(245, 198, 58, 0.22);
 				color: #9a6b00;
-				font-weight: 600;
+			}
+			.cat {
+				background: rgba(245, 198, 58, 0.14);
+				color: var(--accent);
 			}
 			:global(html[data-theme='dark']) .pin {
 				color: #f5c63a;
 			}
-			.cat {
+			.font-tools {
+				margin-left: auto;
+				display: inline-flex;
+				gap: 2px;
+				padding: 2px;
+				border-radius: 8px;
+				background: rgb(var(--gray-light));
+			}
+			.font-tools button {
+				width: 28px;
+				height: 24px;
+				border: 0;
+				border-radius: 6px;
+				background: transparent;
+				color: rgb(var(--gray-dark));
+				font: inherit;
+				font-size: 12.5px;
+				font-weight: 700;
+				cursor: pointer;
+				transition: background 0.15s ease, color 0.15s ease;
+			}
+			.font-tools button:hover {
+				background: var(--accent);
+				color: #fff;
+			}
+			:global(html[data-theme='dark']) .font-tools button:hover {
+				color: #0b1020;
+			}
+			.font-tools button.active {
+				background: rgba(245, 198, 58, 0.28);
 				color: var(--accent);
-				font-weight: 600;
 			}
 
-			/* ===== 标题 ===== */
+			/* ================= 标题 ================= */
 			h1.title {
-				margin: 12px 0 14px;
-				font-size: 30px;
-				line-height: 1.35;
-				letter-spacing: -0.01em;
+				margin: 14px 0 10px;
+				font-size: 32px;
+				line-height: 1.32;
+				letter-spacing: -0.015em;
 				color: rgb(var(--black));
-				background: linear-gradient(120deg, rgb(var(--black)) 55%, var(--accent) 140%);
+				background: linear-gradient(120deg, rgb(var(--black)) 50%, var(--accent) 135%);
 				-webkit-background-clip: text;
 				background-clip: text;
 				-webkit-text-fill-color: transparent;
 			}
+			.post-desc {
+				margin: 0 0 16px;
+				font-size: 16px;
+				line-height: 1.7;
+				color: rgb(var(--gray));
+			}
 
-			/* ===== 标签 ===== */
+			/* ================= 标签 ================= */
 			.tags {
 				display: flex;
 				flex-wrap: wrap;
@@ -170,129 +223,107 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 				background: rgb(var(--gray-light));
 				color: rgb(var(--gray-dark));
 				text-decoration: none;
-				transition: transform 0.15s ease, background 0.2s ease, color 0.2s ease;
+				transition: transform 0.15s ease, background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
 			}
 			.tags a:hover {
 				background: var(--accent);
 				color: #fff;
 				transform: translateY(-2px);
+				box-shadow: 0 6px 14px -8px var(--accent);
 			}
 			:global(html[data-theme='dark']) .tags a:hover {
 				color: #0b1020;
 			}
 
-			/* ===== 目录 ===== */
-			.toc {
-				margin: 0 0 22px;
-				padding: 12px 16px;
-				border: 1px solid rgba(var(--gray), 0.3);
-				border-radius: 14px;
-				font-size: 15px;
-				background: rgba(var(--gray-light), 0.5);
-				transition: border-color 0.2s ease;
-			}
-			.toc[hidden] {
-				display: none;
-			}
-			.toc[open] {
-				border-color: rgba(var(--gray), 0.45);
-			}
-			.toc summary {
-				cursor: pointer;
-				font-weight: 600;
-				list-style: none;
-				display: flex;
+			/* ================= 听文章 ================= */
+			.listen-btn {
+				display: inline-flex;
 				align-items: center;
-				gap: 6px;
-				user-select: none;
-			}
-			.toc summary::-webkit-details-marker {
-				display: none;
-			}
-			.toc summary::after {
-				content: '';
-				margin-left: auto;
-				width: 8px;
-				height: 8px;
-				border-right: 2px solid currentColor;
-				border-bottom: 2px solid currentColor;
-				transform: rotate(45deg);
-				transition: transform 0.25s ease;
-				opacity: 0.6;
-			}
-			.toc[open] summary::after {
-				transform: rotate(-135deg);
-			}
-			.toc ul {
-				margin: 10px 0 0;
-				padding: 0;
-				list-style: none;
-				border-left: 2px solid rgba(var(--gray), 0.25);
-			}
-			.toc li {
-				margin: 0;
-				line-height: 1.5;
-			}
-			.toc li a {
-				display: block;
-				padding: 5px 12px;
-				margin-left: -2px;
-				border-left: 2px solid transparent;
-				font-size: 14px;
-				color: rgb(var(--gray-dark));
-				text-decoration: none;
-				transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
-			}
-			.toc li.l3 a {
-				padding-left: 28px;
-				font-size: 13.5px;
-				opacity: 0.85;
-			}
-			.toc li a:hover {
-				color: var(--accent);
-			}
-			.toc li a.active {
-				color: var(--accent);
-				border-left-color: var(--accent);
-				background: linear-gradient(90deg, rgba(245, 198, 58, 0.14), transparent);
+				gap: 8px;
+				margin: 0 0 20px;
+				padding: 9px 18px;
+				border: 1px solid rgba(217, 165, 32, 0.8);
+				border-radius: 999px;
+				background: rgba(245, 198, 58, 0.12);
+				color: #9a6b00;
+				font: inherit;
+				font-size: 15px;
 				font-weight: 600;
+				cursor: pointer;
+				transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+			}
+			.listen-btn small {
+				font-size: 13px;
+				font-weight: 400;
+				opacity: 0.8;
+			}
+			.listen-btn:hover {
+				background: rgba(245, 198, 58, 0.25);
+				transform: translateY(-1px);
+				box-shadow: 0 8px 18px -10px rgba(217, 165, 32, 0.8);
+			}
+			.listen-btn:active {
+				transform: translateY(0);
+			}
+			:global(html[data-theme='dark']) .listen-btn {
+				color: #f5c63a;
 			}
 
-			/* ===== 正文 ===== */
+			/* ================= 正文 ================= */
 			.prose {
-				font-size: 17px;
+				--prose-size: 17px;
+				font-size: var(--prose-size);
 				line-height: 1.95;
 				color: rgb(var(--gray-dark));
 			}
+			.prose :global(> p:first-of-type) {
+				font-size: calc(var(--prose-size) * 1.04);
+				color: rgb(var(--black));
+			}
 			.prose :global(h2) {
-				font-size: 24px;
-				margin: 2em 0 0.6em;
+				font-size: calc(var(--prose-size) * 1.4);
+				line-height: 1.5;
+				margin: 2.2em 0 0.7em;
 				scroll-margin-top: 76px;
+				color: rgb(var(--black));
 				position: relative;
 			}
+			.prose :global(h2::before) {
+				content: '';
+				position: absolute;
+				left: -18px;
+				top: 0.32em;
+				width: 4px;
+				height: 1.1em;
+				border-radius: 2px;
+				background: linear-gradient(180deg, var(--accent), rgba(245, 198, 58, 0.15));
+			}
 			.prose :global(h3) {
-				font-size: 20px;
-				margin: 1.6em 0 0.5em;
+				font-size: calc(var(--prose-size) * 1.18);
+				line-height: 1.55;
+				margin: 1.8em 0 0.55em;
 				scroll-margin-top: 76px;
-				position: relative;
+				color: rgb(var(--black));
 			}
 			.prose :global(h2 a.anchor),
 			.prose :global(h3 a.anchor) {
 				display: inline-block;
 				margin-left: 8px;
-				font-size: 0.7em;
+				padding: 0 6px;
+				font-size: 0.62em;
 				color: var(--accent);
 				text-decoration: none;
 				opacity: 0;
 				transition: opacity 0.2s ease;
 				vertical-align: middle;
+				border-radius: 4px;
 			}
 			.prose :global(h2:hover a.anchor),
 			.prose :global(h3:hover a.anchor) {
-				opacity: 0.8;
+				opacity: 0.75;
 			}
 			.prose :global(p) {
-				margin: 0 0 1.1em;
+				margin: 0 0 1.15em;
 			}
 			.prose :global(a) {
 				color: var(--accent);
@@ -302,6 +333,7 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 				background-position: 0 100%;
 				background-repeat: no-repeat;
 				transition: background-size 0.25s ease;
+				font-weight: 500;
 			}
 			.prose :global(a:hover) {
 				background-size: 100% 1.5px;
@@ -309,38 +341,63 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 			.prose :global(img) {
 				max-width: 100%;
 				height: auto;
-				border-radius: 10px;
-				transition: box-shadow 0.25s ease, filter 0.25s ease;
+				border-radius: 12px;
+				transition: box-shadow 0.25s ease;
 			}
 			.prose :global(img.zoomable) {
 				cursor: zoom-in;
 			}
 			.prose :global(img.zoomable:hover) {
-				box-shadow: 0 8px 24px -10px rgba(0, 0, 0, 0.35);
+				box-shadow: 0 12px 30px -14px rgba(0, 0, 0, 0.4);
 			}
 			.prose :global(table) {
 				display: block;
 				overflow-x: auto;
 				border-collapse: collapse;
-				margin: 1em 0;
+				margin: 1.2em 0;
 				font-size: 15px;
+				border-radius: 10px;
+				overflow: hidden;
+				box-shadow: 0 0 0 1px rgba(var(--gray), 0.25);
 			}
 			.prose :global(th),
 			.prose :global(td) {
-				border: 1px solid rgba(var(--gray), 0.35);
-				padding: 8px 12px;
+				border: 1px solid rgba(var(--gray), 0.28);
+				padding: 9px 13px;
+			}
+			.prose :global(th) {
+				background: rgba(245, 198, 58, 0.1);
+				font-weight: 600;
+			}
+			.prose :global(tbody tr:nth-child(even)) {
+				background: rgba(var(--gray-light), 0.5);
 			}
 			.prose :global(blockquote) {
-				margin: 1em 0;
-				padding: 2px 16px;
+				margin: 1.2em 0;
+				padding: 12px 18px;
 				border-left: 4px solid var(--accent);
+				border-radius: 0 10px 10px 0;
+				background: rgba(245, 198, 58, 0.06);
 				color: rgb(var(--gray));
+			}
+			.prose :global(blockquote p:last-child) {
+				margin-bottom: 0;
 			}
 			.prose :global(hr) {
 				border: 0;
 				height: 1px;
-				margin: 2em 0;
+				margin: 2.4em 0;
 				background: linear-gradient(90deg, transparent, rgba(var(--gray), 0.5), transparent);
+			}
+			.prose :global(ul),
+			.prose :global(ol) {
+				padding-left: 1.4em;
+			}
+			.prose :global(li) {
+				margin: 0.35em 0;
+			}
+			.prose :global(li::marker) {
+				color: var(--accent);
 			}
 			.prose :global(pre) {
 				position: relative;
@@ -348,7 +405,7 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 				border-radius: 12px;
 				overflow-x: auto;
 				font-size: 14px;
-				line-height: 1.6;
+				line-height: 1.65;
 				background: rgb(var(--gray-light));
 				border: 1px solid rgba(var(--gray), 0.18);
 			}
@@ -359,17 +416,22 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 			.prose :global(:not(pre) > code) {
 				padding: 1px 6px;
 				border-radius: 6px;
-				background: rgb(var(--gray-light));
+				background: rgba(245, 198, 58, 0.14);
+				color: #9a6b00;
 				font-size: 0.9em;
+			}
+			:global(html[data-theme='dark']) .prose :global(:not(pre) > code) {
+				color: #f5c63a;
 			}
 			:global(.code-copy) {
 				position: absolute;
 				top: 10px;
 				right: 10px;
+				z-index: 2;
 				padding: 4px 10px;
 				border: 1px solid rgba(var(--gray), 0.35);
 				border-radius: 7px;
-				background: rgba(var(--gray-light), 0.9);
+				background: rgba(var(--gray-light), 0.92);
 				color: rgb(var(--gray-dark));
 				font-size: 12px;
 				font-weight: 500;
@@ -392,33 +454,147 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 				border-color: #22a06b;
 			}
 
-			/* ===== 分享 ===== */
-			.share-mini {
-				margin-left: auto;
-				padding: 2px 8px;
-				border: 0;
-				border-radius: 6px;
-				background: none;
-				font: inherit;
+			/* ================= 侧边目录 ================= */
+			.post-aside {
 				font-size: 14px;
-				color: var(--accent);
+			}
+			@media (min-width: 1080px) {
+				.post-aside {
+					position: sticky;
+					top: 84px;
+					max-height: calc(100vh - 110px);
+					overflow-y: auto;
+					padding-right: 4px;
+				}
+			}
+			.toc-panel {
+				padding: 16px 14px 16px 18px;
+				border-radius: 14px;
+				background: rgba(var(--gray-light), 0.55);
+				border: 1px solid rgba(var(--gray), 0.22);
+			}
+			.toc-head {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				margin-bottom: 10px;
+				font-size: 13px;
+				font-weight: 700;
+				letter-spacing: 0.04em;
+				text-transform: uppercase;
+				color: rgb(var(--gray));
+			}
+			.toc-close {
+				display: none;
+				width: 28px;
+				height: 28px;
+				border: 0;
+				border-radius: 50%;
+				background: rgba(var(--gray), 0.15);
+				color: rgb(var(--gray-dark));
+				font-size: 18px;
+				line-height: 1;
 				cursor: pointer;
-				transition: background 0.2s ease, transform 0.15s ease;
 			}
-			.share-mini:hover {
-				background: rgba(245, 198, 58, 0.16);
-				transform: translateY(-1px);
+			.toc-close:hover {
+				background: rgba(var(--gray), 0.28);
 			}
+			#toc-list {
+				margin: 0;
+				padding: 0;
+				list-style: none;
+				border-left: 2px solid rgba(var(--gray), 0.22);
+			}
+			#toc-list li {
+				margin: 0;
+			}
+			#toc-list a {
+				display: block;
+				padding: 6px 10px;
+				margin-left: -2px;
+				border-left: 2px solid transparent;
+				font-size: 13.5px;
+				line-height: 1.5;
+				color: rgb(var(--gray-dark));
+				text-decoration: none;
+				transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+			}
+			#toc-list li.l3 a {
+				padding-left: 22px;
+				font-size: 13px;
+				opacity: 0.82;
+			}
+			#toc-list a:hover {
+				color: var(--accent);
+			}
+			#toc-list a.active {
+				color: var(--accent);
+				border-left-color: var(--accent);
+				background: linear-gradient(90deg, rgba(245, 198, 58, 0.16), transparent);
+				font-weight: 600;
+			}
+			/* 移动端抽屉 */
+			@media (max-width: 1079px) {
+				.post-aside {
+					position: fixed;
+					inset: 0;
+					z-index: 300;
+					display: none;
+					align-items: flex-end;
+					justify-content: center;
+					padding: 0;
+					background: rgba(0, 0, 0, 0.5);
+					backdrop-filter: blur(6px);
+					-webkit-backdrop-filter: blur(6px);
+					animation: fade-in 0.2s ease both;
+				}
+				.post-aside.open {
+					display: flex;
+				}
+				.post-aside .toc-panel {
+					width: 100%;
+					max-height: 78vh;
+					overflow-y: auto;
+					padding: 20px 20px 28px;
+					border-radius: 20px 20px 0 0;
+					background: rgb(var(--gray-light));
+					border: 0;
+					animation: slide-up 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+				}
+				.toc-close {
+					display: inline-flex;
+					align-items: center;
+					justify-content: center;
+				}
+				#toc-list a {
+					padding: 10px 12px;
+					font-size: 15px;
+				}
+				#toc-list li.l3 a {
+					font-size: 14px;
+					padding-left: 26px;
+				}
+			}
+			@keyframes fade-in {
+				from { opacity: 0; }
+				to { opacity: 1; }
+			}
+			@keyframes slide-up {
+				from { transform: translateY(30px); opacity: 0; }
+				to { transform: none; opacity: 1; }
+			}
+
+			/* ================= 分享卡片 ================= */
 			.share-end {
 				display: flex;
 				align-items: center;
 				justify-content: space-between;
 				gap: 12px;
-				margin-top: 36px;
-				padding: 16px 18px;
-				border-radius: 14px;
-				background: linear-gradient(120deg, rgba(245, 198, 58, 0.14), rgba(245, 198, 58, 0.04));
-				border: 1px solid rgba(245, 198, 58, 0.28);
+				margin-top: 40px;
+				padding: 18px 20px;
+				border-radius: 16px;
+				background: linear-gradient(120deg, rgba(245, 198, 58, 0.16), rgba(245, 198, 58, 0.04));
+				border: 1px solid rgba(245, 198, 58, 0.3);
 				font-size: 15px;
 				color: rgb(var(--gray-dark));
 			}
@@ -426,9 +602,9 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 				display: inline-flex;
 				align-items: center;
 				gap: 6px;
-				padding: 8px 18px;
+				padding: 9px 20px;
 				border: 0;
-				border-radius: 10px;
+				border-radius: 11px;
 				background: var(--accent);
 				color: #fff;
 				font: inherit;
@@ -437,141 +613,84 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 				cursor: pointer;
 				flex: none;
 				transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
-				box-shadow: 0 6px 16px -8px var(--accent);
+				box-shadow: 0 8px 18px -10px var(--accent);
 			}
 			.share-btn:hover {
 				transform: translateY(-1px);
 				filter: brightness(1.06);
-				box-shadow: 0 10px 22px -8px var(--accent);
+				box-shadow: 0 12px 24px -10px var(--accent);
 			}
 			.share-btn:active {
-				transform: translateY(0) scale(0.97);
+				transform: scale(0.97);
 			}
 			:global(html[data-theme='dark']) .share-btn {
 				color: #0b1020;
 			}
-
-			/* ===== 阅读进度 ===== */
-			#progress {
-				position: fixed;
-				top: 0;
-				left: 0;
-				height: 3px;
-				width: 0;
-				background: linear-gradient(90deg, var(--accent), #ff9f43, var(--accent));
-				background-size: 200% 100%;
-				animation: flow 2.6s linear infinite;
-				z-index: 100;
-				border-radius: 0 3px 3px 0;
-				box-shadow: 0 0 12px rgba(245, 198, 58, 0.55);
-			}
-			@keyframes flow {
-				to {
-					background-position: 200% 0;
-				}
-			}
-
-			/* ===== 回到顶部 ===== */
-			.totop {
-				position: fixed;
-				right: 18px;
-				bottom: 22px;
-				width: 44px;
-				height: 44px;
+			.share-mini {
+				margin-left: auto;
+				padding: 3px 10px;
 				border: 0;
-				border-radius: 50%;
-				background: var(--accent);
-				color: #fff;
+				border-radius: 7px;
+				background: rgba(245, 198, 58, 0.14);
+				font: inherit;
+				font-size: 13px;
+				color: var(--accent);
 				cursor: pointer;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				opacity: 0;
-				pointer-events: none;
-				transform: translateY(8px) scale(0.9);
-				transition: opacity 0.25s ease, transform 0.25s ease;
-				z-index: 60;
-				box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+				transition: background 0.2s ease, transform 0.15s ease;
 			}
-			.totop.show {
-				opacity: 1;
-				pointer-events: auto;
-				transform: none;
-			}
-			.totop:hover {
-				filter: brightness(1.06);
-			}
-			.totop-ring {
-				position: absolute;
-				inset: 0;
-				transform: rotate(-90deg);
-			}
-			.totop-track {
-				stroke: currentColor;
-				opacity: 0.22;
-			}
-			.totop-fill {
-				stroke: #fff;
-				transition: stroke-dashoffset 0.1s linear;
-			}
-			.totop-icon {
-				position: relative;
-				z-index: 1;
-			}
-			:global(html[data-theme='dark']) .totop {
-				color: #0b1020;
-			}
-			:global(html[data-theme='dark']) .totop-fill {
-				stroke: #0b1020;
+			.share-mini:hover {
+				background: rgba(245, 198, 58, 0.28);
+				transform: translateY(-1px);
 			}
 
-			/* ===== 上下篇 ===== */
+			/* ================= 上下篇 ================= */
 			.pn {
 				display: grid;
 				grid-template-columns: 1fr;
 				gap: 12px;
-				margin-top: 40px;
+				margin-top: 44px;
 			}
 			.pn a {
 				position: relative;
 				display: block;
-				padding: 14px 16px;
-				border-radius: 12px;
-				border: 1px solid rgba(var(--gray), 0.3);
+				padding: 16px 18px;
+				border-radius: 14px;
+				border: 1px solid rgba(var(--gray), 0.28);
 				text-decoration: none;
 				color: inherit;
 				overflow: hidden;
-				transition: border-color 0.22s ease, transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+				transition: border-color 0.22s ease, transform 0.22s ease, box-shadow 0.22s ease;
 			}
 			.pn a::before {
 				content: '';
 				position: absolute;
 				inset: 0;
-				background: linear-gradient(120deg, rgba(245, 198, 58, 0.12), transparent 60%);
+				background: linear-gradient(120deg, rgba(245, 198, 58, 0.14), transparent 65%);
 				opacity: 0;
 				transition: opacity 0.25s ease;
 			}
 			.pn a:hover {
 				border-color: var(--accent);
 				transform: translateY(-2px);
-				box-shadow: 0 10px 22px -14px rgba(0, 0, 0, 0.4);
+				box-shadow: 0 14px 28px -18px rgba(0, 0, 0, 0.45);
 			}
 			.pn a:hover::before {
 				opacity: 1;
 			}
 			.pn small {
+				position: relative;
 				display: block;
 				font-size: 13px;
 				color: var(--accent);
-				margin-bottom: 3px;
-				position: relative;
+				margin-bottom: 4px;
+				font-weight: 600;
 			}
 			.pn b {
+				position: relative;
 				display: block;
 				font-size: 16px;
 				line-height: 1.5;
 				color: rgb(var(--black));
-				position: relative;
 			}
 			.pn .next {
 				text-align: right;
@@ -588,16 +707,192 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 				}
 			}
 
-			/* ===== 图片灯箱 ===== */
-			.lightbox {
+			/* ================= 顶部进度 ================= */
+			#progress {
+				position: fixed;
+				top: 0;
+				left: 0;
+				height: 3px;
+				width: 0;
+				background: linear-gradient(90deg, var(--accent), #ff9f43, var(--accent));
+				background-size: 200% 100%;
+				animation: flow 2.6s linear infinite;
+				z-index: 100;
+				border-radius: 0 3px 3px 0;
+				box-shadow: 0 0 12px rgba(245, 198, 58, 0.5);
+			}
+			@keyframes flow {
+				to { background-position: 200% 0; }
+			}
+
+			/* ================= 悬浮工具列 ================= */
+			.float-stack {
+				position: fixed;
+				right: 16px;
+				bottom: 20px;
+				z-index: 70;
+				display: flex;
+				flex-direction: column;
+				gap: 10px;
+			}
+			.fab {
+				width: 46px;
+				height: 46px;
+				border: 0;
+				border-radius: 50%;
+				background: rgba(var(--gray-light), 0.92);
+				color: rgb(var(--gray-dark));
+				cursor: pointer;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				box-shadow: 0 6px 16px -8px rgba(0, 0, 0, 0.35);
+				border: 1px solid rgba(var(--gray), 0.22);
+				transition: transform 0.18s ease, background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+				-webkit-backdrop-filter: blur(10px);
+				backdrop-filter: blur(10px);
+			}
+			.fab:hover {
+				transform: translateY(-2px);
+				color: var(--accent);
+				box-shadow: 0 10px 22px -10px rgba(0, 0, 0, 0.45);
+			}
+			.fab:active {
+				transform: scale(0.94);
+			}
+			.fab.active {
+				color: var(--accent);
+				border-color: var(--accent);
+				background: rgba(245, 198, 58, 0.2);
+			}
+			.mobile-only {
+				display: none;
+			}
+			@media (max-width: 1079px) {
+				.mobile-only {
+					display: flex;
+				}
+			}
+
+			/* ================= 回到顶部 ================= */
+			.totop {
+				position: relative;
+				background: var(--accent);
+				color: #fff;
+				border: 0;
+				opacity: 0;
+				pointer-events: none;
+				transform: translateY(10px);
+				transition: opacity 0.25s ease, transform 0.25s ease;
+				box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.4);
+			}
+			.totop.show {
+				opacity: 1;
+				pointer-events: auto;
+				transform: none;
+			}
+			.totop:hover {
+				transform: translateY(-2px);
+				filter: brightness(1.06);
+			}
+			:global(html[data-theme='dark']) .totop {
+				color: #0b1020;
+			}
+			.totop-ring {
+				position: absolute;
+				inset: 0;
+				transform: rotate(-90deg);
+				width: 100%;
+				height: 100%;
+			}
+			.totop-track {
+				stroke: currentColor;
+				opacity: 0.2;
+			}
+			.totop-fill {
+				stroke: #fff;
+				transition: stroke-dashoffset 0.12s linear;
+			}
+			:global(html[data-theme='dark']) .totop-fill {
+				stroke: #0b1020;
+			}
+			.totop-icon {
+				position: relative;
+				z-index: 1;
+			}
+
+			/* ================= 分享面板 ================= */
+			.share-popover {
 				position: fixed;
 				inset: 0;
-				z-index: 9999;
+				z-index: 400;
 				display: flex;
 				align-items: center;
 				justify-content: center;
 				padding: 24px;
-				background: rgba(6, 10, 18, 0.86);
+				background: rgba(0, 0, 0, 0.4);
+				backdrop-filter: blur(4px);
+				-webkit-backdrop-filter: blur(4px);
+				animation: fade-in 0.18s ease both;
+			}
+			.share-card {
+				width: 100%;
+				max-width: 340px;
+				padding: 22px 20px 18px;
+				border-radius: 18px;
+				background: rgb(var(--gray-light));
+				box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.5);
+				animation: slide-up 0.24s cubic-bezier(0.22, 1, 0.36, 1) both;
+			}
+			:global(html[data-theme='dark']) .share-card {
+				background: #1a1d26;
+			}
+			.share-card h3 {
+				margin: 0 0 14px;
+				font-size: 16px;
+				text-align: center;
+				color: rgb(var(--black));
+			}
+			.share-grid {
+				display: grid;
+				grid-template-columns: repeat(2, 1fr);
+				gap: 10px;
+			}
+			.share-grid button,
+			.share-grid a {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				gap: 8px;
+				padding: 12px;
+				border: 1px solid rgba(var(--gray), 0.25);
+				border-radius: 12px;
+				background: transparent;
+				color: rgb(var(--gray-dark));
+				font: inherit;
+				font-size: 14px;
+				font-weight: 500;
+				text-decoration: none;
+				cursor: pointer;
+				transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+			}
+			.share-grid button:hover,
+			.share-grid a:hover {
+				background: rgba(245, 198, 58, 0.14);
+				color: var(--accent);
+				border-color: var(--accent);
+			}
+
+			/* ================= 图片灯箱 ================= */
+			.lightbox {
+				position: fixed;
+				inset: 0;
+				z-index: 500;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				padding: 24px;
+				background: rgba(6, 10, 18, 0.88);
 				backdrop-filter: blur(8px);
 				-webkit-backdrop-filter: blur(8px);
 				opacity: 0;
@@ -607,9 +902,6 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 			.lightbox.show {
 				opacity: 1;
 				pointer-events: auto;
-			}
-			.lightbox[hidden] {
-				display: none;
 			}
 			.lightbox img {
 				max-width: 100%;
@@ -645,27 +937,42 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 				transform: rotate(90deg);
 			}
 
-			/* ===== 入场动画 ===== */
+			/* ================= Toast ================= */
+			:global(#toast) {
+				position: fixed;
+				left: 50%;
+				bottom: 90px;
+				transform: translateX(-50%) translateY(12px);
+				padding: 10px 18px;
+				border-radius: 999px;
+				background: rgba(20, 24, 34, 0.92);
+				color: #fff;
+				font-size: 14px;
+				font-weight: 500;
+				z-index: 800;
+				opacity: 0;
+				pointer-events: none;
+				transition: opacity 0.25s ease, transform 0.25s ease;
+				box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
+			}
+			:global(#toast.show) {
+				opacity: 1;
+				transform: translateX(-50%) translateY(0);
+			}
+
+			/* ================= 入场动画 ================= */
 			@media (prefers-reduced-motion: no-preference) {
-				main.post > article > .cover-wrap,
-				main.post > article > .meta,
-				main.post > article > h1.title,
-				main.post > article > .tags {
-					animation: fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+				.post-hero > .cover-wrap,
+				.post-hero > .hero-body,
+				.prose {
+					animation: fade-up 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
 				}
-				main.post > article > .meta { animation-delay: 0.04s; }
-				main.post > article > h1.title { animation-delay: 0.08s; }
-				main.post > article > .tags { animation-delay: 0.12s; }
+				.post-hero > .hero-body { animation-delay: 0.06s; }
+				.prose { animation-delay: 0.12s; }
 			}
 			@keyframes fade-up {
-				from {
-					opacity: 0;
-					transform: translateY(10px);
-				}
-				to {
-					opacity: 1;
-					transform: none;
-				}
+				from { opacity: 0; transform: translateY(12px); }
+				to { opacity: 1; transform: none; }
 			}
 		</style>
 	</head>
@@ -673,94 +980,152 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 		<div id="progress"></div>
 		<Header />
 		<main class="post">
-			<article>
-				{heroImage && (
-					<div class="cover-wrap">
-						<Image class="cover" width={1020} height={510} src={heroImage} alt="" />
-					</div>
-				)}
-				<div class="meta">
-					{pinned && (
-						<span class="pin">
-							<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15.5 2.5a1 1 0 0 1 .7 1.7l-1.1 1.1 3.6 3.6 1.1-1.1a1 1 0 0 1 1.4 1.4l-3 3-.5 4.6-1.5 1.5-3.9-3.9-5.9 5.9a1 1 0 0 1-1.4-1.4l5.9-5.9-3.9-3.9 1.5-1.5 4.6-.5 3-3a1 1 0 0 1 .7-.3z"/></svg>
-							置顶
-						</span>
-					)}
-					{category && <span class="cat">{category}</span>}
-					{(pinned || category) && <span class="dot" aria-hidden="true"></span>}
-					<span>{fmt(pubDate)}</span>
-					{updatedDate && (
-						<>
-							<span class="dot" aria-hidden="true"></span>
-							<span>更新于 {fmt(updatedDate)}</span>
-						</>
-					)}
-					<span class="dot" aria-hidden="true"></span>
-					<span id="reading-time"></span>
-					<button class="share-mini" type="button" data-share data-share-scope="article" aria-label="分享这篇文章">分享</button>
-				</div>
-				<h1 class="title">{title}</h1>
-				{
-					tags.length > 0 && (
-						<div class="tags">
-							{tags.map((t: string) => (
-								<a href={`/blog?tag=${encodeURIComponent(t)}`}>#{t}</a>
-							))}
+			<div class="post-layout">
+				<article class="post-article">
+					<header class="post-hero">
+						{heroImage && (
+							<div class="cover-wrap">
+								<Image class="cover" width={1020} height={510} src={heroImage} alt="" />
+							</div>
+						)}
+						<div class="hero-body">
+							<div class="meta">
+								{pinned && (
+									<span class="pin">
+										<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15.5 2.5a1 1 0 0 1 .7 1.7l-1.1 1.1 3.6 3.6 1.1-1.1a1 1 0 0 1 1.4 1.4l-3 3-.5 4.6-1.5 1.5-3.9-3.9-5.9 5.9a1 1 0 0 1-1.4-1.4l5.9-5.9-3.9-3.9 1.5-1.5 4.6-.5 3-3a1 1 0 0 1 .7-.3z"/></svg>
+										置顶
+									</span>
+								)}
+								{category && <span class="cat">{category}</span>}
+								{(pinned || category) && <span class="dot" aria-hidden="true"></span>}
+								<span>{fmt(pubDate)}</span>
+								{updatedDate && (
+									<>
+										<span class="dot" aria-hidden="true"></span>
+										<span>更新于 {fmt(updatedDate)}</span>
+									</>
+								)}
+								<span class="dot" aria-hidden="true"></span>
+								<span id="reading-time"></span>
+								<div class="font-tools" role="group" aria-label="字体大小">
+									<button type="button" data-font="down" aria-label="缩小字号">A-</button>
+									<button type="button" data-font="up" aria-label="放大字号">A+</button>
+								</div>
+								<button class="share-mini" type="button" data-share data-share-scope="article" aria-label="分享这篇文章">分享</button>
+							</div>
+							<h1 class="title">{title}</h1>
+							{description && <p class="post-desc">{description}</p>}
+							{
+								tags.length > 0 && (
+									<div class="tags">
+										{tags.map((t: string) => (
+											<a href={`/blog?tag=${encodeURIComponent(t)}`}>#{t}</a>
+										))}
+									</div>
+								)
+							}
+							<button class="listen-btn" id="listen-open" type="button" data-listen-open>
+								<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15v-3a8 8 0 0 1 16 0v3" /><rect x="3" y="14" width="4" height="7" rx="1.5" /><rect x="17" y="14" width="4" height="7" rx="1.5" /></svg>
+								听文章 <small id="listen-eta"></small>
+							</button>
 						</div>
-					)
-				}
-				<button class="listen-btn" id="listen-open" type="button" data-listen-open>
-					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15v-3a8 8 0 0 1 16 0v3" /><rect x="3" y="14" width="4" height="7" rx="1.5" /><rect x="17" y="14" width="4" height="7" rx="1.5" /></svg>
-					听文章 <small id="listen-eta"></small>
-				</button>
-				<details id="toc" class="toc" hidden>
-					<summary>目录</summary>
-					<ul id="toc-list"></ul>
-				</details>
-				<div class="prose" id="prose"><slot /></div>
-				<div class="share-end">
-					<span>觉得有用？分享给朋友吧</span>
-					<button class="share-btn" type="button" data-share data-share-scope="article">
-						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4" /></svg>
-						分享
-					</button>
-				</div>
-			</article>
-			{
-				(prev || next) && (
-					<nav class="pn" aria-label="文章导航">
-						{prev ? (
-							<a class="prev" href={`/blog/${slugOf(prev)}/`}>
-								<small>← 上一篇</small>
-								<b>{prev.data.title}</b>
-							</a>
-						) : (
-							<span />
-						)}
-						{next ? (
-							<a class="next" href={`/blog/${slugOf(next)}/`}>
-								<small>下一篇 →</small>
-								<b>{next.data.title}</b>
-							</a>
-						) : (
-							<span />
-						)}
-					</nav>
-				)
-			}
-			<Comments />
+					</header>
+
+					<div class="prose" id="prose"><slot /></div>
+
+					<div class="share-end">
+						<span>觉得有用？分享给朋友吧</span>
+						<button class="share-btn" type="button" data-share data-share-scope="article">
+							<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4" /></svg>
+							分享
+						</button>
+					</div>
+
+					{
+						(prev || next) && (
+							<nav class="pn" aria-label="文章导航">
+								{prev ? (
+									<a class="prev" href={`/blog/${slugOf(prev)}/`}>
+										<small>← 上一篇</small>
+										<b>{prev.data.title}</b>
+									</a>
+								) : (
+									<span />
+								)}
+								{next ? (
+									<a class="next" href={`/blog/${slugOf(next)}/`}>
+										<small>下一篇 →</small>
+										<b>{next.data.title}</b>
+									</a>
+								) : (
+									<span />
+								)}
+							</nav>
+						)
+					}
+					<Comments />
+				</article>
+
+				<aside class="post-aside" id="post-aside" hidden>
+					<div class="toc-panel">
+						<div class="toc-head">
+							<span>目录</span>
+							<button class="toc-close" type="button" aria-label="关闭目录">×</button>
+						</div>
+						<ul id="toc-list"></ul>
+					</div>
+				</aside>
+			</div>
 		</main>
-		<button class="totop" id="totop" type="button" aria-label="回到顶部">
-			<svg class="totop-ring" viewBox="0 0 44 44" aria-hidden="true">
-				<circle class="totop-track" cx="22" cy="22" r="20" fill="none" stroke-width="2.5" />
-				<circle class="totop-fill" cx="22" cy="22" r="20" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="125.66" stroke-dashoffset="125.66" />
-			</svg>
-			<svg class="totop-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 15 6-6 6 6" /></svg>
-		</button>
+
+		<div class="float-stack">
+			<button class="fab" type="button" data-tool="bookmark" aria-label="收藏文章" title="收藏">
+				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" /></svg>
+			</button>
+			<button class="fab" type="button" data-tool="share" aria-label="分享文章" title="分享">
+				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4" /></svg>
+			</button>
+			<button class="fab mobile-only" type="button" data-tool="toc" aria-label="打开目录" title="目录" hidden>
+				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h12M4 18h16" /></svg>
+			</button>
+			<button class="fab totop" id="totop" type="button" aria-label="回到顶部">
+				<svg class="totop-ring" viewBox="0 0 46 46" aria-hidden="true">
+					<circle class="totop-track" cx="23" cy="23" r="21" fill="none" stroke-width="2.5" />
+					<circle class="totop-fill" cx="23" cy="23" r="21" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="131.95" stroke-dashoffset="131.95" />
+				</svg>
+				<svg class="totop-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 15 6-6 6 6" /></svg>
+			</button>
+		</div>
+
+		<div class="share-popover" id="share-popover" hidden>
+			<div class="share-card" role="dialog" aria-modal="true" aria-label="分享文章">
+				<h3>分享这篇文章</h3>
+				<div class="share-grid">
+					<button type="button" data-share-action="copy">
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></svg>
+						复制链接
+					</button>
+					<button type="button" data-share-action="native">
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 7l4-4 4 4M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" /></svg>
+						系统分享
+					</button>
+					<a data-share-action="x" href="#" target="_blank" rel="noopener">
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+						X
+					</a>
+					<a data-share-action="weibo" href="#" target="_blank" rel="noopener">
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.31 15.32c-3.29.4-6.13-1.16-6.34-3.5-.21-2.33 2.3-4.56 5.59-4.96 3.29-.4 6.13 1.16 6.34 3.5.21 2.33-2.3 4.56-5.59 4.96zm4.61-8.08c.35-.13.73-.2 1.11-.19 1.42.03 2.57 1.22 2.55 2.64-.02 1.42-1.19 2.56-2.61 2.53-.28 0-.55-.05-.8-.13"/></svg>
+						微博
+					</a>
+				</div>
+			</div>
+		</div>
+
 		<div class="lightbox" id="lightbox" hidden>
 			<button class="lightbox-close" type="button" aria-label="关闭">×</button>
 			<img id="lightbox-img" alt="" />
 		</div>
+
 		<Listen />
 		<Footer />
 
@@ -768,11 +1133,26 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 			const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 			const prose = document.getElementById('prose');
 			const heads: HTMLElement[] = [];
-			let tocLinks: HTMLAnchorElement[] = [];
+			const tocLinks: HTMLAnchorElement[] = [];
 			let headingTops: number[] = [];
 
+			/* ---------- Toast ---------- */
+			let toastTimer: number | undefined;
+			const toast = (msg: string) => {
+				let el = document.getElementById('toast');
+				if (!el) {
+					el = document.createElement('div');
+					el.id = 'toast';
+					document.body.appendChild(el);
+				}
+				el.textContent = msg;
+				el.classList.add('show');
+				window.clearTimeout(toastTimer);
+				toastTimer = window.setTimeout(() => el?.classList.remove('show'), 1800);
+			};
+
 			if (prose) {
-				// ===== 阅读时间：中文按字数，英文按词数，约 400 单位/分钟 =====
+				/* ---------- 阅读时间 ---------- */
 				const text = prose.textContent || '';
 				const zh = (text.match(/[\u4e00-\u9fa5]/g) || []).length;
 				const en = (text.replace(/[\u4e00-\u9fa5]/g, ' ').match(/[A-Za-z0-9]+/g) || []).length;
@@ -782,7 +1162,7 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 				const eta = document.getElementById('listen-eta');
 				if (eta) eta.textContent = `约 ${mins} 分钟`;
 
-				// ===== 目录：收集 h2 / h3，至少 3 个标题才显示 =====
+				/* ---------- 目录 ---------- */
 				const allHeads = Array.from(prose.querySelectorAll<HTMLElement>('h2, h3'));
 				if (allHeads.length >= 3) {
 					const list = document.getElementById('toc-list');
@@ -794,40 +1174,43 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 						const a = document.createElement('a');
 						a.href = '#' + h.id;
 						a.textContent = h.textContent || '';
-						a.dataset.target = h.id;
 						li.appendChild(a);
 						list?.appendChild(li);
 						tocLinks.push(a);
 					});
-					const toc = document.getElementById('toc') as HTMLDetailsElement | null;
-					if (toc) {
-						toc.hidden = false;
-						if (window.innerWidth >= 720) toc.open = true;
-					}
+					const aside = document.getElementById('post-aside');
+					if (aside) aside.hidden = false;
+					const tocBtn = document.querySelector<HTMLButtonElement>('[data-tool="toc"]');
+					if (tocBtn) tocBtn.hidden = false;
 				}
 
-				// ===== 标题锚点 =====
+				/* ---------- 标题锚点 ---------- */
 				heads.forEach((h) => {
 					const a = document.createElement('a');
 					a.className = 'anchor';
 					a.href = '#' + h.id;
-					a.setAttribute('aria-label', '复制该标题链接');
 					a.textContent = '#';
+					a.setAttribute('aria-label', '复制标题链接');
 					a.addEventListener('click', (e) => {
 						e.preventDefault();
 						const url = location.origin + location.pathname + '#' + h.id;
+						const done = () => {
+							a.textContent = '✓';
+							toast('链接已复制');
+							setTimeout(() => (a.textContent = '#'), 1200);
+						};
 						if (navigator.clipboard?.writeText) {
-							navigator.clipboard.writeText(url).catch(() => {});
+							navigator.clipboard.writeText(url).then(done).catch(() => {});
+						} else {
+							done();
 						}
 						history.replaceState(null, '', '#' + h.id);
-						a.textContent = '✓';
-						setTimeout(() => (a.textContent = '#'), 1200);
 					});
 					h.appendChild(a);
 				});
 
-				// ===== 代码复制按钮 =====
-				prose.querySelectorAll('pre').forEach((pre) => {
+				/* ---------- 代码复制 ---------- */
+				prose.querySelectorAll<HTMLElement>('pre').forEach((pre) => {
 					const btn = document.createElement('button');
 					btn.type = 'button';
 					btn.className = 'code-copy';
@@ -849,6 +1232,7 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 							}
 							btn.textContent = '已复制';
 							btn.classList.add('done');
+							toast('代码已复制');
 						} catch {
 							btn.textContent = '复制失败';
 						}
@@ -860,7 +1244,7 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 					pre.appendChild(btn);
 				});
 
-				// ===== 图片灯箱 =====
+				/* ---------- 图片灯箱 ---------- */
 				const lightbox = document.getElementById('lightbox')!;
 				const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement;
 				const lightboxClose = lightbox.querySelector('.lightbox-close') as HTMLButtonElement;
@@ -882,18 +1266,19 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 				prose.querySelectorAll<HTMLImageElement>('img').forEach((img) => {
 					img.classList.add('zoomable');
 					img.addEventListener('click', () => {
-						if (img.currentSrc || img.src) openLightbox(img.currentSrc || img.src, img.alt);
+						const src = img.currentSrc || img.src;
+						if (src) openLightbox(src, img.alt);
 					});
 				});
-				lightboxClose?.addEventListener('click', closeLightbox);
-				lightbox?.addEventListener('click', (e) => {
+				lightboxClose.addEventListener('click', closeLightbox);
+				lightbox.addEventListener('click', (e) => {
 					if (e.target === lightbox) closeLightbox();
 				});
 				document.addEventListener('keydown', (e) => {
 					if (e.key === 'Escape' && !lightbox.hidden) closeLightbox();
 				});
 
-				// ===== 目录高亮测量 =====
+				/* ---------- 测量标题位置 ---------- */
 				const measureHeadings = () => {
 					headingTops = heads.map((h) => h.getBoundingClientRect().top + window.scrollY);
 				};
@@ -903,13 +1288,8 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 				setTimeout(measureHeadings, 600);
 			}
 
-			// ===== 阅读进度条 + 回到顶部 + 目录高亮 =====
-			const bar = document.getElementById('progress');
-			const top = document.getElementById('totop');
-			const ring = top?.querySelector('.totop-fill') as SVGCircleElement | null;
-			const RING_LEN = 2 * Math.PI * 20;
+			/* ---------- 目录高亮 ---------- */
 			let lastActive = -1;
-
 			function updateToc() {
 				if (!tocLinks.length) return;
 				const y = window.scrollY + 110;
@@ -923,19 +1303,22 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 				lastActive = active;
 			}
 
+			/* ---------- 进度条 / 回到顶部 ---------- */
+			const bar = document.getElementById('progress');
+			const top = document.getElementById('totop') as HTMLButtonElement | null;
+			const ring = top?.querySelector('.totop-fill') as SVGCircleElement | null;
+			const RING_LEN = 2 * Math.PI * 21;
+
+			let ticking = false;
 			function onScroll() {
 				const doc = document.documentElement;
 				const max = doc.scrollHeight - doc.clientHeight;
 				const pct = max > 0 ? Math.min(100, Math.max(0, (window.scrollY / max) * 100)) : 0;
 				if (bar) bar.style.width = pct + '%';
-				top?.classList.toggle('show', window.scrollY > 600);
-				if (ring) {
-					ring.style.strokeDashoffset = String(RING_LEN - (RING_LEN * pct) / 100);
-				}
+				top?.classList.toggle('show', window.scrollY > 500);
+				if (ring) ring.style.strokeDashoffset = String(RING_LEN - (RING_LEN * pct) / 100);
 				updateToc();
 			}
-
-			let ticking = false;
 			window.addEventListener(
 				'scroll',
 				() => {
@@ -949,8 +1332,146 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 				{ passive: true },
 			);
 			window.addEventListener('resize', onScroll, { passive: true });
-			top?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' }));
+			top?.addEventListener('click', () =>
+				window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' }),
+			);
 			onScroll();
+
+			/* ---------- 字体大小 ---------- */
+			const FONT_KEY = 'blog:font-scale';
+			let scale = 1;
+			try {
+				scale = Number(localStorage.getItem(FONT_KEY) || 1) || 1;
+			} catch {}
+			scale = Math.min(1.3, Math.max(0.85, scale));
+			const applyScale = () => {
+				if (prose) prose.style.setProperty('--prose-size', 17 * scale + 'px');
+				document
+					.querySelectorAll<HTMLButtonElement>('[data-font]')
+					.forEach((b) => b.classList.remove('active'));
+				document
+					.querySelector<HTMLButtonElement>('[data-font="down"]')
+					?.classList.toggle('active', scale < 1);
+				document
+					.querySelector<HTMLButtonElement>('[data-font="up"]')
+					?.classList.toggle('active', scale > 1);
+			};
+			applyScale();
+			document.querySelectorAll<HTMLButtonElement>('[data-font]').forEach((btn) => {
+				btn.addEventListener('click', () => {
+					const dir = btn.dataset.font;
+					if (dir === 'up') scale = Math.min(1.3, +(scale + 0.05).toFixed(2));
+					if (dir === 'down') scale = Math.max(0.85, +(scale - 0.05).toFixed(2));
+					try {
+						localStorage.setItem(FONT_KEY, String(scale));
+					} catch {}
+					applyScale();
+				});
+			});
+
+			/* ---------- 书签 ---------- */
+			const BOOKMARK_KEY = 'blog:bookmarks';
+			const getBookmarks = (): string[] => {
+				try {
+					return JSON.parse(localStorage.getItem(BOOKMARK_KEY) || '[]');
+				} catch {
+					return [];
+				}
+			};
+			const slug = location.pathname.replace(/\/+$/, '');
+			const bookmarkBtn = document.querySelector<HTMLButtonElement>('[data-tool="bookmark"]');
+			const ICON_BOOKMARK =
+				'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" /></svg>';
+			const ICON_BOOKMARKED =
+				'<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" /></svg>';
+			const syncBookmark = () => {
+				if (!bookmarkBtn) return;
+				const saved = getBookmarks().includes(slug);
+				bookmarkBtn.classList.toggle('active', saved);
+				bookmarkBtn.innerHTML = saved ? ICON_BOOKMARKED : ICON_BOOKMARK;
+				bookmarkBtn.setAttribute('aria-label', saved ? '取消收藏' : '收藏文章');
+				bookmarkBtn.title = saved ? '取消收藏' : '收藏';
+			};
+			syncBookmark();
+			bookmarkBtn?.addEventListener('click', () => {
+				const list = getBookmarks();
+				const saved = list.includes(slug);
+				const nextList = saved ? list.filter((s) => s !== slug) : [...list, slug];
+				try {
+					localStorage.setItem(BOOKMARK_KEY, JSON.stringify(nextList));
+				} catch {}
+				syncBookmark();
+				toast(saved ? '已取消收藏' : '已收藏');
+			});
+
+			/* ---------- 分享面板 ---------- */
+			const popover = document.getElementById('share-popover')!;
+			const shareTitle = document.title;
+			const shareUrl = location.href;
+			const xLink = popover.querySelector<HTMLAnchorElement>('[data-share-action="x"]');
+			const weiboLink = popover.querySelector<HTMLAnchorElement>('[data-share-action="weibo"]');
+			if (xLink) {
+				xLink.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareTitle)}&url=${encodeURIComponent(shareUrl)}`;
+			}
+			if (weiboLink) {
+				weiboLink.href = `https://service.weibo.com/share/share.php?title=${encodeURIComponent(shareTitle)}&url=${encodeURIComponent(shareUrl)}`;
+			}
+			const openShare = () => {
+				popover.hidden = false;
+			};
+			const closeShare = () => {
+				popover.hidden = true;
+			};
+			popover.addEventListener('click', (e) => {
+				if (e.target === popover) closeShare();
+			});
+			document.addEventListener('keydown', (e) => {
+				if (e.key === 'Escape' && !popover.hidden) closeShare();
+			});
+			popover.querySelectorAll<HTMLElement>('[data-share-action]').forEach((el) => {
+				el.addEventListener('click', async (e) => {
+					const action = (el as HTMLElement).dataset.shareAction;
+					if (action === 'copy') {
+						e.preventDefault();
+						try {
+							await navigator.clipboard.writeText(shareUrl);
+							toast('链接已复制');
+						} catch {
+							toast('复制失败，请手动复制');
+						}
+						closeShare();
+					} else if (action === 'native') {
+						e.preventDefault();
+						if (navigator.share) {
+							try {
+								await navigator.share({ title: shareTitle, url: shareUrl });
+							} catch {}
+							closeShare();
+						} else {
+							toast('当前环境不支持系统分享');
+						}
+					}
+				});
+			});
+			document
+				.querySelector('[data-tool="share"]')
+				?.addEventListener('click', openShare);
+
+			/* ---------- 移动端目录抽屉 ---------- */
+			const aside = document.getElementById('post-aside');
+			const tocBtn = document.querySelector('[data-tool="toc"]');
+			const tocClose = aside?.querySelector('.toc-close');
+			const openToc = () => aside?.classList.add('open');
+			const closeToc = () => aside?.classList.remove('open');
+			tocBtn?.addEventListener('click', openToc);
+			tocClose?.addEventListener('click', closeToc);
+			aside?.addEventListener('click', (e) => {
+				if (e.target === aside) closeToc();
+			});
+			aside?.querySelectorAll('a').forEach((a) => a.addEventListener('click', closeToc));
+			document.addEventListener('keydown', (e) => {
+				if (e.key === 'Escape') closeToc();
+			});
 		</script>
 	</body>
 </html>
