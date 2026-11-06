@@ -1,0 +1,176 @@
+---
+interface Props {
+	title?: string;
+}
+const { title = 'R' } = Astro.props;
+const initial = Array.from(title.trim())[0]?.toUpperCase() ?? 'R';
+---
+
+<style is:global>
+	#pt-overlay { position: fixed; inset: 0; z-index: 2147483000; display: flex; align-items: center; justify-content: center; background: radial-gradient(120% 90% at 50% 40%, #1d2f6b 0%, #0b1020 70%); color: #e6ebff; pointer-events: none; overscroll-behavior: contain; }
+	#pt-overlay[hidden] { display: none; }
+	#pt-overlay.pt-on { pointer-events: auto; }
+	#pt-overlay .pt-content { display: flex; flex-direction: column; align-items: center; gap: 14px; opacity: 0; transform: translateY(6px); transition: opacity 0.18s, transform 0.18s; }
+	#pt-overlay.pt-on .pt-content { opacity: 1; transform: none; transition: opacity 0.25s 0.12s, transform 0.25s 0.12s; }
+	#pt-overlay .pt-orbit { width: 112px; height: 112px; display: block; }
+	#pt-overlay .pt-spin { transform-origin: 60px 60px; animation: pt-spin 1.6s linear infinite; }
+	#pt-overlay .pt-spin2 { transform-origin: 60px 60px; animation: pt-spin 2.8s linear infinite reverse; }
+	@keyframes pt-spin { to { transform: rotate(360deg); } }
+	#pt-overlay .pt-cap { max-width: 80vw; font-size: 14px; letter-spacing: 0.12em; opacity: 0.9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+	#pt-overlay .pt-cap b { margin-left: 0.5em; color: #f5c63a; font-weight: 700; }
+	#pt-overlay .pt-bar { width: 140px; height: 3px; border-radius: 3px; background: rgba(143, 168, 255, 0.2); overflow: hidden; }
+	#pt-overlay .pt-bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #b8860b, #f5c63a, #fff2b0); transition: width 0.45s ease-out; }
+	#pt-overlay.pt-go .pt-bar i { width: 62%; }
+	#pt-overlay.pt-arriving .pt-bar i { width: 100%; transition-duration: 0.25s; }
+	@media print { #pt-overlay { display: none !important; } }
+</style>
+
+<div id="pt-overlay" hidden aria-hidden="true">
+	<div class="pt-content">
+		<svg class="pt-orbit" viewBox="0 0 120 120" fill="none">
+			<defs>
+				<linearGradient id="pt-gold" x1="0" y1="0" x2="1" y2="1">
+					<stop offset="0" stop-color="#b8860b" />
+					<stop offset="0.5" stop-color="#f5c63a" />
+					<stop offset="1" stop-color="#fff2b0" />
+				</linearGradient>
+			</defs>
+			<circle cx="60" cy="60" r="54" stroke="#8fa8ff" stroke-opacity="0.25" stroke-width="1.5" />
+			<g class="pt-spin2">
+				<circle cx="60" cy="60" r="38" stroke="url(#pt-gold)" stroke-width="2" stroke-dasharray="5 9" stroke-linecap="round" />
+				<circle cx="98" cy="60" r="3.5" fill="#5eead4" />
+			</g>
+			<g class="pt-spin">
+				<circle cx="60" cy="6" r="9" stroke="#f5c63a" stroke-opacity="0.35" />
+				<circle cx="60" cy="6" r="5" fill="#f5c63a" />
+			</g>
+			<text x="60" y="74" text-anchor="middle" font-size="40" font-weight="800" fill="url(#pt-gold)" font-family="system-ui, sans-serif">{initial}</text>
+		</svg>
+		<div class="pt-cap">正在前往<b id="pt-label"></b></div>
+		<div class="pt-bar"><i></i></div>
+	</div>
+</div>
+
+<script is:inline>
+	(function () {
+		var ov = document.getElementById('pt-overlay');
+		if (!ov) return;
+		var labelEl = document.getElementById('pt-label');
+		var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+		var KEY = 'pt.v1';
+		var anim = null;
+		var EASE = 'cubic-bezier(.65,0,.35,1)';
+
+		function maxR(x, y) {
+			return Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y)) + 8;
+		}
+		function circle(r, x, y) {
+			return 'circle(' + r + 'px at ' + x + 'px ' + y + 'px)';
+		}
+		function stopAnim() {
+			if (anim) {
+				anim.cancel();
+				anim = null;
+			}
+		}
+		function hide() {
+			stopAnim();
+			ov.hidden = true;
+			ov.className = '';
+			ov.style.clipPath = '';
+		}
+		// 圆形从点击位置扩张，盖住整个页面
+		function expand(x, y, done) {
+			stopAnim();
+			ov.hidden = false;
+			ov.className = 'pt-on pt-go';
+			anim = ov.animate([{ clipPath: circle(0, x, y) }, { clipPath: circle(maxR(x, y), x, y) }], { duration: 420, easing: EASE, fill: 'forwards' });
+			anim.onfinish = done;
+		}
+		// 新页面就绪后，圆形收缩回点击位置，露出页面
+		function shrink(x, y) {
+			stopAnim();
+			ov.classList.remove('pt-on');
+			anim = ov.animate([{ clipPath: circle(maxR(x, y), x, y) }, { clipPath: circle(0, x, y) }], { duration: 560, easing: EASE, fill: 'forwards' });
+			anim.onfinish = hide;
+		}
+
+		// ---- 到达页：若是由本站动画跳转而来，先保持覆盖，再揭幕 ----
+		var d = null;
+		try {
+			d = JSON.parse(sessionStorage.getItem(KEY) || 'null');
+			sessionStorage.removeItem(KEY);
+		} catch (e) {}
+		if (d && !reduce && Date.now() - d.t < 6000) {
+			ov.hidden = false;
+			ov.className = 'pt-on pt-arriving';
+			labelEl.textContent = d.l || '';
+			var reveal = function () {
+				setTimeout(function () {
+					shrink(d.x, d.y);
+				}, 160);
+			};
+			if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', reveal);
+			else reveal();
+		}
+
+		// ---- 离开页：拦截站内链接点击 ----
+		document.addEventListener('click', function (e) {
+			if (reduce || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+			var a = e.target.closest && e.target.closest('a[href]');
+			if (!a || (a.target && a.target !== '_self') || a.hasAttribute('download') || a.hasAttribute('data-no-transition')) return;
+			var u;
+			try {
+				u = new URL(a.href, location.href);
+			} catch (err) {
+				return;
+			}
+			if (u.origin !== location.origin || !/^https?:$/.test(u.protocol)) return;
+			if (u.pathname === location.pathname && u.search === location.search) return; // 同页或仅锚点
+			var x = e.clientX;
+			var y = e.clientY;
+			if (!e.detail || (!x && !y)) {
+				var r = a.getBoundingClientRect();
+				x = r.left + r.width / 2;
+				y = r.top + r.height / 2;
+			}
+			var h = a.querySelector('h1,h2,h3');
+			var text = (a.getAttribute('data-pt-label') || a.getAttribute('aria-label') || (h && h.textContent) || a.textContent || '').replace(/\s+/g, ' ').trim();
+			if (text.length > 18) text = text.slice(0, 17) + '…';
+			try {
+				sessionStorage.setItem(KEY, JSON.stringify({ x: x, y: y, l: text, t: Date.now() }));
+			} catch (err) {
+				return; // 无法保存状态时退回普通跳转
+			}
+			e.preventDefault();
+			labelEl.textContent = text;
+			var started = false;
+			var go = function () {
+				if (started) return;
+				started = true;
+				location.href = u.href;
+			};
+			expand(x, y, go);
+			setTimeout(go, 700);
+			// 保险：跳转长时间没有发生时撤掉遮罩，避免页面卡死
+			setTimeout(function () {
+				if (!ov.hidden) {
+					try {
+						sessionStorage.removeItem(KEY);
+					} catch (err) {}
+					shrink(x, y);
+				}
+			}, 6500);
+		});
+
+		// 从浏览器缓存恢复（后退/前进）时，清掉残留遮罩
+		window.addEventListener('pageshow', function (e) {
+			if (e.persisted) {
+				hide();
+				try {
+					sessionStorage.removeItem(KEY);
+				} catch (err) {}
+			}
+		});
+	})();
+</script>

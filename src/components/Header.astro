@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import { SITE_TITLE } from '../consts';
+import PageTransition from './PageTransition.astro';
 
 const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
 // 听文章：在文章页里是「开始/暂停朗读」，在其他页面是「跳转到最新文章并打开朗读」
@@ -18,6 +19,8 @@ const links = [
 const isActive = (href: string) =>
 	href === '/' ? path === '/' : path === href || path.startsWith(href + '/');
 ---
+
+<PageTransition title={SITE_TITLE} />
 
 <script is:inline>
 	(function () {
