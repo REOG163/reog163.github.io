@@ -11,7 +11,7 @@ const projects = [
 		desc: '基于 Astro 构建的中文个人博客，支持深色模式、站内搜索、标签分类、RSS 订阅与评论，通过 GitHub Actions 自动部署到 GitHub Pages。',
 		tags: ['Astro', 'GitHub Actions', 'GitHub Pages', 'Giscus'],
 		status: '运行中',
-		// 换了一个加载更稳定的测试视频
+		// 注意：路径前面必须要有斜杠 /
 		video: '/aac.mp4',
 		image: '', 
 		links: [
@@ -303,7 +303,7 @@ const palettes = [
 											muted 
 											loop 
 											playsinline
-											preload="auto"
+											preload="metadata"
 										/>
 									) : p.image ? (
 										<img class="cover" src={p.image} alt={p.title} loading="lazy" />
@@ -358,16 +358,19 @@ const palettes = [
 		</main>
 		<Footer />
 
-		<!-- 强制视频播放的兜底脚本 -->
+		<!-- 强制视频播放 & 降速的兜底脚本 -->
 		<script>
 			document.addEventListener('astro:page-load', () => {
 				const videos = document.querySelectorAll('.js-video');
 				videos.forEach((video: any) => {
-					// 尝试调用 play()，解决部分浏览器因为策略导致卡在第一帧的问题
+					// 将视频速度降为 0.6 倍，解决原视频播放太快的问题
+					video.playbackRate = 0.6; 
+
+					// 尝试播放
 					const playPromise = video.play();
 					if (playPromise !== undefined) {
 						playPromise.catch((error: any) => {
-							console.log('浏览器阻止了自动播放，可能需要用户交互:', error);
+							console.log('浏览器拦截了自动播放:', error);
 						});
 					}
 				});
