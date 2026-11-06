@@ -5,15 +5,14 @@ import Footer from '../components/Footer.astro';
 import { SITE_TITLE } from '../consts';
 
 // ===== 在这里添加你的作品，复制一段 { ... } 即可 =====
-// 优先显示 video，其次 image，都没有则显示动态 SVG 封面
 const projects = [
 	{
 		title: '本站：REOG 个人网站',
 		desc: '基于 Astro 构建的中文个人博客，支持深色模式、站内搜索、标签分类、RSS 订阅与评论，通过 GitHub Actions 自动部署到 GitHub Pages。',
 		tags: ['Astro', 'GitHub Actions', 'GitHub Pages', 'Giscus'],
 		status: '运行中',
-		// 为你准备的默认酷炫视频（网络加载），你可以换成自己放在 public 里的视频，比如 '/my-video.mp4'
-		video: 'https://assets.mixkit.co/videos/preview/mixkit-abstract-technology-blue-network-connections-32899-aiodownloader--#精品视频素材 #片头 炫酷片头转场素材-9855167.mp4',
+		// 换了一个加载更稳定的测试视频
+		video: 'https://cdn.pixabay.com/video/2023/03/28/156136-812262469_large.mp4',
 		image: '', 
 		links: [
 			{ label: '访问网站', href: 'https://reog163.github.io' },
@@ -65,7 +64,6 @@ const palettes = [
 				gap: 18px;
 			}
 
-			/* 基础卡片样式 + 入场动画 */
 			.card {
 				display: flex;
 				flex-direction: column;
@@ -93,7 +91,6 @@ const palettes = [
 				border-color: #5eead4;
 			}
 
-			/* 悬浮高光扫过 */
 			.card::after {
 				content: '';
 				position: absolute;
@@ -131,44 +128,33 @@ const palettes = [
 				transform: scale(1.06);
 			}
 
-			/* ========== 原 SVG 动效保留（当没有视频/图片时显示） ========== */
+			/* 原 SVG 动效 */
 			.orbit-rings circle {
 				transform-origin: 320px 100px;
 				animation: radar-pulse 4s ease-out infinite;
 			}
 			.orbit-rings circle:nth-child(2) { animation-delay: 1.3s; }
 			.orbit-rings circle:nth-child(3) { animation-delay: 2.6s; }
-
 			@keyframes radar-pulse {
 				0% { transform: scale(0.8); opacity: 0; stroke-width: 2px;}
 				20% { opacity: 0.4; }
 				100% { transform: scale(1.2); opacity: 0; stroke-width: 0.5px;}
 			}
-
-			.orbit-dot {
-				animation: dot-float 5s ease-in-out infinite;
-			}
+			.orbit-dot { animation: dot-float 5s ease-in-out infinite; }
 			@keyframes dot-float {
 				0%, 100% { transform: translate(0, 0); filter: drop-shadow(0 0 4px currentColor); }
 				50% { transform: translate(15px, -15px); filter: drop-shadow(0 0 10px currentColor); }
 			}
-
-			.orbit-number {
-				animation: number-float 6s ease-in-out infinite;
-			}
+			.orbit-number { animation: number-float 6s ease-in-out infinite; }
 			@keyframes number-float {
 				0%, 100% { transform: translateY(0); opacity: 0.9; }
 				50% { transform: translateY(-6px); opacity: 1; text-shadow: 0 0 15px rgba(255,255,255,0.3); }
 			}
-
-			.cover-bg {
-				animation: bg-pulse 8s ease-in-out infinite alternate;
-			}
+			.cover-bg { animation: bg-pulse 8s ease-in-out infinite alternate; }
 			@keyframes bg-pulse {
 				0% { filter: brightness(1); }
 				100% { filter: brightness(1.2); }
 			}
-			/* ================================= */
 
 			.body {
 				padding: 16px 18px 18px;
@@ -184,7 +170,7 @@ const palettes = [
 				gap: 8px;
 			}
 
-			/* 重点文字：黄金流光特效 */
+			/* 黄金流光文字 */
 			.card h2, .soon b {
 				margin: 0;
 				font-size: 19px;
@@ -200,12 +186,9 @@ const palettes = [
 				animation: shine 4s linear infinite;
 				filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2));
 			}
+			@keyframes shine { to { background-position: 200% center; } }
 
-			@keyframes shine {
-				to { background-position: 200% center; }
-			}
-
-			/* 状态标签优化 */
+			/* 状态标签 */
 			.status {
 				flex: none;
 				font-size: 12px;
@@ -233,27 +216,11 @@ const palettes = [
 				0%, 100% { opacity: 1; transform: scale(1); }
 				50% { opacity: 0.4; transform: scale(0.8); }
 			}
+			:global(html[data-theme='dark']) .status { color: #5eead4; border-color: rgba(94, 234, 212, 0.4); }
+			:global(html[data-theme='dark']) .status::before { background: #5eead4; box-shadow: 0 0 6px #5eead4; }
 
-			:global(html[data-theme='dark']) .status {
-				color: #5eead4;
-				border-color: rgba(94, 234, 212, 0.4);
-			}
-			:global(html[data-theme='dark']) .status::before {
-				background: #5eead4;
-				box-shadow: 0 0 6px #5eead4;
-			}
-
-			.card p {
-				margin: 0;
-				font-size: 15px;
-				line-height: 1.75;
-				color: rgb(var(--gray-dark));
-			}
-			.tags {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 6px;
-			}
+			.card p { margin: 0; font-size: 15px; line-height: 1.75; color: rgb(var(--gray-dark)); }
+			.tags { display: flex; flex-wrap: wrap; gap: 6px; }
 			.tags span {
 				font-size: 12px;
 				padding: 2px 10px;
@@ -263,16 +230,8 @@ const palettes = [
 				transition: all 0.2s ease;
 				border: 1px solid transparent;
 			}
-			.card:hover .tags span {
-				background: rgba(var(--gray), 0.15);
-				border-color: rgba(var(--gray), 0.3);
-			}
-			.links {
-				display: flex;
-				gap: 14px;
-				margin-top: auto;
-				padding-top: 10px;
-			}
+			.card:hover .tags span { background: rgba(var(--gray), 0.15); border-color: rgba(var(--gray), 0.3); }
+			.links { display: flex; gap: 14px; margin-top: auto; padding-top: 10px; }
 			.links a {
 				font-size: 14px;
 				font-weight: 600;
@@ -280,9 +239,7 @@ const palettes = [
 				text-decoration: none;
 				transition: opacity 0.2s;
 			}
-			.links a:hover {
-				opacity: 0.8;
-			}
+			.links a:hover { opacity: 0.8; }
 
 			/* 筹备中卡片 */
 			.soon {
@@ -296,19 +253,13 @@ const palettes = [
 				border-color: rgba(var(--gray), 0.4);
 				transition: all 0.4s ease;
 			}
-			.soon:hover {
-				background: rgba(var(--gray-light), 0.2);
-				border-color: rgba(94, 234, 212, 0.6);
-			}
-			:global(html[data-theme='dark']) .soon {
-				border-color: #26335c;
-			}
+			.soon:hover { background: rgba(var(--gray-light), 0.2); border-color: rgba(94, 234, 212, 0.6); }
+			:global(html[data-theme='dark']) .soon { border-color: #26335c; }
 			:global(html[data-theme='dark']) .soon:hover {
 				border-color: #5eead4;
 				background: rgba(26, 36, 64, 0.6);
 				box-shadow: 0 0 30px rgba(94, 234, 212, 0.08);
 			}
-
 			.soon-icon {
 				margin-bottom: 12px;
 				color: var(--accent);
@@ -320,29 +271,13 @@ const palettes = [
 				0%, 100% { transform: translateY(0); }
 				50% { transform: translateY(-8px); }
 			}
+			.soon span { font-size: 14px; color: rgb(var(--gray)); margin-top: 4px; }
 
-			.soon span {
-				font-size: 14px;
-				color: rgb(var(--gray));
-				margin-top: 4px;
-			}
+			@media (min-width: 720px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+			:global(html[data-theme='dark']) .card { background: rgba(26, 36, 64, 0.95); border-color: #26335c; }
 
-			@media (min-width: 720px) {
-				.grid {
-					grid-template-columns: repeat(2, 1fr);
-				}
-			}
-
-			:global(html[data-theme='dark']) .card {
-				background: rgba(26, 36, 64, 0.95);
-				border-color: #26335c;
-			}
-
-			/* 针对减少动效偏好，隐藏视频 */
 			@media (prefers-reduced-motion: reduce) {
-				.cover-wrap video {
-					display: none;
-				}
+				.cover-wrap video { display: none; }
 			}
 		</style>
 	</head>
@@ -360,20 +295,18 @@ const palettes = [
 						return (
 							<div class="card" style={`animation-delay: ${i * 0.15}s;`}>
 								<div class="cover-wrap">
-									{/* 优先级 1：视频 */}
 									{p.video ? (
 										<video 
-											class="cover" 
+											class="cover js-video" 
 											src={p.video} 
 											autoplay 
 											muted 
 											loop 
-											playsinline 
+											playsinline
+											preload="auto"
 										/>
-									/* 优先级 2：图片 */
 									) : p.image ? (
 										<img class="cover" src={p.image} alt={p.title} loading="lazy" />
-									/* 优先级 3：动态 SVG */
 									) : (
 										<svg class="cover" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
 											<defs>
@@ -382,17 +315,13 @@ const palettes = [
 													<stop offset="1" stop-color={c[1]} />
 												</linearGradient>
 											</defs>
-											
 											<rect width="400" height="200" fill={`url(#g${i})`} class="cover-bg" />
-											
 											<g fill="none" stroke="#fff" stroke-opacity="0.3" class="orbit-rings">
 												<circle cx="320" cy="100" r="90" />
 												<circle cx="320" cy="100" r="56" />
 												<circle cx="320" cy="100" r="24" />
 											</g>
-											
 											<circle cx="230" cy="100" r="6" fill={c[2]} class="orbit-dot" style={`color: ${c[2]};`} />
-											
 											<text x="28" y="116" font-size="44" font-weight="800" fill="#fff" font-family="system-ui, sans-serif" letter-spacing="2" class="orbit-number">
 												{String(i + 1).padStart(2, '0')}
 											</text>
@@ -428,5 +357,21 @@ const palettes = [
 			</div>
 		</main>
 		<Footer />
+
+		<!-- 强制视频播放的兜底脚本 -->
+		<script>
+			document.addEventListener('astro:page-load', () => {
+				const videos = document.querySelectorAll('.js-video');
+				videos.forEach((video: any) => {
+					// 尝试调用 play()，解决部分浏览器因为策略导致卡在第一帧的问题
+					const playPromise = video.play();
+					if (playPromise !== undefined) {
+						playPromise.catch((error: any) => {
+							console.log('浏览器阻止了自动播放，可能需要用户交互:', error);
+						});
+					}
+				});
+			});
+		</script>
 	</body>
 </html>
