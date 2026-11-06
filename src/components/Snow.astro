@@ -1,6 +1,6 @@
 ---
 // src/components/Snow.astro
-// 主页下雪特效（轻量、可关闭、尊重减少动效偏好）
+// 主页掉落少量像素猫爪（轻量、可关闭、尊重减少动效偏好）
 ---
 
 <div class="snow" id="snow" aria-hidden="true"></div>
@@ -14,43 +14,51 @@
     overflow: hidden;
   }
 
-  .snow .flake {
+  .snow .paw {
     position: absolute;
-    top: -12px;
-    border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 0 4px rgba(255, 255, 255, 0.6);
+    top: 0;
+    width: 20px;
+    height: 20px;
+    /* 12x10 像素猫爪：4 个趾垫 + 1 个掌垫 */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 10' shape-rendering='crispEdges'%3E%3Cg fill='%23ffffff'%3E%3Crect x='0' y='1' width='2' height='2'/%3E%3Crect x='3' y='0' width='2' height='2'/%3E%3Crect x='6' y='0' width='2' height='2'/%3E%3Crect x='9' y='1' width='2' height='2'/%3E%3Crect x='3' y='4' width='6' height='1'/%3E%3Crect x='1' y='5' width='10' height='1'/%3E%3Crect x='1' y='6' width='10' height='1'/%3E%3Crect x='2' y='7' width='8' height='1'/%3E%3Crect x='4' y='8' width='4' height='1'/%3E%3C/g%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.35));
     will-change: transform;
-    animation-name: snow-fall;
+    animation-name: paw-fall;
     animation-timing-function: linear;
     animation-iteration-count: infinite;
   }
 
-  .snow .flake.wobble {
-    animation-name: snow-fall-wobble;
+  .snow .paw.wobble {
+    animation-name: paw-fall-wobble;
   }
 
-  @keyframes snow-fall {
+  @keyframes paw-fall {
+    from {
+      transform: translate3d(0, -10vh, 0) rotate(-10deg);
+    }
     to {
-      transform: translateY(110vh);
+      transform: translate3d(0, 110vh, 0) rotate(10deg);
     }
   }
 
-  @keyframes snow-fall-wobble {
+  @keyframes paw-fall-wobble {
     0% {
-      transform: translateY(0) translateX(0);
+      transform: translate3d(0, -10vh, 0) rotate(-15deg);
     }
     25% {
-      transform: translateY(27.5vh) translateX(14px);
+      transform: translate3d(22px, 20vh, 0) rotate(8deg);
     }
     50% {
-      transform: translateY(55vh) translateX(-10px);
+      transform: translate3d(-16px, 50vh, 0) rotate(-6deg);
     }
     75% {
-      transform: translateY(82.5vh) translateX(12px);
+      transform: translate3d(18px, 80vh, 0) rotate(12deg);
     }
     100% {
-      transform: translateY(110vh) translateX(0);
+      transform: translate3d(0, 110vh, 0) rotate(-15deg);
     }
   }
 
@@ -75,30 +83,26 @@
       return;
     }
 
-    const COUNT = 56;
+    const COUNT = 18; // 少量猫爪
     const frag = document.createDocumentFragment();
 
     for (let i = 0; i < COUNT; i++) {
-      const flake = document.createElement('span');
-      flake.className = 'flake' + (Math.random() > 0.5 ? ' wobble' : '');
+      const paw = document.createElement('span');
+      paw.className = 'paw' + (Math.random() > 0.5 ? ' wobble' : '');
 
-      const size = 3 + Math.random() * 5; // 3~8px，更容易看见
-      const left = Math.random() * 100;
-      const duration = 7 + Math.random() * 12; // 7~19s
+      const size = 16 + Math.random() * 14; // 16~30px，像素画太小会糊
+      const left = Math.random() * 98;
+      const duration = 14 + Math.random() * 16; // 14~30s，飘得比雪慢一些
       const delay = -Math.random() * duration;
 
-      flake.style.width = size + 'px';
-      flake.style.height = size + 'px';
-      flake.style.left = left + '%';
-      flake.style.opacity = String(0.55 + Math.random() * 0.45);
-      flake.style.animationDuration = duration + 's';
-      flake.style.animationDelay = delay + 's';
+      paw.style.width = size + 'px';
+      paw.style.height = size + 'px';
+      paw.style.left = left + '%';
+      paw.style.opacity = String(0.45 + Math.random() * 0.45);
+      paw.style.animationDuration = duration + 's';
+      paw.style.animationDelay = delay + 's';
 
-      if (size > 5) {
-        flake.style.filter = 'blur(0.5px)';
-      }
-
-      frag.appendChild(flake);
+      frag.appendChild(paw);
     }
 
     root.appendChild(frag);
