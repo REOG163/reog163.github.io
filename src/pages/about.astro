@@ -60,26 +60,26 @@ const doing = [
 			/* 头像与星环区域 */
 			.avatar-container {
 				position: relative;
-				width: 180px;
-				height: 180px;
+				width: 200px;
+				height: 200px;
 				margin: 0 auto 20px;
 				display: flex;
 				align-items: center;
 				justify-content: center;
 			}
 
-			/* 你的头像 */
+			/* 你的头像：完美贴合内环 */
 			.avatar-img {
 				position: absolute;
-				width: 110px;
-				height: 110px;
-				object-fit: contain;
+				width: 80%; /* 恰好等于 SVG 内环的 160px/200px */
+				height: 80%;
+				object-fit: cover;
 				z-index: 2;
-				border-radius: 50%;
-				/* 如果你的图片带有纯白背景，下面的代码会自动把白底过滤掉 */
-				mix-blend-mode: multiply; 
-				/* 增加一点微弱的发光感，让头像和背景更好地融合 */
-				filter: drop-shadow(0 0 12px rgba(94, 234, 212, 0.3));
+				border-radius: 50%; /* 把方形 JPEG 裁成圆形 */
+				/* 去掉变暗的正片叠底，还原真实颜色 */
+				background-color: #fff; 
+				/* 加一点淡淡的青蓝色光晕，和星环呼应 */
+				box-shadow: 0 0 20px rgba(94, 234, 212, 0.2), inset 0 0 10px rgba(0,0,0,0.1);
 			}
 
 			/* 旋转的星环 */
@@ -116,13 +116,32 @@ const doing = [
 				letter-spacing: 0.2em;
 				color: #8fa8ff;
 			}
+
+			/* 黄金渐变 REOG */
 			.hero h1 {
 				margin: 0;
-				font-size: 44px;
+				font-size: 48px;
 				line-height: 1.15;
 				letter-spacing: 0.05em;
-				color: #fff;
+				font-weight: 800;
+				/* 黄金质感渐变 */
+				background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #b38728 50%, #fbf5b7 75%, #aa771c 100%);
+				background-size: 200% auto;
+				-webkit-background-clip: text;
+				background-clip: text;
+				-webkit-text-fill-color: transparent;
+				color: transparent; /* 后备方案 */
+				/* 阴影增强立体金属感 */
+				filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6));
+				animation: shine 4s linear infinite;
 			}
+
+			@keyframes shine {
+				to {
+					background-position: 200% center;
+				}
+			}
+
 			.hero .tagline {
 				margin: 12px auto 0;
 				max-width: 520px;
@@ -295,7 +314,7 @@ const doing = [
 					padding: 72px 0 60px;
 				}
 				.hero h1 {
-					font-size: 60px;
+					font-size: 64px;
 				}
 				.contact-bar {
 					flex-direction: row;
@@ -314,12 +333,8 @@ const doing = [
 					grid-template-columns: 1fr 1fr;
 				}
 				.avatar-container {
-					width: 220px;
-					height: 220px;
-				}
-				.avatar-img {
-					width: 130px;
-					height: 130px;
+					width: 240px;
+					height: 240px;
 				}
 			}
 
@@ -347,10 +362,10 @@ const doing = [
 				<div class="wrap">
 					<!-- 头像与星环容器 -->
 					<div class="avatar-container" aria-hidden="true">
-						<!-- 你的头像：请确保你的图片放在 public 目录下，并修改 src 的路径 -->
+						<!-- 修改了图片名称为 IMG_8747.jpeg -->
 						<img src="/IMG_8747.jpeg" alt="Avatar" class="avatar-img" />
 						
-						<!-- 升级版星环 -->
+						<!-- 星环 -->
 						<svg class="orbit-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
 							<defs>
 								<linearGradient id="ag" x1="0" y1="0" x2="1" y2="1">
@@ -362,18 +377,16 @@ const doing = [
 							<!-- 外圈虚线星轨 -->
 							<circle cx="100" cy="100" r="94" fill="none" stroke="url(#ag)" stroke-width="1.5" stroke-dasharray="12 8" opacity="0.6" />
 							
-							<!-- 内圈极细实线 -->
-							<circle cx="100" cy="100" r="80" fill="none" stroke="url(#ag)" stroke-width="1" opacity="0.25" />
+							<!-- 内圈极细实线 (头像宽高刚好 80%，即占 160，这里半径为 80，完美贴合) -->
+							<circle cx="100" cy="100" r="80" fill="none" stroke="url(#ag)" stroke-width="1.5" opacity="0.5" />
 
 							<!-- 第一组：顺时针旋转的星环与发光点 -->
 							<g class="spin">
-								<!-- 发光小点 -->
 								<circle cx="100" cy="6" r="5" fill="#5eead4" filter="drop-shadow(0 0 6px #5eead4)" />
-								<!-- 大一点的白点 -->
 								<circle cx="194" cy="100" r="3.5" fill="#fff" filter="drop-shadow(0 0 4px #fff)" />
 							</g>
 
-							<!-- 第二组：逆时针旋转的隐藏小点（制造空间交错感） -->
+							<!-- 第二组：逆时针旋转的隐藏小点 -->
 							<g class="spin-reverse">
 								<circle cx="20" cy="100" r="2.5" fill="#8fa8ff" filter="drop-shadow(0 0 5px #8fa8ff)" />
 							</g>
