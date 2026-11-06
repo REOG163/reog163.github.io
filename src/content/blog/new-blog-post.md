@@ -3,6 +3,7 @@ title: '别再收藏教程了：用“最小可运行版本”真正学会一项
 description: '一个把学习从“看过”变成“做过”的方法：先做最小可运行版本，再按失败点补知识。'
 pubDate: 'Nov 06 2026'
 category: '方法笔记'
+heroImage: '../../assets/IMG_1354.jpeg'
 tags: ['学习方法', '效率', '实践']
 pinned: false
 ---
