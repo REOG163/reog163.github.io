@@ -13,7 +13,8 @@ import { NOW } from '../data/now';
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    max-width: 100%;
+    max-width: min(100%, 520px);
+    box-sizing: border-box;
     padding: 8px 14px;
     border-radius: 999px;
     border: 1px solid rgba(var(--gray), 0.35);
@@ -44,5 +45,20 @@ import { NOW } from '../data/now';
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    min-width: 0;
+  }
+  @media (max-width: 640px) {
+    .now-badge {
+      max-width: 100%;
+      width: 100%;
+      border-radius: 12px;
+      align-items: flex-start;
+    }
+    .text {
+      white-space: normal;
+      overflow: visible;
+      text-overflow: unset;
+      word-break: break-word;
+    }
   }
 </style>

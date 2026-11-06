@@ -10,22 +10,22 @@ const year = new Date().getFullYear();
 	<div class="now-wrap">
 		<NowBadge />
 	</div>
-	<div>© {year} REOG · 保留所有权利</div>
+	<div class="copy">© {year} REOG · 保留所有权利</div>
 	<div class="links">
-		<a href="/rss.xml">RSS 订阅</a>
-		<a href="/search">站内搜索</a>
-		<a href="/stats">写作仪表盘</a>
+		<a href="/rss.xml">RSS</a>
+		<a href="/search">搜索</a>
+		<a href="/stats">仪表盘</a>
 		<a href="/tools">小工具</a>
-		<a href="/changelog">建站日志</a>
+		<a href="/changelog">日志</a>
 		<a href="/now">此刻</a>
-		<a href="/about">联系我</a>
+		<a href="/about">联系</a>
 		<button
 			type="button"
 			data-share
 			data-share-scope="site"
 			data-share-url="/"
 			data-share-title={SITE_TITLE}
-			data-share-desc={SITE_DESCRIPTION}>分享本站</button
+			data-share-desc={SITE_DESCRIPTION}>分享</button
 		>
 	</div>
 </footer>
@@ -40,17 +40,26 @@ const year = new Date().getFullYear();
 		color: rgb(var(--gray));
 		font-size: 14px;
 		line-height: 1.9;
+		box-sizing: border-box;
+		overflow-x: hidden;
 	}
 	.now-wrap {
 		display: flex;
 		justify-content: center;
 		margin-bottom: 16px;
+		padding: 0 4px;
+		box-sizing: border-box;
+		width: 100%;
+	}
+	.copy {
+		margin-bottom: 6px;
 	}
 	.links {
 		display: flex;
 		justify-content: center;
 		flex-wrap: wrap;
-		gap: 4px 18px;
+		gap: 8px 14px;
+		padding: 0 8px;
 	}
 	.links a,
 	.links button {
@@ -61,9 +70,19 @@ const year = new Date().getFullYear();
 		padding: 0;
 		font: inherit;
 		cursor: pointer;
+		white-space: nowrap;
 	}
 	.links a:hover,
 	.links button:hover {
 		color: var(--accent);
+	}
+	@media (max-width: 640px) {
+		footer {
+			padding: 1.5em 12px 3em;
+			font-size: 13px;
+		}
+		.links {
+			gap: 10px 12px;
+		}
 	}
 </style>
