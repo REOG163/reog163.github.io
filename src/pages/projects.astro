@@ -56,11 +56,14 @@ const palettes = [
 				font-size: 16px;
 				color: rgb(var(--gray));
 			}
+			
 			.grid {
 				display: grid;
 				grid-template-columns: 1fr;
 				gap: 18px;
 			}
+
+			/* 基础卡片样式 + 入场动画 */
 			.card {
 				display: flex;
 				flex-direction: column;
@@ -68,14 +71,72 @@ const palettes = [
 				border-radius: 14px;
 				border: 1px solid rgba(var(--gray), 0.3);
 				background: rgba(var(--gray-light), 0.35);
+				position: relative;
+				transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease, border-color 0.4s ease;
+				/* 默认入场动画 */
+				animation: cardIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+			}
+
+			@keyframes cardIn {
+				from {
+					opacity: 0;
+					transform: translateY(30px) scale(0.98);
+				}
+				to {
+					opacity: 1;
+					transform: translateY(0) scale(1);
+				}
+			}
+
+			/* 悬浮：整体上浮 + 边框发光 */
+			.card:hover {
+				transform: translateY(-6px);
+				border-color: rgba(94, 234, 212, 0.5);
+				box-shadow: 0 16px 32px -10px rgba(0, 0, 0, 0.1);
+			}
+			:global(html[data-theme='dark']) .card:hover {
+				box-shadow: 0 16px 32px -10px rgba(0, 0, 0, 0.6), 0 0 24px rgba(94, 234, 212, 0.15);
+				border-color: #5eead4;
+			}
+
+			/* 悬浮：高光扫过特效 */
+			.card::after {
+				content: '';
+				position: absolute;
+				top: 0; left: -150%;
+				width: 50%; height: 100%;
+				background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+				transform: skewX(-25deg);
+				transition: left 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+				pointer-events: none;
+				z-index: 10;
+			}
+			.card:hover::after {
+				left: 150%;
+			}
+			:global(html[data-theme='dark']) .card::after {
+				background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+			}
+
+			/* 封面图包装器（防止图片放大时溢出） */
+			.cover-wrap {
+				width: 100%;
+				aspect-ratio: 2 / 1;
+				overflow: hidden;
+				background: #0b1020;
+				position: relative;
 			}
 			.cover {
 				display: block;
 				width: 100%;
-				height: auto;
-				aspect-ratio: 2 / 1;
+				height: 100%;
 				object-fit: cover;
+				transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
 			}
+			.card:hover .cover {
+				transform: scale(1.06);
+			}
+
 			.body {
 				padding: 16px 18px 18px;
 				display: flex;
@@ -89,23 +150,70 @@ const palettes = [
 				align-items: center;
 				gap: 8px;
 			}
-			.card h2 {
+
+			/* 重点文字：黄金流光特效 */
+			.card h2, .soon b {
 				margin: 0;
 				font-size: 19px;
 				line-height: 1.4;
-				color: rgb(var(--black));
+				font-weight: 800;
+				letter-spacing: 0.5px;
+				/* 黄金渐变 */
+				background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #b38728 50%, #fbf5b7 75%, #aa771c 100%);
+				background-size: 200% auto;
+				-webkit-background-clip: text;
+				background-clip: text;
+				-webkit-text-fill-color: transparent;
+				color: transparent;
+				/* 流光动画 */
+				animation: shine 4s linear infinite;
+				/* 增强文字立体可读性 */
+				filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2));
 			}
+
+			@keyframes shine {
+				to { background-position: 200% center; }
+			}
+
+			/* 状态标签优化 */
 			.status {
 				flex: none;
 				font-size: 12px;
-				padding: 1px 10px;
+				padding: 2px 10px;
 				border-radius: 999px;
-				background: rgba(94, 234, 212, 0.2);
+				background: rgba(94, 234, 212, 0.15);
 				color: #0f9d8a;
+				border: 1px solid rgba(94, 234, 212, 0.3);
+				box-shadow: 0 0 10px rgba(94, 234, 212, 0.05);
+				display: flex;
+				align-items: center;
+				gap: 6px;
+				font-weight: 600;
 			}
+			/* 状态标签的呼吸绿点 */
+			.status::before {
+				content: '';
+				width: 6px;
+				height: 6px;
+				border-radius: 50%;
+				background: #0f9d8a;
+				box-shadow: 0 0 6px #0f9d8a;
+				animation: blink 2s infinite ease-in-out;
+			}
+			@keyframes blink {
+				0%, 100% { opacity: 1; transform: scale(1); }
+				50% { opacity: 0.4; transform: scale(0.8); }
+			}
+
 			:global(html[data-theme='dark']) .status {
 				color: #5eead4;
+				border-color: rgba(94, 234, 212, 0.4);
 			}
+			:global(html[data-theme='dark']) .status::before {
+				background: #5eead4;
+				box-shadow: 0 0 6px #5eead4;
+			}
+
 			.card p {
 				margin: 0;
 				font-size: 15px;
@@ -119,39 +227,78 @@ const palettes = [
 			}
 			.tags span {
 				font-size: 12px;
-				padding: 1px 10px;
-				border-radius: 999px;
-				background: rgb(var(--gray-light));
+				padding: 2px 10px;
+				border-radius: 6px;
+				background: rgba(var(--gray), 0.1);
 				color: rgb(var(--gray-dark));
+				transition: all 0.2s ease;
+				border: 1px solid transparent;
+			}
+			.card:hover .tags span {
+				background: rgba(var(--gray), 0.15);
+				border-color: rgba(var(--gray), 0.3);
 			}
 			.links {
 				display: flex;
 				gap: 14px;
 				margin-top: auto;
-				padding-top: 6px;
+				padding-top: 10px;
 			}
 			.links a {
 				font-size: 14px;
 				font-weight: 600;
 				color: var(--accent);
 				text-decoration: none;
+				transition: opacity 0.2s;
 			}
+			.links a:hover {
+				opacity: 0.8;
+			}
+
+			/* 筹备中卡片彻底美化 */
 			.soon {
 				align-items: center;
 				justify-content: center;
 				text-align: center;
 				border-style: dashed;
+				border-width: 2px;
 				padding: 36px 20px;
 				background: transparent;
+				border-color: rgba(var(--gray), 0.4);
+				transition: all 0.4s ease;
 			}
-			.soon b {
-				font-size: 17px;
-				color: rgb(var(--black));
+			.soon:hover {
+				background: rgba(var(--gray-light), 0.2);
+				border-color: rgba(94, 234, 212, 0.6);
 			}
+			:global(html[data-theme='dark']) .soon {
+				border-color: #26335c;
+			}
+			:global(html[data-theme='dark']) .soon:hover {
+				border-color: #5eead4;
+				background: rgba(26, 36, 64, 0.6);
+				box-shadow: 0 0 30px rgba(94, 234, 212, 0.08);
+			}
+
+			/* 悬浮图标 */
+			.soon-icon {
+				margin-bottom: 12px;
+				color: var(--accent);
+				animation: float 3s ease-in-out infinite;
+				display: flex;
+				justify-content: center;
+			}
+			@keyframes float {
+				0%, 100% { transform: translateY(0); }
+				50% { transform: translateY(-8px); }
+			}
+
 			.soon span {
 				font-size: 14px;
 				color: rgb(var(--gray));
+				margin-top: 4px;
 			}
+
 			@media (min-width: 720px) {
 				.grid {
 					grid-template-columns: repeat(2, 1fr);
@@ -161,10 +308,6 @@ const palettes = [
 			:global(html[data-theme='dark']) .card {
 				background: rgba(26, 36, 64, 0.95);
 				border-color: #26335c;
-			}
-			:global(html[data-theme='dark']) .tag {
-				background: #1a2440;
-				color: #aab6d3;
 			}
 		</style>
 	</head>
@@ -180,27 +323,29 @@ const palettes = [
 					projects.map((p, i) => {
 						const c = palettes[i % palettes.length];
 						return (
-							<div class="card">
-								{p.image ? (
-									<img class="cover" src={p.image} alt={p.title} loading="lazy" />
-								) : (
-									<svg class="cover" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-										<defs>
-											<linearGradient id={`g${i}`} x1="0" y1="0" x2="1" y2="1">
-												<stop offset="0" stop-color={c[0]} />
-												<stop offset="1" stop-color={c[1]} />
-											</linearGradient>
-										</defs>
-										<rect width="400" height="200" fill={`url(#g${i})`} />
-										<g fill="none" stroke="#fff" stroke-opacity="0.18">
-											<circle cx="320" cy="100" r="90" />
-											<circle cx="320" cy="100" r="56" />
-											<circle cx="320" cy="100" r="24" />
-										</g>
-										<circle cx="230" cy="100" r="6" fill={c[2]} />
-										<text x="28" y="116" font-size="44" font-weight="800" fill="#fff" font-family="system-ui, sans-serif" letter-spacing="2">{String(i + 1).padStart(2, '0')}</text>
-									</svg>
-								)}
+							<div class="card" style={`animation-delay: ${i * 0.15}s;`}>
+								<div class="cover-wrap">
+									{p.image ? (
+										<img class="cover" src={p.image} alt={p.title} loading="lazy" />
+									) : (
+										<svg class="cover" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+											<defs>
+												<linearGradient id={`g${i}`} x1="0" y1="0" x2="1" y2="1">
+													<stop offset="0" stop-color={c[0]} />
+													<stop offset="1" stop-color={c[1]} />
+												</linearGradient>
+											</defs>
+											<rect width="400" height="200" fill={`url(#g${i})`} />
+											<g fill="none" stroke="#fff" stroke-opacity="0.18">
+												<circle cx="320" cy="100" r="90" />
+												<circle cx="320" cy="100" r="56" />
+												<circle cx="320" cy="100" r="24" />
+											</g>
+											<circle cx="230" cy="100" r="6" fill={c[2]} />
+											<text x="28" y="116" font-size="44" font-weight="800" fill="#fff" font-family="system-ui, sans-serif" letter-spacing="2">{String(i + 1).padStart(2, '0')}</text>
+										</svg>
+									)}
+								</div>
 								<div class="body">
 									<div class="head">
 										<h2>{p.title}</h2>
@@ -218,7 +363,12 @@ const palettes = [
 						);
 					})
 				}
-				<div class="card soon">
+				<div class="card soon" style="animation-delay: 0.4s;">
+					<div class="soon-icon">
+						<svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M12 5v14M5 12h14"/>
+						</svg>
+					</div>
 					<b>下一个作品筹备中</b>
 					<span>有新项目上线后会在这里更新</span>
 				</div>
