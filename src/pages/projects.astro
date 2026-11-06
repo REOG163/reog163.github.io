@@ -5,7 +5,6 @@ import Footer from '../components/Footer.astro';
 import { SITE_TITLE } from '../consts';
 
 // ===== 在这里添加你的作品，复制一段 { ... } 即可 =====
-// image 可选：把图片放进 public 文件夹，例如 '/my-project.jpg'；不填则自动生成封面
 const projects = [
 	{
 		title: '本站：REOG 个人网站',
@@ -73,22 +72,14 @@ const palettes = [
 				background: rgba(var(--gray-light), 0.35);
 				position: relative;
 				transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease, border-color 0.4s ease;
-				/* 默认入场动画 */
 				animation: cardIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
 			}
 
 			@keyframes cardIn {
-				from {
-					opacity: 0;
-					transform: translateY(30px) scale(0.98);
-				}
-				to {
-					opacity: 1;
-					transform: translateY(0) scale(1);
-				}
+				from { opacity: 0; transform: translateY(30px) scale(0.98); }
+				to { opacity: 1; transform: translateY(0) scale(1); }
 			}
 
-			/* 悬浮：整体上浮 + 边框发光 */
 			.card:hover {
 				transform: translateY(-6px);
 				border-color: rgba(94, 234, 212, 0.5);
@@ -99,7 +90,7 @@ const palettes = [
 				border-color: #5eead4;
 			}
 
-			/* 悬浮：高光扫过特效 */
+			/* 悬浮高光扫过 */
 			.card::after {
 				content: '';
 				position: absolute;
@@ -118,7 +109,7 @@ const palettes = [
 				background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
 			}
 
-			/* 封面图包装器（防止图片放大时溢出） */
+			/* 封面区域 */
 			.cover-wrap {
 				width: 100%;
 				aspect-ratio: 2 / 1;
@@ -136,6 +127,49 @@ const palettes = [
 			.card:hover .cover {
 				transform: scale(1.06);
 			}
+
+			/* ========== 封面内部动效 ========== */
+			/* 1. 雷达波纹扩散 */
+			.orbit-rings circle {
+				transform-origin: 320px 100px;
+				animation: radar-pulse 4s ease-out infinite;
+			}
+			.orbit-rings circle:nth-child(2) { animation-delay: 1.3s; }
+			.orbit-rings circle:nth-child(3) { animation-delay: 2.6s; }
+
+			@keyframes radar-pulse {
+				0% { transform: scale(0.8); opacity: 0; stroke-width: 2px;}
+				20% { opacity: 0.4; }
+				100% { transform: scale(1.2); opacity: 0; stroke-width: 0.5px;}
+			}
+
+			/* 2. 小圆点漂浮 */
+			.orbit-dot {
+				animation: dot-float 5s ease-in-out infinite;
+			}
+			@keyframes dot-float {
+				0%, 100% { transform: translate(0, 0); filter: drop-shadow(0 0 4px currentColor); }
+				50% { transform: translate(15px, -15px); filter: drop-shadow(0 0 10px currentColor); }
+			}
+
+			/* 3. 数字漂浮 + 光影变化 */
+			.orbit-number {
+				animation: number-float 6s ease-in-out infinite;
+			}
+			@keyframes number-float {
+				0%, 100% { transform: translateY(0); opacity: 0.9; }
+				50% { transform: translateY(-6px); opacity: 1; text-shadow: 0 0 15px rgba(255,255,255,0.3); }
+			}
+
+			/* 封面渐变背景的光影过渡 */
+			.cover-bg {
+				animation: bg-pulse 8s ease-in-out infinite alternate;
+			}
+			@keyframes bg-pulse {
+				0% { filter: brightness(1); }
+				100% { filter: brightness(1.2); }
+			}
+			/* ================================= */
 
 			.body {
 				padding: 16px 18px 18px;
@@ -158,16 +192,13 @@ const palettes = [
 				line-height: 1.4;
 				font-weight: 800;
 				letter-spacing: 0.5px;
-				/* 黄金渐变 */
 				background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #b38728 50%, #fbf5b7 75%, #aa771c 100%);
 				background-size: 200% auto;
 				-webkit-background-clip: text;
 				background-clip: text;
 				-webkit-text-fill-color: transparent;
 				color: transparent;
-				/* 流光动画 */
 				animation: shine 4s linear infinite;
-				/* 增强文字立体可读性 */
 				filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2));
 			}
 
@@ -190,7 +221,6 @@ const palettes = [
 				gap: 6px;
 				font-weight: 600;
 			}
-			/* 状态标签的呼吸绿点 */
 			.status::before {
 				content: '';
 				width: 6px;
@@ -255,7 +285,7 @@ const palettes = [
 				opacity: 0.8;
 			}
 
-			/* 筹备中卡片彻底美化 */
+			/* 筹备中卡片 */
 			.soon {
 				align-items: center;
 				justify-content: center;
@@ -280,7 +310,6 @@ const palettes = [
 				box-shadow: 0 0 30px rgba(94, 234, 212, 0.08);
 			}
 
-			/* 悬浮图标 */
 			.soon-icon {
 				margin-bottom: 12px;
 				color: var(--accent);
@@ -335,14 +364,24 @@ const palettes = [
 													<stop offset="1" stop-color={c[1]} />
 												</linearGradient>
 											</defs>
-											<rect width="400" height="200" fill={`url(#g${i})`} />
-											<g fill="none" stroke="#fff" stroke-opacity="0.18">
+											
+											{/* 动态渐变背景 */}
+											<rect width="400" height="200" fill={`url(#g${i})`} class="cover-bg" />
+											
+											{/* 雷达波纹圆环 */}
+											<g fill="none" stroke="#fff" stroke-opacity="0.3" class="orbit-rings">
 												<circle cx="320" cy="100" r="90" />
 												<circle cx="320" cy="100" r="56" />
 												<circle cx="320" cy="100" r="24" />
 											</g>
-											<circle cx="230" cy="100" r="6" fill={c[2]} />
-											<text x="28" y="116" font-size="44" font-weight="800" fill="#fff" font-family="system-ui, sans-serif" letter-spacing="2">{String(i + 1).padStart(2, '0')}</text>
+											
+											{/* 漂浮的青色光点 */}
+											<circle cx="230" cy="100" r="6" fill={c[2]} class="orbit-dot" style={`color: ${c[2]};`} />
+											
+											{/* 漂浮的数字 */}
+											<text x="28" y="116" font-size="44" font-weight="800" fill="#fff" font-family="system-ui, sans-serif" letter-spacing="2" class="orbit-number">
+												{String(i + 1).padStart(2, '0')}
+											</text>
 										</svg>
 									)}
 								</div>
