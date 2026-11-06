@@ -5,10 +5,6 @@ import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
----
-<main>
-  <HeroOrbit />
-</main>
 
 // Windows 桌面版下载地址（由 GitHub Actions 自动发布到 Releases）
 const DOWNLOAD_URL = 'https://github.com/REOG163/reog163.github.io/releases/latest/download/REOG-Setup.exe';
@@ -137,29 +133,6 @@ const fields = [
 				width: 100%;
 				max-width: 380px;
 				margin: 8px auto 0;
-			}
-			.art svg {
-				width: 100%;
-				height: auto;
-				display: block;
-			}
-			.spin {
-				transform-origin: 200px 200px;
-				animation: spin 40s linear infinite;
-			}
-			.spin.rev {
-				animation-duration: 60s;
-				animation-direction: reverse;
-			}
-			@keyframes spin {
-				to {
-					transform: rotate(360deg);
-				}
-			}
-			@media (prefers-reduced-motion: reduce) {
-				.spin {
-					animation: none;
-				}
 			}
 
 			/* Sections */
@@ -341,8 +314,8 @@ const fields = [
 	</head>
 	<body>
 		<Header />
-  <Snow />
-  <main class="home">
+		<Snow />
+		<main class="home">
 			<!-- Hero -->
 			<section class="hero">
 				<div class="wrap">
@@ -361,35 +334,7 @@ const fields = [
 						</div>
 					</div>
 					<div class="art" aria-hidden="true">
-						<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
-							<defs>
-								<radialGradient id="glow" cx="50%" cy="50%" r="50%">
-									<stop offset="0%" stop-color="#6d8bff" stop-opacity="0.55" />
-									<stop offset="100%" stop-color="#6d8bff" stop-opacity="0" />
-								</radialGradient>
-								<linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
-									<stop offset="0%" stop-color="#8fa8ff" />
-									<stop offset="100%" stop-color="#5eead4" />
-								</linearGradient>
-							</defs>
-							<circle cx="200" cy="200" r="190" fill="url(#glow)" />
-							<g stroke="#8fa8ff" stroke-opacity="0.15" stroke-width="1">
-								<path d="M0 100H400M0 200H400M0 300H400M100 0V400M200 0V400M300 0V400" />
-							</g>
-							<circle cx="200" cy="200" r="160" fill="none" stroke="#8fa8ff" stroke-opacity="0.25" />
-							<circle cx="200" cy="200" r="110" fill="none" stroke="url(#ring)" stroke-width="1.5" stroke-opacity="0.8" />
-							<circle cx="200" cy="200" r="60" fill="none" stroke="#8fa8ff" stroke-opacity="0.4" />
-							<g class="spin">
-								<circle cx="200" cy="40" r="7" fill="#5eead4" />
-								<circle cx="200" cy="310" r="5" fill="#8fa8ff" />
-							</g>
-							<g class="spin rev">
-								<circle cx="360" cy="200" r="6" fill="#fff" />
-								<circle cx="90" cy="200" r="4" fill="#5eead4" />
-							</g>
-							<rect x="176" y="176" width="48" height="48" rx="12" fill="#fff" />
-							<path d="M190 208V192h12a6 6 0 0 1 0 12h-12m10 0 8 4" fill="none" stroke="#14204a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-						</svg>
+						<HeroOrbit />
 					</div>
 				</div>
 			</section>
