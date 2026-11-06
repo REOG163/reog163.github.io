@@ -11,7 +11,6 @@ const projects = [
 		desc: '基于 Astro 构建的中文个人博客，支持深色模式、站内搜索、标签分类、RSS 订阅与评论，通过 GitHub Actions 自动部署到 GitHub Pages。',
 		tags: ['Astro', 'GitHub Actions', 'GitHub Pages', 'Giscus'],
 		status: '运行中',
-		// 留空即可显示庄重的红宝石印章
 		video: '',
 		image: '', 
 		links: [
@@ -94,9 +93,8 @@ const palettes = [
 				width: 100%;
 				aspect-ratio: 2 / 1;
 				overflow: hidden;
-				background: #080b13; /* 极度深邃的底色 */
+				background: #0b1020;
 				position: relative;
-				cursor: pointer; /* 提示可点击 */
 			}
 			.cover {
 				display: block;
@@ -105,80 +103,71 @@ const palettes = [
 				object-fit: cover;
 			}
 
-			/* ================= 庄重红宝石印章特效 ================= */
-			.seal-group {
-				transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-				transform-origin: center;
-			}
-			.cover-wrap:hover .seal-group {
-				transform: scale(1.05);
-			}
-
-			/* 外层金色流光旋转 */
-			.gold-flow {
-				animation: spin 8s linear infinite;
-				transform-origin: 200px 100px;
-			}
+			/* 01 动效 */
+			.tech-bg { fill: url(#bg-grad); }
+			.grid-lines { stroke: rgba(94, 234, 212, 0.15); stroke-width: 1; }
+			.core-ring { transform-origin: 320px 100px; }
+			.ring-fast { animation: spin 6s linear infinite; }
+			.ring-reverse { animation: spin 12s linear infinite reverse; }
+			.ring-slow { animation: spin 25s linear infinite; }
 			@keyframes spin { 100% { transform: rotate(360deg); } }
 
-			/* 红宝石内部流光动画 */
-			.ruby-gleam {
-				animation: gleam 4s ease-in-out infinite alternate;
-			}
-			@keyframes gleam {
-				0% { opacity: 0.3; }
-				100% { opacity: 0.8; }
+			.scanner { animation: scan 4s ease-in-out infinite; }
+			@keyframes scan {
+				0%, 100% { transform: translateY(-40px); opacity: 0; }
+				10%, 90% { opacity: 0.8; }
+				50% { transform: translateY(40px); opacity: 1; }
 			}
 
-			/* 悬停提示文字 */
-			.inspect-hint {
+			.energy-pulse {
+				transform-origin: 320px 100px;
+				animation: pulse-ring 3s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+			}
+			@keyframes pulse-ring {
+				0% { transform: scale(0.6); opacity: 0.8; }
+				100% { transform: scale(1.8); opacity: 0; }
+			}
+
+			.big-number {
+				animation: number-breathe 3s ease-in-out infinite alternate;
+				filter: drop-shadow(0 0 10px rgba(94, 234, 212, 0.8)) drop-shadow(0 0 20px rgba(94, 234, 212, 0.4));
+				font-family: 'Impact', 'Arial Black', system-ui, sans-serif;
+			}
+			@keyframes number-breathe {
+				0% { transform: scale(1); opacity: 0.85; }
+				100% { transform: scale(1.05); opacity: 1; }
+			}
+
+			.particle { animation: float-up 5s linear infinite; }
+			@keyframes float-up {
+				0% { transform: translateY(0); opacity: 0; }
+				20% { opacity: 1; }
+				80% { opacity: 1; }
+				100% { transform: translateY(-80px); opacity: 0; }
+			}
+
+			/* ================= 右下角悬浮高级印章 ================= */
+			.seal-corner {
 				position: absolute;
 				bottom: 12px;
-				left: 50%;
-				transform: translateX(-50%);
-				font-size: 12px;
-				letter-spacing: 2px;
-				color: rgba(212, 175, 55, 0.6);
-				opacity: 0;
-				transition: opacity 0.3s, transform 0.3s;
-				pointer-events: none;
-				font-family: monospace;
+				right: 12px;
+				width: 68px;
+				height: 68px;
+				cursor: pointer;
+				z-index: 10;
+				transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.4s ease;
+				filter: drop-shadow(0 4px 12px rgba(0,0,0,0.8));
 			}
-			.cover-wrap:hover .inspect-hint {
-				opacity: 1;
-				transform: translate(-50%, -4px);
+			.seal-corner:hover {
+				transform: scale(1.1) translateY(-4px);
+				filter: drop-shadow(0 8px 16px rgba(200, 30, 30, 0.4));
 			}
-
-			/* ================= 全屏检视 Modal ================= */
-			.modal-overlay {
-				position: fixed;
-				inset: 0;
-				background: rgba(0, 0, 0, 0.85);
-				backdrop-filter: blur(8px);
-				z-index: 9999;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				opacity: 0;
-				visibility: hidden;
-				transition: all 0.4s ease;
-			}
-			.modal-overlay.active {
-				opacity: 1;
-				visibility: visible;
-			}
-			.modal-content {
-				width: 80vw;
-				max-width: 500px;
-				aspect-ratio: 1 / 1;
-				transform: scale(0.8) rotateX(20deg);
-				transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-			}
-			.modal-overlay.active .modal-content {
-				transform: scale(1) rotateX(0deg);
+			.seal-corner svg {
+				width: 100%;
+				height: 100%;
 			}
 
-			/* 内容样式 */
+			/* 内容区 */
 			.body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
 			.head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 
@@ -197,10 +186,7 @@ const palettes = [
 				background: rgba(94, 234, 212, 0.15); color: #0f9d8a; border: 1px solid rgba(94, 234, 212, 0.3);
 				display: flex; align-items: center; gap: 6px; font-weight: 600;
 			}
-			.status::before {
-				content: ''; width: 6px; height: 6px; border-radius: 50%; background: #0f9d8a; box-shadow: 0 0 6px #0f9d8a;
-				animation: blink 2s infinite ease-in-out;
-			}
+			.status::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #0f9d8a; box-shadow: 0 0 6px #0f9d8a; animation: blink 2s infinite ease-in-out; }
 			@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 			:global(html[data-theme='dark']) .status { color: #5eead4; border-color: rgba(94, 234, 212, 0.4); }
 			:global(html[data-theme='dark']) .status::before { background: #5eead4; box-shadow: 0 0 6px #5eead4; }
@@ -227,9 +213,48 @@ const palettes = [
 			@media (min-width: 720px) { .grid { grid-template-columns: repeat(2, 1fr); } }
 			:global(html[data-theme='dark']) .card { background: rgba(26, 36, 64, 0.95); border-color: #26335c; }
 
-			/* 针对减少动效偏好 */
-			@media (prefers-reduced-motion: reduce) {
-				.gold-flow, .ruby-gleam { animation: none !important; }
+			/* ================= 全屏检视 Modal ================= */
+			.modal-overlay {
+				position: fixed;
+				inset: 0;
+				background: rgba(2, 3, 5, 0.9);
+				backdrop-filter: blur(15px);
+				-webkit-backdrop-filter: blur(15px);
+				z-index: 99999;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				opacity: 0;
+				visibility: hidden;
+				transition: all 0.5s ease;
+			}
+			.modal-overlay.active {
+				opacity: 1;
+				visibility: visible;
+			}
+			.modal-content {
+				width: 85vw;
+				height: 85vw;
+				max-width: 500px;
+				max-height: 500px;
+				transform: scale(0.8) translateY(30px);
+				transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+				filter: drop-shadow(0 20px 40px rgba(0,0,0,0.9));
+			}
+			.modal-overlay.active .modal-content {
+				transform: scale(1) translateY(0);
+			}
+			.modal-content svg {
+				width: 100%;
+				height: 100%;
+			}
+
+			/* 动画关键帧 */
+			.gold-flow { animation: spin 12s linear infinite; transform-origin: 200px 200px; }
+			.gem-pulse { animation: gem-glow 3s ease-in-out infinite alternate; }
+			@keyframes gem-glow {
+				0% { opacity: 0.6; }
+				100% { opacity: 1; filter: drop-shadow(0 0 15px rgba(255, 40, 60, 0.4)); }
 			}
 		</style>
 	</head>
@@ -246,105 +271,105 @@ const palettes = [
 						const c = palettes[i % palettes.length];
 						return (
 							<div class="card" style={`animation-delay: ${i * 0.15}s;`}>
-								<div class="cover-wrap js-inspect-btn">
+								
+								<div class="cover-wrap">
 									{p.video ? (
 										<video class="cover js-video" src={p.video} autoplay muted loop playsinline preload="metadata" />
 									) : p.image ? (
 										<img class="cover" src={p.image} alt={p.title} style="background: #0b1020;" />
 									) : (
-										/* ================= 庄重严肃红宝石印章 SVG ================= */
 										<svg class="cover" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
 											<defs>
-												<!-- 背景渐变 -->
-												<radialGradient id="bg-grad" cx="50%" cy="50%" r="50%">
-													<stop offset="0%" stop-color="#141a2e" />
-													<stop offset="100%" stop-color="#070a11" />
+												<radialGradient id="bg-grad" cx="80%" cy="50%" r="80%">
+													<stop offset="0%" stop-color="#14204a" />
+													<stop offset="100%" stop-color="#0b1020" />
 												</radialGradient>
-												
-												<!-- 红宝石底座渐变 -->
-												<radialGradient id="ruby-base" cx="50%" cy="50%" r="50%">
-													<stop offset="0%" stop-color="#ff2a40" />
-													<stop offset="60%" stop-color="#9b111e" />
-													<stop offset="100%" stop-color="#4a0008" />
-												</radialGradient>
-
-												<!-- 红宝石切面高光渐变 -->
-												<linearGradient id="ruby-facet1" x1="0" y1="0" x2="1" y2="1">
-													<stop offset="0%" stop-color="rgba(255,255,255,0.4)" />
-													<stop offset="100%" stop-color="rgba(255,255,255,0)" />
+												<linearGradient id="num-grad" x1="0" y1="0" x2="1" y2="1">
+													<stop offset="0%" stop-color="#ffffff" />
+													<stop offset="100%" stop-color="#5eead4" />
 												</linearGradient>
-												<linearGradient id="ruby-facet2" x1="1" y1="0" x2="0" y2="1">
-													<stop offset="0%" stop-color="rgba(255,100,100,0.5)" />
-													<stop offset="100%" stop-color="rgba(255,255,255,0)" />
+												<linearGradient id="scan-grad" x1="0" y1="0" x2="0" y2="1">
+													<stop offset="0%" stop-color="rgba(94, 234, 212, 0)" />
+													<stop offset="50%" stop-color="rgba(94, 234, 212, 0.5)" />
+													<stop offset="100%" stop-color="rgba(94, 234, 212, 0)" />
 												</linearGradient>
-
-												<!-- 金属字 R 渐变 -->
-												<linearGradient id="gold-text" x1="0" y1="0" x2="1" y2="1">
-													<stop offset="0%" stop-color="#fbf5b7" />
-													<stop offset="30%" stop-color="#b38728" />
-													<stop offset="70%" stop-color="#bf953f" />
-													<stop offset="100%" stop-color="#aa771c" />
-												</linearGradient>
-
-												<!-- 环绕文字路径 -->
-												<path id="circlePath" d="M 200, 50 A 50,50 0 1,1 199.9, 50" fill="none" />
 											</defs>
-											
-											<!-- 暗色背景 -->
-											<rect width="400" height="200" fill="url(#bg-grad)" />
-											
-											<!-- 居中印章组 (整体缩小到适合卡片比例) -->
-											<g transform="translate(200, 100) scale(0.9) translate(-200, -100)" class="seal-group">
-												
-												<!-- 外环金色底盘 -->
-												<circle cx="200" cy="100" r="85" fill="#0b1020" stroke="#b38728" stroke-width="2" />
-												<circle cx="200" cy="100" r="80" fill="none" stroke="#4a3613" stroke-width="1" />
-												
-												<!-- 外围刻度 -->
-												<circle cx="200" cy="100" r="75" fill="none" stroke="#d4af37" stroke-width="4" stroke-dasharray="2 6" opacity="0.6" />
-												
-												<!-- 环绕文字 -->
-												<text font-size="9" fill="#bf953f" font-family="monospace" font-weight="600" letter-spacing="4">
-													<textPath href="#circlePath" startOffset="50%" text-anchor="middle">
-														REOG OFFICIAL SEAL • EST. 2024 •
-													</textPath>
-												</text>
-
-												<!-- 内层金属边框 -->
-												<circle cx="200" cy="100" r="56" fill="none" stroke="#d4af37" stroke-width="1.5" />
-												
-												<!-- 红宝石主体 -->
-												<circle cx="200" cy="100" r="50" fill="url(#ruby-base)" />
-												
-												<!-- 宝石切面多边形（制造立体感） -->
-												<polygon points="200,50 235,65 250,100 235,135 200,150 165,135 150,100 165,65" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
-												<polygon points="200,50 250,100 200,100" fill="url(#ruby-facet1)" />
-												<polygon points="200,50 150,100 200,100" fill="url(#ruby-facet2)" />
-												<polygon points="200,150 250,100 200,100" fill="url(#ruby-facet1)" opacity="0.5"/>
-												<polygon points="200,150 150,100 200,100" fill="url(#ruby-facet2)" opacity="0.5"/>
-
-												<!-- 内部呼吸流光层 -->
-												<circle cx="200" cy="100" r="50" fill="url(#ruby-base)" opacity="0.5" class="ruby-gleam" mix-blend-mode="screen" />
-
-												<!-- 中心字母 R (古典衬线体) -->
-												<text x="200" y="118" text-anchor="middle" font-size="60" font-weight="900" fill="url(#gold-text)" font-family="Georgia, 'Times New Roman', serif" filter="drop-shadow(0px 2px 4px rgba(0,0,0,0.8))">
-													R
-												</text>
-
-												<!-- 边缘金色流光 -->
-												<g class="gold-flow">
-													<circle cx="200" cy="100" r="85" fill="none" stroke="url(#gold-text)" stroke-width="2" stroke-dasharray="100 500" stroke-linecap="round" />
-												</g>
+											<rect width="400" height="200" class="tech-bg" />
+											<g class="grid-lines">
+												<line x1="0" y1="50" x2="400" y2="50" />
+												<line x1="0" y1="100" x2="400" y2="100" />
+												<line x1="0" y1="150" x2="400" y2="150" />
+												<line x1="50" y1="0" x2="50" y2="200" />
+												<line x1="150" y1="0" x2="150" y2="200" />
+												<line x1="250" y1="0" x2="250" y2="200" />
+												<line x1="350" y1="0" x2="350" y2="200" />
 											</g>
-											
-											<!-- 悬停提示 -->
-											<text x="200" y="180" text-anchor="middle" font-size="10" fill="rgba(212, 175, 55, 0.4)" font-family="monospace" letter-spacing="2">
-												CLICK TO INSPECT
-											</text>
+											<circle cx="320" cy="100" r="70" fill="none" stroke="rgba(94, 234, 212, 0.2)" stroke-width="1" />
+											<circle cx="320" cy="100" r="40" fill="none" stroke="#5eead4" stroke-width="2" class="energy-pulse" />
+											<g class="core-ring ring-slow"><circle cx="320" cy="100" r="85" fill="none" stroke="rgba(94, 234, 212, 0.3)" stroke-width="4" stroke-dasharray="2 10" /></g>
+											<g class="core-ring ring-reverse"><circle cx="320" cy="100" r="65" fill="none" stroke="#8fa8ff" stroke-width="1.5" stroke-dasharray="15 5" /><circle cx="320" cy="35" r="4" fill="#8fa8ff" filter="drop-shadow(0 0 6px #8fa8ff)" /></g>
+											<g class="core-ring ring-fast"><circle cx="320" cy="100" r="50" fill="none" stroke="#5eead4" stroke-width="1" /><circle cx="270" cy="100" r="3" fill="#5eead4" filter="drop-shadow(0 0 8px #5eead4)" /></g>
+											<rect x="250" y="60" width="140" height="4" fill="url(#scan-grad)" class="scanner" />
+											<circle cx="280" cy="130" r="1.5" fill="#fff" class="particle" style="animation-delay: 0s;" />
+											<circle cx="350" cy="140" r="2" fill="#5eead4" class="particle" style="animation-delay: 1.5s;" />
+											<circle cx="310" cy="150" r="1" fill="#8fa8ff" class="particle" style="animation-delay: 3s;" />
+											<text x="30" y="135" font-size="90" font-weight="900" fill="url(#num-grad)" class="big-number">{String(i + 1).padStart(2, '0')}</text>
 										</svg>
 									)}
-									{!p.video && !p.image && <div class="inspect-hint">点击检视印章</div>}
+									
+									{/* 右下角悬浮印章 */}
+									{!p.video && !p.image && (
+										<div class="seal-corner js-open-seal" title="点击全屏检视">
+											<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+												<defs>
+													<radialGradient id="gem-base-sm" cx="50%" cy="50%" r="50%">
+														<stop offset="0%" stop-color="#7a0912" />
+														<stop offset="70%" stop-color="#2d0004" />
+														<stop offset="100%" stop-color="#110002" />
+													</radialGradient>
+													<linearGradient id="gold-ring-sm" x1="0" y1="0" x2="1" y2="1">
+														<stop offset="0%" stop-color="#fff5cc" />
+														<stop offset="50%" stop-color="#8a5a19" />
+														<stop offset="100%" stop-color="#fff5cc" />
+													</linearGradient>
+													<path id="arc-sm" d="M 200, 40 A 160,160 0 1,1 199.9, 40" fill="none" />
+												</defs>
+												{/* 最底层深邃黑盘 */}
+												<circle cx="200" cy="200" r="190" fill="#05080f" stroke="#4a3613" stroke-width="2" />
+												{/* 精密刻度 */}
+												<circle cx="200" cy="200" r="170" fill="none" stroke="#bf953f" stroke-width="6" stroke-dasharray="2 8" opacity="0.6"/>
+												{/* 文本 */}
+												<text font-size="16" fill="#d4af37" font-family="monospace" font-weight="600" letter-spacing="6" opacity="0.8">
+													<textPath href="#arc-sm" startOffset="50%" text-anchor="middle">REOG • AUTHENTIC SEAL •</textPath>
+												</text>
+												{/* 内圈金边 */}
+												<circle cx="200" cy="200" r="125" fill="none" stroke="url(#gold-ring-sm)" stroke-width="3" />
+												
+												{/* 红宝石主体底盘 */}
+												<circle cx="200" cy="200" r="110" fill="url(#gem-base-sm)" />
+												{/* 几何切面（模拟红宝石折射） */}
+												<g opacity="0.4">
+													<polygon points="200,90 280,140 280,260 200,310 120,260 120,140" fill="none" stroke="#ff4d4d" stroke-width="1"/>
+													<polygon points="200,90 280,140 200,200" fill="rgba(255,255,255,0.15)"/>
+													<polygon points="200,90 120,140 200,200" fill="rgba(255,0,0,0.2)"/>
+													<polygon points="200,310 280,260 200,200" fill="rgba(255,255,255,0.05)"/>
+													<polygon points="200,310 120,260 200,200" fill="rgba(255,0,0,0.1)"/>
+												</g>
+												{/* 中心发红光晕层 */}
+												<circle cx="200" cy="200" r="110" fill="url(#gem-base-sm)" opacity="0.6" class="gem-pulse" mix-blend-mode="screen" />
+												
+												{/* 中心纯粹古典字母 R */}
+												<text x="200" y="245" text-anchor="middle" font-size="130" font-weight="900" fill="url(#gold-ring-sm)" font-family="Georgia, 'Times New Roman', serif" filter="drop-shadow(0px 8px 15px rgba(0,0,0,0.8))">R</text>
+												
+												{/* 外圈流光旋转 */}
+												<g class="gold-flow">
+													<circle cx="200" cy="200" r="170" fill="none" stroke="url(#gold-ring-sm)" stroke-width="4" stroke-dasharray="150 900" stroke-linecap="round" />
+												</g>
+											</svg>
+										</div>
+									)}
 								</div>
+								
 								<div class="body">
 									<div class="head">
 										<h2>{p.title}</h2>
@@ -375,60 +400,67 @@ const palettes = [
 		</main>
 		<Footer />
 
-		<!-- 检视印章 Modal 弹窗 -->
+		{/* 全屏检视 Modal 弹窗 */}
 		<div class="modal-overlay" id="seal-modal">
 			<div class="modal-content">
-				<!-- 克隆一份大号的 SVG 放进来 -->
-				<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+				<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
 					<defs>
-						<radialGradient id="bg-grad-m" cx="50%" cy="50%" r="50%">
-							<stop offset="0%" stop-color="#141a2e" />
-							<stop offset="100%" stop-color="#070a11" />
+						<radialGradient id="gem-base-lg" cx="50%" cy="50%" r="50%">
+							<stop offset="0%" stop-color="#9b111e" />
+							<stop offset="60%" stop-color="#3a0006" />
+							<stop offset="100%" stop-color="#080001" />
 						</radialGradient>
-						<radialGradient id="ruby-base-m" cx="50%" cy="50%" r="50%">
-							<stop offset="0%" stop-color="#ff2a40" />
-							<stop offset="60%" stop-color="#9b111e" />
-							<stop offset="100%" stop-color="#4a0008" />
-						</radialGradient>
-						<linearGradient id="ruby-facet1-m" x1="0" y1="0" x2="1" y2="1">
-							<stop offset="0%" stop-color="rgba(255,255,255,0.5)" />
-							<stop offset="100%" stop-color="rgba(255,255,255,0)" />
+						<linearGradient id="gold-ring-lg" x1="0" y1="0" x2="1" y2="1">
+							<stop offset="0%" stop-color="#fff5cc" />
+							<stop offset="20%" stop-color="#d4af37" />
+							<stop offset="50%" stop-color="#5c3a0b" />
+							<stop offset="80%" stop-color="#d4af37" />
+							<stop offset="100%" stop-color="#fff5cc" />
 						</linearGradient>
-						<linearGradient id="ruby-facet2-m" x1="1" y1="0" x2="0" y2="1">
-							<stop offset="0%" stop-color="rgba(255,100,100,0.6)" />
-							<stop offset="100%" stop-color="rgba(255,255,255,0)" />
-						</linearGradient>
-						<linearGradient id="gold-text-m" x1="0" y1="0" x2="1" y2="1">
-							<stop offset="0%" stop-color="#fbf5b7" />
-							<stop offset="30%" stop-color="#b38728" />
-							<stop offset="70%" stop-color="#bf953f" />
-							<stop offset="100%" stop-color="#aa771c" />
-						</linearGradient>
-						<path id="circlePath-m" d="M 200, 50 A 50,50 0 1,1 199.9, 50" fill="none" />
+						<path id="arc-lg" d="M 200, 20 A 180,180 0 1,1 199.9, 20" fill="none" />
 					</defs>
-					<rect width="400" height="200" fill="url(#bg-grad-m)" />
-					<g transform="translate(200, 100) scale(1.6) translate(-200, -100)">
-						<circle cx="200" cy="100" r="85" fill="#0b1020" stroke="#b38728" stroke-width="2" />
-						<circle cx="200" cy="100" r="80" fill="none" stroke="#4a3613" stroke-width="1" />
-						<circle cx="200" cy="100" r="75" fill="none" stroke="#d4af37" stroke-width="4" stroke-dasharray="2 6" opacity="0.6" />
-						<text font-size="9" fill="#bf953f" font-family="monospace" font-weight="600" letter-spacing="4">
-							<textPath href="#circlePath-m" startOffset="50%" text-anchor="middle">
-								REOG OFFICIAL SEAL • EST. 2024 •
+					<g>
+						{/* 底座 */}
+						<circle cx="200" cy="200" r="195" fill="#05080f" stroke="#33250c" stroke-width="4" />
+						{/* 刻度线 */}
+						<circle cx="200" cy="200" r="175" fill="none" stroke="#bf953f" stroke-width="8" stroke-dasharray="3 12" opacity="0.7" />
+						{/* 环形文字 */}
+						<text font-size="20" fill="#d4af37" font-family="monospace" font-weight="600" letter-spacing="8" opacity="0.9">
+							<textPath href="#arc-lg" startOffset="50%" text-anchor="middle">
+								REOG • AUTHENTIC SEAL • EST. 2024 •
 							</textPath>
 						</text>
-						<circle cx="200" cy="100" r="56" fill="none" stroke="#d4af37" stroke-width="1.5" />
-						<circle cx="200" cy="100" r="50" fill="url(#ruby-base-m)" />
-						<polygon points="200,50 235,65 250,100 235,135 200,150 165,135 150,100 165,65" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
-						<polygon points="200,50 250,100 200,100" fill="url(#ruby-facet1-m)" />
-						<polygon points="200,50 150,100 200,100" fill="url(#ruby-facet2-m)" />
-						<polygon points="200,150 250,100 200,100" fill="url(#ruby-facet1-m)" opacity="0.5"/>
-						<polygon points="200,150 150,100 200,100" fill="url(#ruby-facet2-m)" opacity="0.5"/>
-						<circle cx="200" cy="100" r="50" fill="url(#ruby-base-m)" opacity="0.5" class="ruby-gleam" mix-blend-mode="screen" />
-						<text x="200" y="118" text-anchor="middle" font-size="60" font-weight="900" fill="url(#gold-text-m)" font-family="Georgia, 'Times New Roman', serif" filter="drop-shadow(0px 2px 6px rgba(0,0,0,0.8))">
+						{/* 内金环 */}
+						<circle cx="200" cy="200" r="135" fill="none" stroke="url(#gold-ring-lg)" stroke-width="4" />
+						
+						{/* 红宝石主体 */}
+						<circle cx="200" cy="200" r="120" fill="url(#gem-base-lg)" />
+						
+						{/* 复杂的宝石切面 */}
+						<g opacity="0.5">
+							<polygon points="200,80 290,140 290,260 200,320 110,260 110,140" fill="none" stroke="#ff4d4d" stroke-width="2"/>
+							<polygon points="200,80 290,140 200,200" fill="rgba(255,255,255,0.25)"/>
+							<polygon points="200,80 110,140 200,200" fill="rgba(255,0,0,0.3)"/>
+							<polygon points="200,320 290,260 200,200" fill="rgba(255,255,255,0.1)"/>
+							<polygon points="200,320 110,260 200,200" fill="rgba(255,0,0,0.2)"/>
+							<polygon points="290,140 290,260 200,200" fill="rgba(255,100,100,0.15)"/>
+							<polygon points="110,140 110,260 200,200" fill="rgba(255,100,100,0.15)"/>
+						</g>
+						
+						{/* 中心高光 */}
+						<circle cx="160" cy="160" r="40" fill="rgba(255,255,255,0.15)" filter="blur(10px)" />
+						
+						{/* 呼吸发光层 */}
+						<circle cx="200" cy="200" r="120" fill="url(#gem-base-lg)" opacity="0.6" class="gem-pulse" mix-blend-mode="screen" />
+						
+						{/* 中心巨大 R */}
+						<text x="200" y="255" text-anchor="middle" font-size="150" font-weight="900" fill="url(#gold-ring-lg)" font-family="Georgia, 'Times New Roman', serif" filter="drop-shadow(0px 10px 20px rgba(0,0,0,0.9))">
 							R
 						</text>
+
+						{/* 边缘流光旋转 */}
 						<g class="gold-flow">
-							<circle cx="200" cy="100" r="85" fill="none" stroke="url(#gold-text-m)" stroke-width="2" stroke-dasharray="100 500" stroke-linecap="round" />
+							<circle cx="200" cy="200" r="175" fill="none" stroke="url(#gold-ring-lg)" stroke-width="6" stroke-dasharray="200 1100" stroke-linecap="round" />
 						</g>
 					</g>
 				</svg>
@@ -444,22 +476,16 @@ const palettes = [
 					video.play().catch((err: any) => console.log(err));
 				});
 
-				// 印章检视 Modal 逻辑
-				const inspectBtns = document.querySelectorAll('.js-inspect-btn');
+				// 检视印章 Modal 逻辑
+				const openBtns = document.querySelectorAll('.js-open-seal');
 				const modal = document.getElementById('seal-modal');
 
-				inspectBtns.forEach(btn => {
-					// 判断当前卡片是否真的在显示 SVG 印章
+				openBtns.forEach(btn => {
 					btn.addEventListener('click', (e) => {
-						const svg = btn.querySelector('svg');
-						const isSeal = svg && !svg.classList.contains('js-video') && !btn.querySelector('img');
-						
-						// 如果点击的是视频或图片，则不触发弹窗
-						if (!isSeal) return;
-
+						e.stopPropagation(); // 阻止冒泡
 						if (modal) {
 							modal.classList.add('active');
-							document.body.style.overflow = 'hidden'; // 阻止滚动
+							document.body.style.overflow = 'hidden'; // 锁定背景滚动
 						}
 					});
 				});
