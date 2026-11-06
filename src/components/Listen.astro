@@ -1,0 +1,402 @@
+<div class="ls-bar" id="ls-bar" hidden role="region" aria-label="朗读播放器">
+	<div class="ls-progress" id="ls-progress" role="slider" aria-label="朗读进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+		<span id="ls-fill"></span>
+	</div>
+	<div class="ls-top">
+		<div class="ls-info">
+			<b id="ls-title"></b>
+			<span id="ls-status"></span>
+		</div>
+		<button class="ls-btn" id="ls-close" type="button" aria-label="关闭朗读">
+			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18" /></svg>
+		</button>
+	</div>
+	<div class="ls-ctrl">
+		<button class="ls-btn" id="ls-prev" type="button" aria-label="上一段">
+			<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h2v14H6zM20 5v14L9 12z" /></svg>
+		</button>
+		<button class="ls-play" id="ls-play" type="button" aria-label="播放">
+			<svg class="i-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+			<svg class="i-pause" viewBox="0 0 24 24" fill="currentColor"><path d="M7 5h4v14H7zM13 5h4v14h-4z" /></svg>
+		</button>
+		<button class="ls-btn" id="ls-next" type="button" aria-label="下一段">
+			<svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 5h2v14h-2zM4 5v14l11-7z" /></svg>
+		</button>
+		<button class="ls-rate" id="ls-rate" type="button" aria-label="切换语速">1×</button>
+		<button class="ls-btn" id="ls-more" type="button" aria-label="声音与语速设置" aria-expanded="false">
+			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10" /><circle cx="16" cy="7" r="2" /><circle cx="8" cy="17" r="2" /></svg>
+		</button>
+	</div>
+	<div class="ls-settings" id="ls-settings" hidden>
+		<label>声音 <select id="ls-voice"></select></label>
+		<label>语速 <input id="ls-range" type="range" min="0.6" max="2.2" step="0.05" value="1" /></label>
+		<p id="ls-hint"></p>
+	</div>
+</div>
+
+<style is:global>
+	.ls-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 80; background: #fff; color: #0f172a; border-top: 1px solid #e2e8f0; box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.12); padding: 0 14px calc(10px + env(safe-area-inset-bottom, 0px)); max-height: 75vh; overflow-y: auto; }
+	.ls-bar[hidden] { display: none; }
+	html[data-theme='dark'] .ls-bar { background: #111a33; color: #e6ebff; border-top-color: #26335c; }
+	.ls-progress { position: relative; height: 14px; margin: 0 -14px; cursor: pointer; }
+	.ls-progress::before { content: ''; position: absolute; left: 0; right: 0; top: 5px; height: 3px; background: rgba(100, 116, 139, 0.25); }
+	.ls-progress span { position: absolute; left: 0; top: 5px; height: 3px; width: 0; background: #d9a520; transition: width 0.25s; }
+	.ls-top { display: flex; align-items: center; gap: 8px; }
+	.ls-info { flex: 1; min-width: 0; line-height: 1.5; }
+	.ls-info b { display: block; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+	.ls-info span { display: block; font-size: 12px; opacity: 0.7; }
+	.ls-ctrl { display: flex; align-items: center; justify-content: space-between; max-width: 420px; margin: 4px auto 0; }
+	.ls-btn, .ls-rate, .ls-play { border: 0; background: transparent; color: inherit; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; padding: 0; font: inherit; }
+	.ls-btn { width: 40px; height: 40px; border-radius: 50%; }
+	.ls-btn svg { width: 22px; height: 22px; }
+	.ls-btn:hover, .ls-rate:hover { background: rgba(100, 116, 139, 0.15); }
+	.ls-play { width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #b8860b, #f5c63a); color: #3b2a00; }
+	.ls-play svg { width: 26px; height: 26px; }
+	.ls-play .i-pause { display: none; }
+	.ls-bar.is-playing .ls-play .i-play { display: none; }
+	.ls-bar.is-playing .ls-play .i-pause { display: block; }
+	.ls-rate { min-width: 52px; height: 36px; border-radius: 18px; font-size: 14px; font-weight: 700; border: 1px solid rgba(100, 116, 139, 0.4); }
+	.ls-settings { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(100, 116, 139, 0.35); font-size: 14px; }
+	.ls-settings[hidden] { display: none; }
+	.ls-settings label { display: flex; align-items: center; gap: 10px; min-width: 0; }
+	.ls-settings select { flex: 1; min-width: 0; width: 100%; text-overflow: ellipsis; font: inherit; padding: 6px 8px; border-radius: 8px; border: 1px solid rgba(100, 116, 139, 0.45); background: transparent; color: inherit; }
+	.ls-settings input[type='range'] { flex: 1; }
+	.ls-settings p { margin: 0; font-size: 12px; opacity: 0.7; line-height: 1.7; }
+	.listening-now { background: rgba(245, 198, 58, 0.22); box-shadow: 0 0 0 6px rgba(245, 198, 58, 0.22); border-radius: 6px; transition: background 0.3s; }
+	body.has-player .totop { bottom: 128px; }
+	body.has-player { padding-bottom: 110px; }
+</style>
+
+<script>
+	const supported = 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window;
+	const synth = supported ? window.speechSynthesis : null;
+	const $ = (id) => document.getElementById(id);
+	const bar = $('ls-bar');
+	const RATES = [0.8, 1, 1.25, 1.5, 1.75, 2];
+	const CPM = 300; // 中文每分钟约朗读字数（1× 语速）
+	const PREF_KEY = 'listen.prefs.v1';
+
+	function loadPrefs() {
+		try {
+			return JSON.parse(localStorage.getItem(PREF_KEY) || '{}');
+		} catch (e) {
+			return {};
+		}
+	}
+	function savePrefs() {
+		try {
+			localStorage.setItem(PREF_KEY, JSON.stringify({ rate, voiceURI: voice ? voice.voiceURI : '' }));
+		} catch (e) {}
+	}
+
+	let blocks = [];
+	let segs = [];
+	let cur = 0;
+	let state = 'idle'; // idle | playing | paused
+	let runId = 0;
+	let errStreak = 0;
+	let built = false;
+	let lastBlock = null;
+	let voices = [];
+	let voice = null;
+	const prefs = loadPrefs();
+	let rate = typeof prefs.rate === 'number' ? prefs.rate : 1;
+
+	// ---------- 文本提取与分段 ----------
+	const clean = (t) => t.replace(/https?:\/\/\S+/g, '链接').replace(/\s+/g, ' ').trim();
+	function hardSplit(text, max) {
+		const parts = text.match(/[^，,、：:\s]+[，,、：:\s]*/g) || [text];
+		const out = [];
+		let buf = '';
+		for (const p of parts) {
+			if ((buf + p).length > max && buf) {
+				out.push(buf);
+				buf = p;
+			} else buf += p;
+		}
+		if (buf) out.push(buf);
+		// 没有任何标点的超长文字：按固定长度硬切，避免单段过长被浏览器截断
+		return out.flatMap((c) => {
+			if (c.length <= max * 1.6) return [c];
+			const pieces = [];
+			for (let i = 0; i < c.length; i += max) pieces.push(c.slice(i, i + max));
+			return pieces;
+		});
+	}
+	function splitText(text, max = 120) {
+		const sentences = text.match(/[^。！？!?；;…]+[。！？!?；;…]*/g) || [text];
+		const chunks = [];
+		let buf = '';
+		for (const s of sentences) {
+			if ((buf + s).length > max && buf) {
+				chunks.push(buf);
+				buf = s;
+			} else buf += s;
+		}
+		if (buf) chunks.push(buf);
+		return chunks.flatMap((c) => (c.length <= max * 1.6 ? [c] : hardSplit(c, max)));
+	}
+	function build() {
+		blocks = [];
+		segs = [];
+		const add = (el, text) => {
+			if (!text) return;
+			blocks.push(el);
+			const bi = blocks.length - 1;
+			splitText(text).forEach((t) => segs.push({ block: bi, text: t }));
+		};
+		const titleEl = document.querySelector('h1.title');
+		if (titleEl) add(titleEl, clean(titleEl.textContent || '') + '。');
+		const root = $('prose');
+		if (root) {
+			root.querySelectorAll('h2, h3, h4, p, li, blockquote').forEach((el) => {
+				if (el.closest('pre, table, .share-end')) return;
+				if (el.querySelector('p, h2, h3, h4')) return; // 容器内的段落会单独朗读
+				const clone = el.cloneNode(true);
+				clone.querySelectorAll('ul, ol, blockquote, pre, table').forEach((n) => n.remove());
+				let t = clean(clone.textContent || '');
+				if (!t) return;
+				if (/^H[2-4]$/.test(el.tagName) && !/[。！？!?：:.]$/.test(t)) t += '。';
+				add(el, t);
+			});
+		}
+		built = true;
+	}
+	const totalChars = () => segs.reduce((n, s) => n + s.text.length, 0);
+	const charsBefore = (i) => segs.slice(0, i).reduce((n, s) => n + s.text.length, 0);
+
+	// ---------- 声音 ----------
+	function voiceScore(v) {
+		let s = 0;
+		if (/^zh[-_]CN/i.test(v.lang)) s += 30;
+		else if (/^zh/i.test(v.lang)) s += 15;
+		if (/Natural|Online/i.test(v.name)) s += 20;
+		if (/Google/i.test(v.name)) s += 10;
+		if (/Xiaoxiao|Yunxi|Xiaoyi|Tingting|Meijia|Sinji|Huihui/i.test(v.name)) s += 5;
+		return s;
+	}
+	function loadVoices() {
+		if (!synth) return;
+		voices = synth.getVoices().filter((v) => /^zh/i.test(v.lang)).sort((a, b) => voiceScore(b) - voiceScore(a));
+		const sel = $('ls-voice');
+		sel.innerHTML = '';
+		voices.forEach((v) => {
+			const o = document.createElement('option');
+			o.value = v.voiceURI;
+			o.textContent = `${v.name} (${v.lang})`;
+			sel.appendChild(o);
+		});
+		voice = voices.find((v) => v.voiceURI === prefs.voiceURI) || voices[0] || null;
+		if (voice) sel.value = voice.voiceURI;
+		sel.parentElement.hidden = voices.length === 0;
+		$('ls-hint').textContent = voices.length
+			? '提示：带 Natural / Online 的声音通常更自然。'
+			: '未检测到中文语音包，将使用系统默认语音朗读。Windows 可在「设置 → 时间和语言 → 语音」中添加中文语音。';
+	}
+
+	// ---------- 播放控制 ----------
+	function clearHighlight() {
+		if (lastBlock) lastBlock.classList.remove('listening-now');
+		lastBlock = null;
+	}
+	function highlight() {
+		const el = blocks[segs[cur].block];
+		if (el === lastBlock) return;
+		clearHighlight();
+		el.classList.add('listening-now');
+		lastBlock = el;
+		const r = el.getBoundingClientRect();
+		if (r.top < 70 || r.bottom > window.innerHeight - 170) el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+	}
+	function render() {
+		const total = totalChars() || 1;
+		const done = charsBefore(cur);
+		const pct = state === 'idle' && cur === 0 ? 0 : Math.min(100, Math.round((done / total) * 100));
+		$('ls-fill').style.width = pct + '%';
+		$('ls-progress').setAttribute('aria-valuenow', String(pct));
+		bar.classList.toggle('is-playing', state === 'playing');
+		$('ls-play').setAttribute('aria-label', state === 'playing' ? '暂停' : '播放');
+		$('ls-rate').textContent = rate + '×';
+		$('ls-range').value = String(rate);
+		const remain = Math.max(1, Math.ceil((total - done) / (CPM * rate)));
+		const pos = segs.length ? segs[cur].block + 1 : 0;
+		$('ls-status').textContent =
+			state === 'idle' && cur === 0
+				? `准备就绪 · 全文约 ${Math.max(1, Math.ceil(total / (CPM * rate)))} 分钟`
+				: `${state === 'paused' ? '已暂停' : '朗读中'} · 第 ${pos}/${blocks.length} 段 · 约剩 ${remain} 分钟`;
+		document.querySelectorAll('[data-listen-toggle]').forEach((b) => b.classList.toggle('on', state === 'playing'));
+	}
+	function speakSeg(i) {
+		if (!synth || !segs.length) return;
+		cur = Math.max(0, Math.min(i, segs.length - 1));
+		const my = ++runId;
+		const u = new SpeechSynthesisUtterance(segs[cur].text);
+		u.lang = voice ? voice.lang : 'zh-CN';
+		if (voice) u.voice = voice;
+		u.rate = rate;
+		u.onstart = () => {
+			if (my === runId) errStreak = 0;
+		};
+		u.onend = () => {
+			if (my !== runId) return;
+			if (cur < segs.length - 1) speakSeg(cur + 1);
+			else finish();
+		};
+		u.onerror = (e) => {
+			if (my !== runId) return;
+			if (e.error === 'interrupted' || e.error === 'canceled') return;
+			errStreak++;
+			if (errStreak >= 3) {
+				stop();
+				$('ls-status').textContent = '朗读失败，请检查系统语音设置';
+				return;
+			}
+			if (cur < segs.length - 1) speakSeg(cur + 1);
+			else finish();
+		};
+		state = 'playing';
+		highlight();
+		render();
+		const busy = synth.speaking || synth.pending;
+		synth.cancel();
+		// 刚 cancel 后立刻 speak 在部分 Chrome 版本会被丢弃，需要稍作延迟；首次播放保持在用户手势内同步调用（iOS 要求）
+		if (busy) setTimeout(() => my === runId && synth.speak(u), 40);
+		else synth.speak(u);
+	}
+	function pause() {
+		if (state !== 'playing') return;
+		runId++;
+		synth.cancel();
+		state = 'paused';
+		render();
+	}
+	function stop() {
+		runId++;
+		if (synth) synth.cancel();
+		state = 'idle';
+		cur = 0;
+		clearHighlight();
+		render();
+	}
+	function finish() {
+		state = 'idle';
+		cur = 0;
+		clearHighlight();
+		render();
+		$('ls-status').textContent = '已读完，感谢收听';
+	}
+	function playPause() {
+		if (state === 'playing') pause();
+		else speakSeg(cur);
+	}
+	function blockStart(bi) {
+		const i = segs.findIndex((s) => s.block === bi);
+		return i < 0 ? 0 : i;
+	}
+	function jump(dir) {
+		if (!segs.length) return;
+		const bi = segs[cur].block;
+		let target;
+		if (dir > 0) target = bi + 1 < blocks.length ? blockStart(bi + 1) : cur;
+		else target = cur > blockStart(bi) ? blockStart(bi) : bi > 0 ? blockStart(bi - 1) : 0;
+		if (state === 'playing') speakSeg(target);
+		else {
+			cur = target;
+			highlight();
+			render();
+		}
+	}
+	function setRate(r) {
+		rate = Math.min(2.2, Math.max(0.6, Math.round(r * 100) / 100));
+		savePrefs();
+		if (state === 'playing') speakSeg(cur);
+		else render();
+	}
+
+	// ---------- 打开 / 关闭 ----------
+	function openBar(play) {
+		if (!built) build();
+		const titleEl = document.querySelector('h1.title');
+		$('ls-title').textContent = titleEl ? titleEl.textContent : document.title;
+		bar.hidden = false;
+		document.body.classList.add('has-player');
+		if (!supported) {
+			$('ls-status').textContent = '当前浏览器不支持语音朗读，请换用 Chrome、Edge 或 Safari';
+			return;
+		}
+		render();
+		if (play) speakSeg(cur);
+	}
+	function closeBar() {
+		stop();
+		bar.hidden = true;
+		document.body.classList.remove('has-player');
+	}
+
+	if (bar) {
+		if (synth) {
+			loadVoices();
+			if (synth.addEventListener) synth.addEventListener('voiceschanged', loadVoices);
+		}
+		build();
+		const eta = $('listen-eta');
+		if (eta) eta.textContent = `约 ${Math.max(1, Math.ceil(totalChars() / CPM))} 分钟`;
+		const openBtn = $('listen-open');
+		if (openBtn && !supported) openBtn.hidden = true;
+
+		document.addEventListener('click', (e) => {
+			const t = e.target.closest && e.target.closest('[data-listen-toggle], [data-listen-open]');
+			if (!t) return;
+			e.preventDefault();
+			if (bar.hidden) openBar(true);
+			else if (t.hasAttribute('data-listen-open') && state === 'playing') return;
+			else playPause();
+		});
+		$('ls-play').addEventListener('click', playPause);
+		$('ls-prev').addEventListener('click', () => jump(-1));
+		$('ls-next').addEventListener('click', () => jump(1));
+		$('ls-close').addEventListener('click', closeBar);
+		$('ls-rate').addEventListener('click', () => {
+			const i = RATES.findIndex((r) => r >= rate - 0.001);
+			setRate(RATES[(i + 1) % RATES.length]);
+		});
+		$('ls-range').addEventListener('change', (e) => setRate(Number(e.target.value)));
+		$('ls-voice').addEventListener('change', (e) => {
+			voice = voices.find((v) => v.voiceURI === e.target.value) || null;
+			savePrefs();
+			if (state === 'playing') speakSeg(cur);
+		});
+		$('ls-more').addEventListener('click', () => {
+			const s = $('ls-settings');
+			s.hidden = !s.hidden;
+			$('ls-more').setAttribute('aria-expanded', String(!s.hidden));
+		});
+		$('ls-progress').addEventListener('click', (e) => {
+			if (!segs.length) return;
+			const r = e.currentTarget.getBoundingClientRect();
+			const target = ((e.clientX - r.left) / r.width) * totalChars();
+			let acc = 0;
+			let idx = segs.length - 1;
+			for (let i = 0; i < segs.length; i++) {
+				acc += segs[i].text.length;
+				if (acc >= target) {
+					idx = i;
+					break;
+				}
+			}
+			if (state === 'playing') speakSeg(idx);
+			else {
+				cur = idx;
+				highlight();
+				render();
+			}
+		});
+		window.addEventListener('pagehide', () => synth && synth.cancel());
+
+		// 从导航栏按钮跳转过来：打开播放器但不自动播放（浏览器要求用户点击后才能发声）
+		if (new URLSearchParams(location.search).get('listen') === '1') {
+			openBar(false);
+			window.scrollTo({ top: 0 });
+		}
+	}
+</script>

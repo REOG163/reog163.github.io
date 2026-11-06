@@ -1,8 +1,14 @@
 ---
-import Effects from './Effects.astro';
+import { getCollection } from 'astro:content';
 import { SITE_TITLE } from '../consts';
 
 const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
+// 听文章：在文章页里是「开始/暂停朗读」，在其他页面是「跳转到最新文章并打开朗读」
+const isArticle = path.startsWith('/blog/');
+const latest: any = (await getCollection('blog')).sort(
+	(a: any, b: any) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+)[0];
+const latestHref = latest ? `/blog/${latest.slug ?? latest.id}/?listen=1` : '/blog';
 const links = [
 	{ href: '/', label: '首页' },
 	{ href: '/blog', label: '博客' },
@@ -30,6 +36,17 @@ const isActive = (href: string) =>
 			<div class="links">
 				{links.map((l) => <a href={l.href} class={isActive(l.href) ? 'active' : ''}>{l.label}</a>)}
 			</div>
+			{
+				isArticle ? (
+					<button class="icon-btn" type="button" data-listen-toggle aria-label="听文章" title="听文章">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15v-3a8 8 0 0 1 16 0v3" /><rect x="3" y="14" width="4" height="7" rx="1.5" /><rect x="17" y="14" width="4" height="7" rx="1.5" /></svg>
+					</button>
+				) : (
+					<a class="icon-btn" href={latestHref} aria-label="听最新文章" title="听最新文章">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15v-3a8 8 0 0 1 16 0v3" /><rect x="3" y="14" width="4" height="7" rx="1.5" /><rect x="17" y="14" width="4" height="7" rx="1.5" /></svg>
+					</a>
+				)
+			}
 			<a class="icon-btn" href="/search" aria-label="搜索">
 				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
 			</a>
@@ -51,7 +68,6 @@ const isActive = (href: string) =>
 		--gray-light: 30, 40, 70;
 		--gray-dark: 214, 222, 240;
 		--gray-gradient: rgba(30, 40, 70, 50%), #0b1020;
-<Effects />
 	}
 	html[data-theme='dark'] body {
 		background-color: #0b1020;
@@ -169,6 +185,10 @@ const isActive = (href: string) =>
 		background: #eef2ff;
 		color: #14204a;
 	}
+	.icon-btn.on {
+		color: #b8860b;
+		background: rgba(245, 198, 58, 0.22);
+	}
 	.icon-btn svg {
 		width: 20px;
 		height: 20px;
@@ -208,6 +228,10 @@ const isActive = (href: string) =>
 	}
 	:global(html[data-theme='dark']) .links a.active,
 	:global(html[data-theme='dark']) .links a:hover,
+	:global(html[data-theme='dark']) .icon-btn.on {
+		color: #f5c63a;
+		background: rgba(245, 198, 58, 0.18);
+	}
 	:global(html[data-theme='dark']) .icon-btn:hover {
 		color: #fff;
 		background: #1d2a52;
@@ -224,8 +248,8 @@ const isActive = (href: string) =>
 			gap: 0;
 		}
 		.links a {
-			padding: 6px 5px;
-			font-size: 14px;
+			padding: 6px 4px;
+			font-size: 13px;
 		}
 		.icon-btn {
 			width: 32px;
