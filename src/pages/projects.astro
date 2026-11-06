@@ -11,7 +11,7 @@ const projects = [
 		desc: '基于 Astro 构建的中文个人博客，支持深色模式、站内搜索、标签分类、RSS 订阅与评论，通过 GitHub Actions 自动部署到 GitHub Pages。',
 		tags: ['Astro', 'GitHub Actions', 'GitHub Pages', 'Giscus'],
 		status: '运行中',
-		// 留空即可显示震撼的 01 动态封面
+		// 留空即可显示庄重的红宝石印章
 		video: '',
 		image: '', 
 		links: [
@@ -33,7 +33,6 @@ const palettes = [
 	<head>
 		<BaseHead title={`作品集 | ${SITE_TITLE}`} description="我做过的项目与作品" />
 		<style>
-			/* 核心：定义 CSS Houdini 变量，让锥形渐变的角度可以动起来 */
 			@property --angle {
 				syntax: '<angle>';
 				initial-value: 0deg;
@@ -54,16 +53,8 @@ const palettes = [
 				font-weight: 600;
 				color: var(--accent);
 			}
-			h1 {
-				margin: 0 0 6px;
-				font-size: 30px;
-				color: rgb(var(--black));
-			}
-			.lead {
-				margin: 0 0 24px;
-				font-size: 16px;
-				color: rgb(var(--gray));
-			}
+			h1 { margin: 0 0 6px; font-size: 30px; color: rgb(var(--black)); }
+			.lead { margin: 0 0 24px; font-size: 16px; color: rgb(var(--gray)); }
 			
 			.grid {
 				display: grid;
@@ -83,60 +74,6 @@ const palettes = [
 				animation: cardIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
 			}
 
-			/* ================= 边缘流光特效 ================= */
-			.card::before {
-				content: '';
-				position: absolute;
-				inset: 0;
-				border-radius: 14px;
-				padding: 1.5px; /* 控制光线的粗细 */
-				/* 基础状态：暗色边缘 + 尾部流光 */
-				background: conic-gradient(
-					from var(--angle), 
-					rgba(var(--gray), 0.2) 0%, 
-					rgba(var(--gray), 0.2) 70%, 
-					#5eead4 90%, 
-					#8fa8ff 100%
-				);
-				-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-				-webkit-mask-composite: xor;
-				mask-composite: exclude;
-				pointer-events: none;
-				animation: spin-edge 4s linear infinite;
-				z-index: 5; /* 确保光效在内容最上层，但只有边框宽度 */
-			}
-
-			@keyframes spin-edge {
-				to {
-					--angle: 360deg;
-				}
-			}
-
-			/* 深色模式下的基础流光 */
-			:global(html[data-theme='dark']) .card::before {
-				background: conic-gradient(
-					from var(--angle), 
-					rgba(38, 51, 92, 0.8) 0%, 
-					rgba(38, 51, 92, 0.8) 70%, 
-					#5eead4 90%, 
-					#8fa8ff 100%
-				);
-			}
-
-			/* 悬浮时：流光加速、变粗、色彩更亮 */
-			.card:hover::before {
-				padding: 2px;
-				background: conic-gradient(
-					from var(--angle), 
-					transparent 40%, 
-					#5eead4 70%, 
-					#ffffff 85%, 
-					#8fa8ff 100%
-				);
-				animation-duration: 1.5s;
-			}
-			/* ================================================= */
-
 			@keyframes cardIn {
 				from { opacity: 0; transform: translateY(30px) scale(0.98); }
 				to { opacity: 1; transform: translateY(0) scale(1); }
@@ -144,30 +81,12 @@ const palettes = [
 
 			.card:hover {
 				transform: translateY(-6px);
-				border-color: transparent; /* 悬浮时隐藏原本的边框，露出里面的流光 */
-				box-shadow: 0 16px 32px -10px rgba(0, 0, 0, 0.1);
+				border-color: rgba(var(--gray), 0.5);
+				box-shadow: 0 16px 32px -10px rgba(0, 0, 0, 0.2);
 			}
 			:global(html[data-theme='dark']) .card:hover {
-				box-shadow: 0 16px 32px -10px rgba(0, 0, 0, 0.6), 0 0 24px rgba(94, 234, 212, 0.15);
-			}
-
-			/* 悬浮斜向高光扫光 */
-			.card::after {
-				content: '';
-				position: absolute;
-				top: 0; left: -150%;
-				width: 50%; height: 100%;
-				background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-				transform: skewX(-25deg);
-				transition: left 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
-				pointer-events: none;
-				z-index: 10;
-			}
-			.card:hover::after {
-				left: 150%;
-			}
-			:global(html[data-theme='dark']) .card::after {
-				background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+				box-shadow: 0 16px 32px -10px rgba(0, 0, 0, 0.6);
+				border-color: #4a5a85;
 			}
 
 			/* 封面区域 */
@@ -175,200 +94,142 @@ const palettes = [
 				width: 100%;
 				aspect-ratio: 2 / 1;
 				overflow: hidden;
-				background: #0b1020;
+				background: #080b13; /* 极度深邃的底色 */
 				position: relative;
+				cursor: pointer; /* 提示可点击 */
 			}
 			.cover {
 				display: block;
 				width: 100%;
 				height: 100%;
 				object-fit: cover;
-				transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
-			}
-			.card:hover .cover {
-				transform: scale(1.03);
 			}
 
-			/* ================= 震撼科幻封面特效 ================= */
-			.tech-bg {
-				fill: url(#bg-grad);
+			/* ================= 庄重红宝石印章特效 ================= */
+			.seal-group {
+				transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+				transform-origin: center;
 			}
-			.grid-lines {
-				stroke: rgba(94, 234, 212, 0.15);
-				stroke-width: 1;
+			.cover-wrap:hover .seal-group {
+				transform: scale(1.05);
 			}
-			.core-ring {
-				transform-origin: 320px 100px;
+
+			/* 外层金色流光旋转 */
+			.gold-flow {
+				animation: spin 8s linear infinite;
+				transform-origin: 200px 100px;
 			}
-			.ring-fast { animation: spin 6s linear infinite; }
-			.ring-reverse { animation: spin 12s linear infinite reverse; }
-			.ring-slow { animation: spin 25s linear infinite; }
 			@keyframes spin { 100% { transform: rotate(360deg); } }
 
-			.scanner { animation: scan 4s ease-in-out infinite; }
-			@keyframes scan {
-				0%, 100% { transform: translateY(-40px); opacity: 0; }
-				10%, 90% { opacity: 0.8; }
-				50% { transform: translateY(40px); opacity: 1; }
+			/* 红宝石内部流光动画 */
+			.ruby-gleam {
+				animation: gleam 4s ease-in-out infinite alternate;
+			}
+			@keyframes gleam {
+				0% { opacity: 0.3; }
+				100% { opacity: 0.8; }
 			}
 
-			.energy-pulse {
-				transform-origin: 320px 100px;
-				animation: pulse-ring 3s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+			/* 悬停提示文字 */
+			.inspect-hint {
+				position: absolute;
+				bottom: 12px;
+				left: 50%;
+				transform: translateX(-50%);
+				font-size: 12px;
+				letter-spacing: 2px;
+				color: rgba(212, 175, 55, 0.6);
+				opacity: 0;
+				transition: opacity 0.3s, transform 0.3s;
+				pointer-events: none;
+				font-family: monospace;
 			}
-			@keyframes pulse-ring {
-				0% { transform: scale(0.6); opacity: 0.8; }
-				100% { transform: scale(1.8); opacity: 0; }
+			.cover-wrap:hover .inspect-hint {
+				opacity: 1;
+				transform: translate(-50%, -4px);
 			}
 
-			.big-number {
-				animation: number-breathe 3s ease-in-out infinite alternate;
-				filter: drop-shadow(0 0 10px rgba(94, 234, 212, 0.8)) drop-shadow(0 0 20px rgba(94, 234, 212, 0.4));
-				font-family: 'Impact', 'Arial Black', system-ui, sans-serif;
-			}
-			@keyframes number-breathe {
-				0% { transform: scale(1); opacity: 0.85; }
-				100% { transform: scale(1.05); opacity: 1; }
-			}
-
-			.particle { animation: float-up 5s linear infinite; }
-			@keyframes float-up {
-				0% { transform: translateY(0); opacity: 0; }
-				20% { opacity: 1; }
-				80% { opacity: 1; }
-				100% { transform: translateY(-80px); opacity: 0; }
-			}
-			/* ==================================================== */
-
-			.body {
-				padding: 16px 18px 18px;
+			/* ================= 全屏检视 Modal ================= */
+			.modal-overlay {
+				position: fixed;
+				inset: 0;
+				background: rgba(0, 0, 0, 0.85);
+				backdrop-filter: blur(8px);
+				z-index: 9999;
 				display: flex;
-				flex-direction: column;
-				gap: 8px;
-				flex: 1;
-			}
-			.head {
-				display: flex;
-				justify-content: space-between;
 				align-items: center;
-				gap: 8px;
+				justify-content: center;
+				opacity: 0;
+				visibility: hidden;
+				transition: all 0.4s ease;
 			}
+			.modal-overlay.active {
+				opacity: 1;
+				visibility: visible;
+			}
+			.modal-content {
+				width: 80vw;
+				max-width: 500px;
+				aspect-ratio: 1 / 1;
+				transform: scale(0.8) rotateX(20deg);
+				transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+			}
+			.modal-overlay.active .modal-content {
+				transform: scale(1) rotateX(0deg);
+			}
+
+			/* 内容样式 */
+			.body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+			.head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 
 			/* 黄金流光文字 */
 			.card h2, .soon b {
-				margin: 0;
-				font-size: 19px;
-				line-height: 1.4;
-				font-weight: 800;
-				letter-spacing: 0.5px;
+				margin: 0; font-size: 19px; line-height: 1.4; font-weight: 800; letter-spacing: 0.5px;
 				background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #b38728 50%, #fbf5b7 75%, #aa771c 100%);
-				background-size: 200% auto;
-				-webkit-background-clip: text;
-				background-clip: text;
-				-webkit-text-fill-color: transparent;
-				color: transparent;
-				animation: shine 4s linear infinite;
-				filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2));
+				background-size: 200% auto; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
+				animation: shine 4s linear infinite; filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2));
 			}
 			@keyframes shine { to { background-position: 200% center; } }
 
 			/* 状态标签 */
 			.status {
-				flex: none;
-				font-size: 12px;
-				padding: 2px 10px;
-				border-radius: 999px;
-				background: rgba(94, 234, 212, 0.15);
-				color: #0f9d8a;
-				border: 1px solid rgba(94, 234, 212, 0.3);
-				box-shadow: 0 0 10px rgba(94, 234, 212, 0.05);
-				display: flex;
-				align-items: center;
-				gap: 6px;
-				font-weight: 600;
-				z-index: 6; /* 防止被流光遮挡 */
+				flex: none; font-size: 12px; padding: 2px 10px; border-radius: 999px;
+				background: rgba(94, 234, 212, 0.15); color: #0f9d8a; border: 1px solid rgba(94, 234, 212, 0.3);
+				display: flex; align-items: center; gap: 6px; font-weight: 600;
 			}
 			.status::before {
-				content: '';
-				width: 6px;
-				height: 6px;
-				border-radius: 50%;
-				background: #0f9d8a;
-				box-shadow: 0 0 6px #0f9d8a;
+				content: ''; width: 6px; height: 6px; border-radius: 50%; background: #0f9d8a; box-shadow: 0 0 6px #0f9d8a;
 				animation: blink 2s infinite ease-in-out;
 			}
-			@keyframes blink {
-				0%, 100% { opacity: 1; transform: scale(1); }
-				50% { opacity: 0.4; transform: scale(0.8); }
-			}
+			@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 			:global(html[data-theme='dark']) .status { color: #5eead4; border-color: rgba(94, 234, 212, 0.4); }
 			:global(html[data-theme='dark']) .status::before { background: #5eead4; box-shadow: 0 0 6px #5eead4; }
 
 			.card p { margin: 0; font-size: 15px; line-height: 1.75; color: rgb(var(--gray-dark)); }
 			.tags { display: flex; flex-wrap: wrap; gap: 6px; }
-			.tags span {
-				font-size: 12px;
-				padding: 2px 10px;
-				border-radius: 6px;
-				background: rgba(var(--gray), 0.1);
-				color: rgb(var(--gray-dark));
-				transition: all 0.2s ease;
-				border: 1px solid transparent;
-			}
-			.card:hover .tags span { background: rgba(var(--gray), 0.15); border-color: rgba(var(--gray), 0.3); }
+			.tags span { font-size: 12px; padding: 2px 10px; border-radius: 6px; background: rgba(var(--gray), 0.1); color: rgb(var(--gray-dark)); }
 			.links { display: flex; gap: 14px; margin-top: auto; padding-top: 10px; }
-			.links a {
-				font-size: 14px;
-				font-weight: 600;
-				color: var(--accent);
-				text-decoration: none;
-				transition: opacity 0.2s;
-				z-index: 6;
-			}
+			.links a { font-size: 14px; font-weight: 600; color: var(--accent); text-decoration: none; }
 			.links a:hover { opacity: 0.8; }
 
 			/* 筹备中卡片 */
 			.soon {
-				align-items: center;
-				justify-content: center;
-				text-align: center;
-				border-style: dashed;
-				border-width: 2px;
-				padding: 36px 20px;
-				background: transparent;
-				border-color: rgba(var(--gray), 0.4);
-				transition: all 0.4s ease;
-			}
-			/* 筹备中卡片不需要动态流光，隐藏掉 */
-			.soon::before {
-				display: none;
+				align-items: center; justify-content: center; text-align: center;
+				border-style: dashed; border-width: 2px; padding: 36px 20px; background: transparent; border-color: rgba(var(--gray), 0.4);
 			}
 			.soon:hover { background: rgba(var(--gray-light), 0.2); border-color: rgba(94, 234, 212, 0.6); }
 			:global(html[data-theme='dark']) .soon { border-color: #26335c; }
-			:global(html[data-theme='dark']) .soon:hover {
-				border-color: #5eead4;
-				background: rgba(26, 36, 64, 0.6);
-				box-shadow: 0 0 30px rgba(94, 234, 212, 0.08);
-			}
-			.soon-icon {
-				margin-bottom: 12px;
-				color: var(--accent);
-				animation: float 3s ease-in-out infinite;
-				display: flex;
-				justify-content: center;
-			}
-			@keyframes float {
-				0%, 100% { transform: translateY(0); }
-				50% { transform: translateY(-8px); }
-			}
+			:global(html[data-theme='dark']) .soon:hover { border-color: #5eead4; background: rgba(26, 36, 64, 0.6); }
+			.soon-icon { margin-bottom: 12px; color: var(--accent); animation: float 3s ease-in-out infinite; display: flex; justify-content: center; }
+			@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 			.soon span { font-size: 14px; color: rgb(var(--gray)); margin-top: 4px; }
 
 			@media (min-width: 720px) { .grid { grid-template-columns: repeat(2, 1fr); } }
 			:global(html[data-theme='dark']) .card { background: rgba(26, 36, 64, 0.95); border-color: #26335c; }
 
+			/* 针对减少动效偏好 */
 			@media (prefers-reduced-motion: reduce) {
-				.cover-wrap video, .cover-wrap svg * { animation: none !important; }
-				.card::before { animation: none !important; background: transparent !important; }
+				.gold-flow, .ruby-gleam { animation: none !important; }
 			}
 		</style>
 	</head>
@@ -385,75 +246,104 @@ const palettes = [
 						const c = palettes[i % palettes.length];
 						return (
 							<div class="card" style={`animation-delay: ${i * 0.15}s;`}>
-								<div class="cover-wrap">
+								<div class="cover-wrap js-inspect-btn">
 									{p.video ? (
-										<video 
-											class="cover js-video" 
-											src={p.video} 
-											autoplay 
-											muted 
-											loop 
-											playsinline
-											preload="metadata"
-										/>
+										<video class="cover js-video" src={p.video} autoplay muted loop playsinline preload="metadata" />
 									) : p.image ? (
 										<img class="cover" src={p.image} alt={p.title} style="background: #0b1020;" />
 									) : (
+										/* ================= 庄重严肃红宝石印章 SVG ================= */
 										<svg class="cover" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
 											<defs>
-												<radialGradient id="bg-grad" cx="80%" cy="50%" r="80%">
-													<stop offset="0%" stop-color="#14204a" />
-													<stop offset="100%" stop-color="#0b1020" />
+												<!-- 背景渐变 -->
+												<radialGradient id="bg-grad" cx="50%" cy="50%" r="50%">
+													<stop offset="0%" stop-color="#141a2e" />
+													<stop offset="100%" stop-color="#070a11" />
 												</radialGradient>
-												<linearGradient id="num-grad" x1="0" y1="0" x2="1" y2="1">
-													<stop offset="0%" stop-color="#ffffff" />
-													<stop offset="100%" stop-color="#5eead4" />
+												
+												<!-- 红宝石底座渐变 -->
+												<radialGradient id="ruby-base" cx="50%" cy="50%" r="50%">
+													<stop offset="0%" stop-color="#ff2a40" />
+													<stop offset="60%" stop-color="#9b111e" />
+													<stop offset="100%" stop-color="#4a0008" />
+												</radialGradient>
+
+												<!-- 红宝石切面高光渐变 -->
+												<linearGradient id="ruby-facet1" x1="0" y1="0" x2="1" y2="1">
+													<stop offset="0%" stop-color="rgba(255,255,255,0.4)" />
+													<stop offset="100%" stop-color="rgba(255,255,255,0)" />
 												</linearGradient>
-												<linearGradient id="scan-grad" x1="0" y1="0" x2="0" y2="1">
-													<stop offset="0%" stop-color="rgba(94, 234, 212, 0)" />
-													<stop offset="50%" stop-color="rgba(94, 234, 212, 0.5)" />
-													<stop offset="100%" stop-color="rgba(94, 234, 212, 0)" />
+												<linearGradient id="ruby-facet2" x1="1" y1="0" x2="0" y2="1">
+													<stop offset="0%" stop-color="rgba(255,100,100,0.5)" />
+													<stop offset="100%" stop-color="rgba(255,255,255,0)" />
 												</linearGradient>
+
+												<!-- 金属字 R 渐变 -->
+												<linearGradient id="gold-text" x1="0" y1="0" x2="1" y2="1">
+													<stop offset="0%" stop-color="#fbf5b7" />
+													<stop offset="30%" stop-color="#b38728" />
+													<stop offset="70%" stop-color="#bf953f" />
+													<stop offset="100%" stop-color="#aa771c" />
+												</linearGradient>
+
+												<!-- 环绕文字路径 -->
+												<path id="circlePath" d="M 200, 50 A 50,50 0 1,1 199.9, 50" fill="none" />
 											</defs>
 											
-											<rect width="400" height="200" class="tech-bg" />
+											<!-- 暗色背景 -->
+											<rect width="400" height="200" fill="url(#bg-grad)" />
 											
-											<g class="grid-lines">
-												<line x1="0" y1="50" x2="400" y2="50" />
-												<line x1="0" y1="100" x2="400" y2="100" />
-												<line x1="0" y1="150" x2="400" y2="150" />
-												<line x1="50" y1="0" x2="50" y2="200" />
-												<line x1="150" y1="0" x2="150" y2="200" />
-												<line x1="250" y1="0" x2="250" y2="200" />
-												<line x1="350" y1="0" x2="350" y2="200" />
+											<!-- 居中印章组 (整体缩小到适合卡片比例) -->
+											<g transform="translate(200, 100) scale(0.9) translate(-200, -100)" class="seal-group">
+												
+												<!-- 外环金色底盘 -->
+												<circle cx="200" cy="100" r="85" fill="#0b1020" stroke="#b38728" stroke-width="2" />
+												<circle cx="200" cy="100" r="80" fill="none" stroke="#4a3613" stroke-width="1" />
+												
+												<!-- 外围刻度 -->
+												<circle cx="200" cy="100" r="75" fill="none" stroke="#d4af37" stroke-width="4" stroke-dasharray="2 6" opacity="0.6" />
+												
+												<!-- 环绕文字 -->
+												<text font-size="9" fill="#bf953f" font-family="monospace" font-weight="600" letter-spacing="4">
+													<textPath href="#circlePath" startOffset="50%" text-anchor="middle">
+														REOG OFFICIAL SEAL • EST. 2024 •
+													</textPath>
+												</text>
+
+												<!-- 内层金属边框 -->
+												<circle cx="200" cy="100" r="56" fill="none" stroke="#d4af37" stroke-width="1.5" />
+												
+												<!-- 红宝石主体 -->
+												<circle cx="200" cy="100" r="50" fill="url(#ruby-base)" />
+												
+												<!-- 宝石切面多边形（制造立体感） -->
+												<polygon points="200,50 235,65 250,100 235,135 200,150 165,135 150,100 165,65" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+												<polygon points="200,50 250,100 200,100" fill="url(#ruby-facet1)" />
+												<polygon points="200,50 150,100 200,100" fill="url(#ruby-facet2)" />
+												<polygon points="200,150 250,100 200,100" fill="url(#ruby-facet1)" opacity="0.5"/>
+												<polygon points="200,150 150,100 200,100" fill="url(#ruby-facet2)" opacity="0.5"/>
+
+												<!-- 内部呼吸流光层 -->
+												<circle cx="200" cy="100" r="50" fill="url(#ruby-base)" opacity="0.5" class="ruby-gleam" mix-blend-mode="screen" />
+
+												<!-- 中心字母 R (古典衬线体) -->
+												<text x="200" y="118" text-anchor="middle" font-size="60" font-weight="900" fill="url(#gold-text)" font-family="Georgia, 'Times New Roman', serif" filter="drop-shadow(0px 2px 4px rgba(0,0,0,0.8))">
+													R
+												</text>
+
+												<!-- 边缘金色流光 -->
+												<g class="gold-flow">
+													<circle cx="200" cy="100" r="85" fill="none" stroke="url(#gold-text)" stroke-width="2" stroke-dasharray="100 500" stroke-linecap="round" />
+												</g>
 											</g>
-
-											<circle cx="320" cy="100" r="70" fill="none" stroke="rgba(94, 234, 212, 0.2)" stroke-width="1" />
-											<circle cx="320" cy="100" r="40" fill="none" stroke="#5eead4" stroke-width="2" class="energy-pulse" />
-
-											<g class="core-ring ring-slow">
-												<circle cx="320" cy="100" r="85" fill="none" stroke="rgba(94, 234, 212, 0.3)" stroke-width="4" stroke-dasharray="2 10" />
-											</g>
-											<g class="core-ring ring-reverse">
-												<circle cx="320" cy="100" r="65" fill="none" stroke="#8fa8ff" stroke-width="1.5" stroke-dasharray="15 5" />
-												<circle cx="320" cy="35" r="4" fill="#8fa8ff" filter="drop-shadow(0 0 6px #8fa8ff)" />
-											</g>
-											<g class="core-ring ring-fast">
-												<circle cx="320" cy="100" r="50" fill="none" stroke="#5eead4" stroke-width="1" />
-												<circle cx="270" cy="100" r="3" fill="#5eead4" filter="drop-shadow(0 0 8px #5eead4)" />
-											</g>
-
-											<rect x="250" y="60" width="140" height="4" fill="url(#scan-grad)" class="scanner" />
-
-											<circle cx="280" cy="130" r="1.5" fill="#fff" class="particle" style="animation-delay: 0s;" />
-											<circle cx="350" cy="140" r="2" fill="#5eead4" class="particle" style="animation-delay: 1.5s;" />
-											<circle cx="310" cy="150" r="1" fill="#8fa8ff" class="particle" style="animation-delay: 3s;" />
-
-											<text x="30" y="135" font-size="90" font-weight="900" fill="url(#num-grad)" class="big-number">
-												{String(i + 1).padStart(2, '0')}
+											
+											<!-- 悬停提示 -->
+											<text x="200" y="180" text-anchor="middle" font-size="10" fill="rgba(212, 175, 55, 0.4)" font-family="monospace" letter-spacing="2">
+												CLICK TO INSPECT
 											</text>
 										</svg>
 									)}
+									{!p.video && !p.image && <div class="inspect-hint">点击检视印章</div>}
 								</div>
 								<div class="body">
 									<div class="head">
@@ -485,19 +375,102 @@ const palettes = [
 		</main>
 		<Footer />
 
-		<!-- 强制视频播放 & 降速的兜底脚本 -->
+		<!-- 检视印章 Modal 弹窗 -->
+		<div class="modal-overlay" id="seal-modal">
+			<div class="modal-content">
+				<!-- 克隆一份大号的 SVG 放进来 -->
+				<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+					<defs>
+						<radialGradient id="bg-grad-m" cx="50%" cy="50%" r="50%">
+							<stop offset="0%" stop-color="#141a2e" />
+							<stop offset="100%" stop-color="#070a11" />
+						</radialGradient>
+						<radialGradient id="ruby-base-m" cx="50%" cy="50%" r="50%">
+							<stop offset="0%" stop-color="#ff2a40" />
+							<stop offset="60%" stop-color="#9b111e" />
+							<stop offset="100%" stop-color="#4a0008" />
+						</radialGradient>
+						<linearGradient id="ruby-facet1-m" x1="0" y1="0" x2="1" y2="1">
+							<stop offset="0%" stop-color="rgba(255,255,255,0.5)" />
+							<stop offset="100%" stop-color="rgba(255,255,255,0)" />
+						</linearGradient>
+						<linearGradient id="ruby-facet2-m" x1="1" y1="0" x2="0" y2="1">
+							<stop offset="0%" stop-color="rgba(255,100,100,0.6)" />
+							<stop offset="100%" stop-color="rgba(255,255,255,0)" />
+						</linearGradient>
+						<linearGradient id="gold-text-m" x1="0" y1="0" x2="1" y2="1">
+							<stop offset="0%" stop-color="#fbf5b7" />
+							<stop offset="30%" stop-color="#b38728" />
+							<stop offset="70%" stop-color="#bf953f" />
+							<stop offset="100%" stop-color="#aa771c" />
+						</linearGradient>
+						<path id="circlePath-m" d="M 200, 50 A 50,50 0 1,1 199.9, 50" fill="none" />
+					</defs>
+					<rect width="400" height="200" fill="url(#bg-grad-m)" />
+					<g transform="translate(200, 100) scale(1.6) translate(-200, -100)">
+						<circle cx="200" cy="100" r="85" fill="#0b1020" stroke="#b38728" stroke-width="2" />
+						<circle cx="200" cy="100" r="80" fill="none" stroke="#4a3613" stroke-width="1" />
+						<circle cx="200" cy="100" r="75" fill="none" stroke="#d4af37" stroke-width="4" stroke-dasharray="2 6" opacity="0.6" />
+						<text font-size="9" fill="#bf953f" font-family="monospace" font-weight="600" letter-spacing="4">
+							<textPath href="#circlePath-m" startOffset="50%" text-anchor="middle">
+								REOG OFFICIAL SEAL • EST. 2024 •
+							</textPath>
+						</text>
+						<circle cx="200" cy="100" r="56" fill="none" stroke="#d4af37" stroke-width="1.5" />
+						<circle cx="200" cy="100" r="50" fill="url(#ruby-base-m)" />
+						<polygon points="200,50 235,65 250,100 235,135 200,150 165,135 150,100 165,65" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+						<polygon points="200,50 250,100 200,100" fill="url(#ruby-facet1-m)" />
+						<polygon points="200,50 150,100 200,100" fill="url(#ruby-facet2-m)" />
+						<polygon points="200,150 250,100 200,100" fill="url(#ruby-facet1-m)" opacity="0.5"/>
+						<polygon points="200,150 150,100 200,100" fill="url(#ruby-facet2-m)" opacity="0.5"/>
+						<circle cx="200" cy="100" r="50" fill="url(#ruby-base-m)" opacity="0.5" class="ruby-gleam" mix-blend-mode="screen" />
+						<text x="200" y="118" text-anchor="middle" font-size="60" font-weight="900" fill="url(#gold-text-m)" font-family="Georgia, 'Times New Roman', serif" filter="drop-shadow(0px 2px 6px rgba(0,0,0,0.8))">
+							R
+						</text>
+						<g class="gold-flow">
+							<circle cx="200" cy="100" r="85" fill="none" stroke="url(#gold-text-m)" stroke-width="2" stroke-dasharray="100 500" stroke-linecap="round" />
+						</g>
+					</g>
+				</svg>
+			</div>
+		</div>
+
 		<script>
 			document.addEventListener('astro:page-load', () => {
+				// 视频播放逻辑
 				const videos = document.querySelectorAll('.js-video');
 				videos.forEach((video: any) => {
 					video.playbackRate = 0.6; 
-					const playPromise = video.play();
-					if (playPromise !== undefined) {
-						playPromise.catch((error: any) => {
-							console.log('浏览器拦截了自动播放:', error);
-						});
-					}
+					video.play().catch((err: any) => console.log(err));
 				});
+
+				// 印章检视 Modal 逻辑
+				const inspectBtns = document.querySelectorAll('.js-inspect-btn');
+				const modal = document.getElementById('seal-modal');
+
+				inspectBtns.forEach(btn => {
+					// 判断当前卡片是否真的在显示 SVG 印章
+					btn.addEventListener('click', (e) => {
+						const svg = btn.querySelector('svg');
+						const isSeal = svg && !svg.classList.contains('js-video') && !btn.querySelector('img');
+						
+						// 如果点击的是视频或图片，则不触发弹窗
+						if (!isSeal) return;
+
+						if (modal) {
+							modal.classList.add('active');
+							document.body.style.overflow = 'hidden'; // 阻止滚动
+						}
+					});
+				});
+
+				// 点击任意地方关闭弹窗
+				if (modal) {
+					modal.addEventListener('click', () => {
+						modal.classList.remove('active');
+						document.body.style.overflow = '';
+					});
+				}
 			});
 		</script>
 	</body>
