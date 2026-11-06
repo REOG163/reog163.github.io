@@ -7,6 +7,13 @@ export type ChangeItem = {
 
 export const CHANGELOG: ChangeItem[] = [
   {
+    date: '2026-11-06',
+    title: '听文章更新',
+    items: [
+      '新增：听文章功能，支持多种语音。',
+    ],
+  },
+  {
     date: '2026-11-05',
     title: '写作仪表盘 · 小工具 · 专注模式',
     items: [
