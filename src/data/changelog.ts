@@ -8,9 +8,11 @@ export type ChangeItem = {
 export const CHANGELOG: ChangeItem[] = [
   {
     date: '2026-11-06',
-    title: '听文章更新',
+    title: '听文章更新（暂时仅支持耳机播放）',
     items: [
       '新增：听文章功能，支持多种语音。',
+      '优化了界面动态效果'
+      '优化了加载速度'
     ],
   },
   {
