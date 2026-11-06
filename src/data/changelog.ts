@@ -1,9 +1,9 @@
 // 建站日志：新到旧排列
-export type ChangeItem = {
+export interface ChangeItem {
   date: string;
   title: string;
   items: string[];
-};
+}
 
 export const CHANGELOG: ChangeItem[] = [
   {
@@ -13,11 +13,11 @@ export const CHANGELOG: ChangeItem[] = [
       '新增：听文章功能，支持多种语音。',
       '优化了界面动态效果',
       '优化了加载速度',
-      '优化文章进度条'，
-      '优化了文章排版，增强阅读舒适性'，
-      '新增主页星球交互'，
-      '新增文章字体大小可调'，
-      '新增收藏功能'，
+      '优化文章进度条',
+      '优化了文章排版，增强阅读舒适性',
+      '新增主页星球交互',
+      '新增文章字体大小可调',
+      '新增收藏功能',
     ],
   },
   {
