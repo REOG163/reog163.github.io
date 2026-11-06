@@ -1,9 +1,14 @@
 ---
+import HeroOrbit from '../components/HeroOrbit.astro';
 import Snow from '../components/Snow.astro';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+---
+<main>
+  <HeroOrbit />
+</main>
 
 // Windows 桌面版下载地址（由 GitHub Actions 自动发布到 Releases）
 const DOWNLOAD_URL = 'https://github.com/REOG163/reog163.github.io/releases/latest/download/REOG-Setup.exe';
