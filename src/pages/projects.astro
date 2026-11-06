@@ -11,7 +11,7 @@ const projects = [
 		desc: '基于 Astro 构建的中文个人博客，支持深色模式、站内搜索、标签分类、RSS 订阅与评论，通过 GitHub Actions 自动部署到 GitHub Pages。',
 		tags: ['Astro', 'GitHub Actions', 'GitHub Pages', 'Giscus'],
 		status: '运行中',
-		// 注意：路径前面必须要有斜杠 /
+		// 留空即可显示震撼的 01 动态封面；若想换回媒体，填入 '/aac.mp4' 或 '/IMG_2998.jpeg'
 		video: '',
 		image: '', 
 		links: [
@@ -125,36 +125,80 @@ const palettes = [
 				transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
 			}
 			.card:hover .cover {
-				transform: scale(1.06);
+				transform: scale(1.03);
 			}
 
-			/* 原 SVG 动效 */
-			.orbit-rings circle {
+			/* ================= 震撼科幻封面特效 ================= */
+			.tech-bg {
+				fill: url(#bg-grad);
+			}
+			
+			/* 透视网格背景 */
+			.grid-lines {
+				stroke: rgba(94, 234, 212, 0.15);
+				stroke-width: 1;
+			}
+
+			/* 核心光环引擎 */
+			.core-ring {
 				transform-origin: 320px 100px;
-				animation: radar-pulse 4s ease-out infinite;
 			}
-			.orbit-rings circle:nth-child(2) { animation-delay: 1.3s; }
-			.orbit-rings circle:nth-child(3) { animation-delay: 2.6s; }
-			@keyframes radar-pulse {
-				0% { transform: scale(0.8); opacity: 0; stroke-width: 2px;}
-				20% { opacity: 0.4; }
-				100% { transform: scale(1.2); opacity: 0; stroke-width: 0.5px;}
+			.ring-fast {
+				animation: spin 6s linear infinite;
 			}
-			.orbit-dot { animation: dot-float 5s ease-in-out infinite; }
-			@keyframes dot-float {
-				0%, 100% { transform: translate(0, 0); filter: drop-shadow(0 0 4px currentColor); }
-				50% { transform: translate(15px, -15px); filter: drop-shadow(0 0 10px currentColor); }
+			.ring-reverse {
+				animation: spin 12s linear infinite reverse;
 			}
-			.orbit-number { animation: number-float 6s ease-in-out infinite; }
-			@keyframes number-float {
-				0%, 100% { transform: translateY(0); opacity: 0.9; }
-				50% { transform: translateY(-6px); opacity: 1; text-shadow: 0 0 15px rgba(255,255,255,0.3); }
+			.ring-slow {
+				animation: spin 25s linear infinite;
 			}
-			.cover-bg { animation: bg-pulse 8s ease-in-out infinite alternate; }
-			@keyframes bg-pulse {
-				0% { filter: brightness(1); }
-				100% { filter: brightness(1.2); }
+
+			@keyframes spin {
+				100% { transform: rotate(360deg); }
 			}
+
+			/* 激光扫描线 */
+			.scanner {
+				animation: scan 4s ease-in-out infinite;
+			}
+			@keyframes scan {
+				0%, 100% { transform: translateY(-40px); opacity: 0; }
+				10%, 90% { opacity: 0.8; }
+				50% { transform: translateY(40px); opacity: 1; }
+			}
+
+			/* 背景呼吸能量圈 */
+			.energy-pulse {
+				transform-origin: 320px 100px;
+				animation: pulse-ring 3s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+			}
+			@keyframes pulse-ring {
+				0% { transform: scale(0.6); opacity: 0.8; }
+				100% { transform: scale(1.8); opacity: 0; }
+			}
+
+			/* 数字 01 强力呼吸与发光 */
+			.big-number {
+				animation: number-breathe 3s ease-in-out infinite alternate;
+				filter: drop-shadow(0 0 10px rgba(94, 234, 212, 0.8)) drop-shadow(0 0 20px rgba(94, 234, 212, 0.4));
+				font-family: 'Impact', 'Arial Black', system-ui, sans-serif;
+			}
+			@keyframes number-breathe {
+				0% { transform: scale(1); opacity: 0.85; }
+				100% { transform: scale(1.05); opacity: 1; }
+			}
+
+			/* 浮动粒子 */
+			.particle {
+				animation: float-up 5s linear infinite;
+			}
+			@keyframes float-up {
+				0% { transform: translateY(0); opacity: 0; }
+				20% { opacity: 1; }
+				80% { opacity: 1; }
+				100% { transform: translateY(-80px); opacity: 0; }
+			}
+			/* ==================================================== */
 
 			.body {
 				padding: 16px 18px 18px;
@@ -277,7 +321,7 @@ const palettes = [
 			:global(html[data-theme='dark']) .card { background: rgba(26, 36, 64, 0.95); border-color: #26335c; }
 
 			@media (prefers-reduced-motion: reduce) {
-				.cover-wrap video { display: none; }
+				.cover-wrap video, .cover-wrap svg * { animation: none !important; }
 			}
 		</style>
 	</head>
@@ -306,23 +350,81 @@ const palettes = [
 											preload="metadata"
 										/>
 									) : p.image ? (
-										<img class="cover" src={p.image} alt={p.title} loading="lazy" />
+										<img class="cover" src={p.image} alt={p.title} style="background: #0b1020;" />
 									) : (
+										/* 震撼赛博科幻封面 SVG */
 										<svg class="cover" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
 											<defs>
-												<linearGradient id={`g${i}`} x1="0" y1="0" x2="1" y2="1">
-													<stop offset="0" stop-color={c[0]} />
-													<stop offset="1" stop-color={c[1]} />
+												<!-- 深空渐变背景 -->
+												<radialGradient id="bg-grad" cx="80%" cy="50%" r="80%">
+													<stop offset="0%" stop-color="#14204a" />
+													<stop offset="100%" stop-color="#0b1020" />
+												</radialGradient>
+												
+												<!-- 数字渐变 -->
+												<linearGradient id="num-grad" x1="0" y1="0" x2="1" y2="1">
+													<stop offset="0%" stop-color="#ffffff" />
+													<stop offset="100%" stop-color="#5eead4" />
+												</linearGradient>
+
+												<!-- 扫描线渐变 -->
+												<linearGradient id="scan-grad" x1="0" y1="0" x2="0" y2="1">
+													<stop offset="0%" stop-color="rgba(94, 234, 212, 0)" />
+													<stop offset="50%" stop-color="rgba(94, 234, 212, 0.5)" />
+													<stop offset="100%" stop-color="rgba(94, 234, 212, 0)" />
 												</linearGradient>
 											</defs>
-											<rect width="400" height="200" fill={`url(#g${i})`} class="cover-bg" />
-											<g fill="none" stroke="#fff" stroke-opacity="0.3" class="orbit-rings">
-												<circle cx="320" cy="100" r="90" />
-												<circle cx="320" cy="100" r="56" />
-												<circle cx="320" cy="100" r="24" />
+											
+											<!-- 背景 -->
+											<rect width="400" height="200" class="tech-bg" />
+											
+											<!-- 透视网格 -->
+											<g class="grid-lines">
+												<line x1="0" y1="50" x2="400" y2="50" />
+												<line x1="0" y1="100" x2="400" y2="100" />
+												<line x1="0" y1="150" x2="400" y2="150" />
+												<line x1="50" y1="0" x2="50" y2="200" />
+												<line x1="150" y1="0" x2="150" y2="200" />
+												<line x1="250" y1="0" x2="250" y2="200" />
+												<line x1="350" y1="0" x2="350" y2="200" />
 											</g>
-											<circle cx="230" cy="100" r="6" fill={c[2]} class="orbit-dot" style={`color: ${c[2]};`} />
-											<text x="28" y="116" font-size="44" font-weight="800" fill="#fff" font-family="system-ui, sans-serif" letter-spacing="2" class="orbit-number">
+
+											<!-- 中心能量底座 -->
+											<circle cx="320" cy="100" r="70" fill="none" stroke="rgba(94, 234, 212, 0.2)" stroke-width="1" />
+											
+											<!-- 核心发光圈（呼吸） -->
+											<circle cx="320" cy="100" r="40" fill="none" stroke="#5eead4" stroke-width="2" class="energy-pulse" />
+
+											<!-- 旋转的星轨系统 -->
+											<g class="core-ring ring-slow">
+												<!-- 外环刻度线 -->
+												<circle cx="320" cy="100" r="85" fill="none" stroke="rgba(94, 234, 212, 0.3)" stroke-width="4" stroke-dasharray="2 10" />
+											</g>
+											
+											<g class="core-ring ring-reverse">
+												<!-- 中环虚线圈 -->
+												<circle cx="320" cy="100" r="65" fill="none" stroke="#8fa8ff" stroke-width="1.5" stroke-dasharray="15 5" />
+												<!-- 卫星光点 -->
+												<circle cx="320" cy="35" r="4" fill="#8fa8ff" filter="drop-shadow(0 0 6px #8fa8ff)" />
+											</g>
+
+											<g class="core-ring ring-fast">
+												<!-- 内环 -->
+												<circle cx="320" cy="100" r="50" fill="none" stroke="#5eead4" stroke-width="1" />
+												<!-- 激光卫星 -->
+												<circle cx="270" cy="100" r="3" fill="#5eead4" filter="drop-shadow(0 0 8px #5eead4)" />
+											</g>
+
+											<!-- 扫描光幕 -->
+											<rect x="250" y="60" width="140" height="4" fill="url(#scan-grad)" class="scanner" />
+
+											<!-- 浮动粒子 -->
+											<circle cx="280" cy="130" r="1.5" fill="#fff" class="particle" style="animation-delay: 0s;" />
+											<circle cx="350" cy="140" r="2" fill="#5eead4" class="particle" style="animation-delay: 1.5s;" />
+											<circle cx="310" cy="150" r="1" fill="#8fa8ff" class="particle" style="animation-delay: 3s;" />
+
+											<!-- 巨大醒目数字 01 -->
+											<text x="30" y="135" font-size="90" font-weight="900" fill="url(#num-grad)" class="big-number">
 												{String(i + 1).padStart(2, '0')}
 											</text>
 										</svg>
@@ -358,15 +460,12 @@ const palettes = [
 		</main>
 		<Footer />
 
-		<!-- 强制视频播放 & 降速的兜底脚本 -->
+		<!-- 强制视频播放 & 降速的兜底脚本 (有视频时生效) -->
 		<script>
 			document.addEventListener('astro:page-load', () => {
 				const videos = document.querySelectorAll('.js-video');
 				videos.forEach((video: any) => {
-					// 将视频速度降为 0.6 倍，解决原视频播放太快的问题
 					video.playbackRate = 0.6; 
-
-					// 尝试播放
 					const playPromise = video.play();
 					if (playPromise !== undefined) {
 						playPromise.catch((error: any) => {
