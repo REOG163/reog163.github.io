@@ -11,7 +11,7 @@ const projects = [
 		desc: '基于 Astro 构建的中文个人博客，支持深色模式、站内搜索、标签分类、RSS 订阅与评论，通过 GitHub Actions 自动部署到 GitHub Pages。',
 		tags: ['Astro', 'GitHub Actions', 'GitHub Pages', 'Giscus'],
 		status: '运行中',
-		// 留空即可显示震撼的 01 动态封面；若想换回媒体，填入 '/aac.mp4' 或 '/IMG_2998.jpeg'
+		// 留空即可显示震撼的 01 动态封面
 		video: '',
 		image: '', 
 		links: [
@@ -33,6 +33,13 @@ const palettes = [
 	<head>
 		<BaseHead title={`作品集 | ${SITE_TITLE}`} description="我做过的项目与作品" />
 		<style>
+			/* 核心：定义 CSS Houdini 变量，让锥形渐变的角度可以动起来 */
+			@property --angle {
+				syntax: '<angle>';
+				initial-value: 0deg;
+				inherits: false;
+			}
+
 			main.pj {
 				width: 100%;
 				max-width: 960px;
@@ -76,6 +83,60 @@ const palettes = [
 				animation: cardIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
 			}
 
+			/* ================= 边缘流光特效 ================= */
+			.card::before {
+				content: '';
+				position: absolute;
+				inset: 0;
+				border-radius: 14px;
+				padding: 1.5px; /* 控制光线的粗细 */
+				/* 基础状态：暗色边缘 + 尾部流光 */
+				background: conic-gradient(
+					from var(--angle), 
+					rgba(var(--gray), 0.2) 0%, 
+					rgba(var(--gray), 0.2) 70%, 
+					#5eead4 90%, 
+					#8fa8ff 100%
+				);
+				-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+				-webkit-mask-composite: xor;
+				mask-composite: exclude;
+				pointer-events: none;
+				animation: spin-edge 4s linear infinite;
+				z-index: 5; /* 确保光效在内容最上层，但只有边框宽度 */
+			}
+
+			@keyframes spin-edge {
+				to {
+					--angle: 360deg;
+				}
+			}
+
+			/* 深色模式下的基础流光 */
+			:global(html[data-theme='dark']) .card::before {
+				background: conic-gradient(
+					from var(--angle), 
+					rgba(38, 51, 92, 0.8) 0%, 
+					rgba(38, 51, 92, 0.8) 70%, 
+					#5eead4 90%, 
+					#8fa8ff 100%
+				);
+			}
+
+			/* 悬浮时：流光加速、变粗、色彩更亮 */
+			.card:hover::before {
+				padding: 2px;
+				background: conic-gradient(
+					from var(--angle), 
+					transparent 40%, 
+					#5eead4 70%, 
+					#ffffff 85%, 
+					#8fa8ff 100%
+				);
+				animation-duration: 1.5s;
+			}
+			/* ================================================= */
+
 			@keyframes cardIn {
 				from { opacity: 0; transform: translateY(30px) scale(0.98); }
 				to { opacity: 1; transform: translateY(0) scale(1); }
@@ -83,14 +144,14 @@ const palettes = [
 
 			.card:hover {
 				transform: translateY(-6px);
-				border-color: rgba(94, 234, 212, 0.5);
+				border-color: transparent; /* 悬浮时隐藏原本的边框，露出里面的流光 */
 				box-shadow: 0 16px 32px -10px rgba(0, 0, 0, 0.1);
 			}
 			:global(html[data-theme='dark']) .card:hover {
 				box-shadow: 0 16px 32px -10px rgba(0, 0, 0, 0.6), 0 0 24px rgba(94, 234, 212, 0.15);
-				border-color: #5eead4;
 			}
 
+			/* 悬浮斜向高光扫光 */
 			.card::after {
 				content: '';
 				position: absolute;
@@ -132,42 +193,25 @@ const palettes = [
 			.tech-bg {
 				fill: url(#bg-grad);
 			}
-			
-			/* 透视网格背景 */
 			.grid-lines {
 				stroke: rgba(94, 234, 212, 0.15);
 				stroke-width: 1;
 			}
-
-			/* 核心光环引擎 */
 			.core-ring {
 				transform-origin: 320px 100px;
 			}
-			.ring-fast {
-				animation: spin 6s linear infinite;
-			}
-			.ring-reverse {
-				animation: spin 12s linear infinite reverse;
-			}
-			.ring-slow {
-				animation: spin 25s linear infinite;
-			}
+			.ring-fast { animation: spin 6s linear infinite; }
+			.ring-reverse { animation: spin 12s linear infinite reverse; }
+			.ring-slow { animation: spin 25s linear infinite; }
+			@keyframes spin { 100% { transform: rotate(360deg); } }
 
-			@keyframes spin {
-				100% { transform: rotate(360deg); }
-			}
-
-			/* 激光扫描线 */
-			.scanner {
-				animation: scan 4s ease-in-out infinite;
-			}
+			.scanner { animation: scan 4s ease-in-out infinite; }
 			@keyframes scan {
 				0%, 100% { transform: translateY(-40px); opacity: 0; }
 				10%, 90% { opacity: 0.8; }
 				50% { transform: translateY(40px); opacity: 1; }
 			}
 
-			/* 背景呼吸能量圈 */
 			.energy-pulse {
 				transform-origin: 320px 100px;
 				animation: pulse-ring 3s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
@@ -177,7 +221,6 @@ const palettes = [
 				100% { transform: scale(1.8); opacity: 0; }
 			}
 
-			/* 数字 01 强力呼吸与发光 */
 			.big-number {
 				animation: number-breathe 3s ease-in-out infinite alternate;
 				filter: drop-shadow(0 0 10px rgba(94, 234, 212, 0.8)) drop-shadow(0 0 20px rgba(94, 234, 212, 0.4));
@@ -188,10 +231,7 @@ const palettes = [
 				100% { transform: scale(1.05); opacity: 1; }
 			}
 
-			/* 浮动粒子 */
-			.particle {
-				animation: float-up 5s linear infinite;
-			}
+			.particle { animation: float-up 5s linear infinite; }
 			@keyframes float-up {
 				0% { transform: translateY(0); opacity: 0; }
 				20% { opacity: 1; }
@@ -246,6 +286,7 @@ const palettes = [
 				align-items: center;
 				gap: 6px;
 				font-weight: 600;
+				z-index: 6; /* 防止被流光遮挡 */
 			}
 			.status::before {
 				content: '';
@@ -282,6 +323,7 @@ const palettes = [
 				color: var(--accent);
 				text-decoration: none;
 				transition: opacity 0.2s;
+				z-index: 6;
 			}
 			.links a:hover { opacity: 0.8; }
 
@@ -296,6 +338,10 @@ const palettes = [
 				background: transparent;
 				border-color: rgba(var(--gray), 0.4);
 				transition: all 0.4s ease;
+			}
+			/* 筹备中卡片不需要动态流光，隐藏掉 */
+			.soon::before {
+				display: none;
 			}
 			.soon:hover { background: rgba(var(--gray-light), 0.2); border-color: rgba(94, 234, 212, 0.6); }
 			:global(html[data-theme='dark']) .soon { border-color: #26335c; }
@@ -322,6 +368,7 @@ const palettes = [
 
 			@media (prefers-reduced-motion: reduce) {
 				.cover-wrap video, .cover-wrap svg * { animation: none !important; }
+				.card::before { animation: none !important; background: transparent !important; }
 			}
 		</style>
 	</head>
@@ -352,22 +399,16 @@ const palettes = [
 									) : p.image ? (
 										<img class="cover" src={p.image} alt={p.title} style="background: #0b1020;" />
 									) : (
-										/* 震撼赛博科幻封面 SVG */
 										<svg class="cover" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
 											<defs>
-												<!-- 深空渐变背景 -->
 												<radialGradient id="bg-grad" cx="80%" cy="50%" r="80%">
 													<stop offset="0%" stop-color="#14204a" />
 													<stop offset="100%" stop-color="#0b1020" />
 												</radialGradient>
-												
-												<!-- 数字渐变 -->
 												<linearGradient id="num-grad" x1="0" y1="0" x2="1" y2="1">
 													<stop offset="0%" stop-color="#ffffff" />
 													<stop offset="100%" stop-color="#5eead4" />
 												</linearGradient>
-
-												<!-- 扫描线渐变 -->
 												<linearGradient id="scan-grad" x1="0" y1="0" x2="0" y2="1">
 													<stop offset="0%" stop-color="rgba(94, 234, 212, 0)" />
 													<stop offset="50%" stop-color="rgba(94, 234, 212, 0.5)" />
@@ -375,10 +416,8 @@ const palettes = [
 												</linearGradient>
 											</defs>
 											
-											<!-- 背景 -->
 											<rect width="400" height="200" class="tech-bg" />
 											
-											<!-- 透视网格 -->
 											<g class="grid-lines">
 												<line x1="0" y1="50" x2="400" y2="50" />
 												<line x1="0" y1="100" x2="400" y2="100" />
@@ -389,41 +428,27 @@ const palettes = [
 												<line x1="350" y1="0" x2="350" y2="200" />
 											</g>
 
-											<!-- 中心能量底座 -->
 											<circle cx="320" cy="100" r="70" fill="none" stroke="rgba(94, 234, 212, 0.2)" stroke-width="1" />
-											
-											<!-- 核心发光圈（呼吸） -->
 											<circle cx="320" cy="100" r="40" fill="none" stroke="#5eead4" stroke-width="2" class="energy-pulse" />
 
-											<!-- 旋转的星轨系统 -->
 											<g class="core-ring ring-slow">
-												<!-- 外环刻度线 -->
 												<circle cx="320" cy="100" r="85" fill="none" stroke="rgba(94, 234, 212, 0.3)" stroke-width="4" stroke-dasharray="2 10" />
 											</g>
-											
 											<g class="core-ring ring-reverse">
-												<!-- 中环虚线圈 -->
 												<circle cx="320" cy="100" r="65" fill="none" stroke="#8fa8ff" stroke-width="1.5" stroke-dasharray="15 5" />
-												<!-- 卫星光点 -->
 												<circle cx="320" cy="35" r="4" fill="#8fa8ff" filter="drop-shadow(0 0 6px #8fa8ff)" />
 											</g>
-
 											<g class="core-ring ring-fast">
-												<!-- 内环 -->
 												<circle cx="320" cy="100" r="50" fill="none" stroke="#5eead4" stroke-width="1" />
-												<!-- 激光卫星 -->
 												<circle cx="270" cy="100" r="3" fill="#5eead4" filter="drop-shadow(0 0 8px #5eead4)" />
 											</g>
 
-											<!-- 扫描光幕 -->
 											<rect x="250" y="60" width="140" height="4" fill="url(#scan-grad)" class="scanner" />
 
-											<!-- 浮动粒子 -->
 											<circle cx="280" cy="130" r="1.5" fill="#fff" class="particle" style="animation-delay: 0s;" />
 											<circle cx="350" cy="140" r="2" fill="#5eead4" class="particle" style="animation-delay: 1.5s;" />
 											<circle cx="310" cy="150" r="1" fill="#8fa8ff" class="particle" style="animation-delay: 3s;" />
 
-											<!-- 巨大醒目数字 01 -->
 											<text x="30" y="135" font-size="90" font-weight="900" fill="url(#num-grad)" class="big-number">
 												{String(i + 1).padStart(2, '0')}
 											</text>
@@ -460,7 +485,7 @@ const palettes = [
 		</main>
 		<Footer />
 
-		<!-- 强制视频播放 & 降速的兜底脚本 (有视频时生效) -->
+		<!-- 强制视频播放 & 降速的兜底脚本 -->
 		<script>
 			document.addEventListener('astro:page-load', () => {
 				const videos = document.querySelectorAll('.js-video');
