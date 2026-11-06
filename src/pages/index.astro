@@ -91,37 +91,81 @@ const fields = [
 				animation: slide-up 0.6s ease both;
 			}
 
-			/* 标题与猫咪尾巴 */
+			/* ================= 标题 3D 残影特效 ================= */
 			.hero h1 {
 				margin: 0;
-				font-size: 56px;
-				line-height: 1.05;
+				font-size: 60px;
+				line-height: 1.1;
 				letter-spacing: 0.04em;
-				color: #fff;
 				animation: slide-up 0.6s ease 0.1s both;
 			}
-			.letter-r {
+			.glitch-text {
 				position: relative;
 				display: inline-block;
+				font-weight: 900;
+				/* 银白色渐变底色 */
+				background: linear-gradient(135deg, #ffffff 10%, #e2e8f0 40%, #cbd5e1 60%, #f8fafc 90%);
+				-webkit-background-clip: text;
+				background-clip: text;
+				color: transparent;
+				-webkit-text-fill-color: transparent;
+				/* 银白发散微光 + Q弹呼吸 */
+				filter: drop-shadow(0 8px 16px rgba(255, 255, 255, 0.2));
+				animation: text-float 3s ease-in-out infinite;
+				z-index: 2;
 			}
-			.cat-tail {
+
+			/* 动态残影 1 - 蓝色系 */
+			.glitch-text::before {
+				content: attr(data-text);
 				position: absolute;
-				width: 110px;
-				height: 110px;
-				bottom: -15px;
-				left: 35px;
-				transform-origin: 10% 85%;
-				animation: tail-wag 2.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) infinite alternate;
-				z-index: 1;
+				left: 0;
+				top: 0;
+				z-index: -1;
+				background: linear-gradient(135deg, #5eead4 0%, #3b82f6 100%);
+				-webkit-background-clip: text;
+				background-clip: text;
+				color: transparent;
+				-webkit-text-fill-color: transparent;
+				animation: ghost-1 2.5s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
+				opacity: 0;
 				pointer-events: none;
-				filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
 			}
-			.hero h1:hover .cat-tail {
+			/* 动态残影 2 - 粉橙系 */
+			.glitch-text::after {
+				content: attr(data-text);
+				position: absolute;
+				left: 0;
+				top: 0;
+				z-index: -2;
+				background: linear-gradient(135deg, #f472b6 0%, #fb923c 100%);
+				-webkit-background-clip: text;
+				background-clip: text;
+				color: transparent;
+				-webkit-text-fill-color: transparent;
+				animation: ghost-2 2.5s cubic-bezier(0.34, 1.56, 0.64, 1) infinite 0.15s;
+				opacity: 0;
+				pointer-events: none;
+			}
+			/* 悬停时残影加速爆发 */
+			.hero h1:hover .glitch-text::before,
+			.hero h1:hover .glitch-text::after {
 				animation-duration: 1s;
 			}
-			@keyframes tail-wag {
-				0% { transform: rotate(-10deg) scaleY(0.95); }
-				100% { transform: rotate(25deg) scaleY(1.05); }
+
+			@keyframes text-float {
+				0%, 100% { transform: scale(1) translateY(0); }
+				50% { transform: scale(1.02) translateY(-3px); }
+			}
+			@keyframes ghost-1 {
+				0%, 100% { transform: translate(0, 0) scale(1); opacity: 0; filter: blur(0); }
+				30% { transform: translate(-10px, 5px) scale(1.02); opacity: 0.6; filter: blur(3px); }
+				70% { transform: translate(-22px, 12px) scale(1.05); opacity: 0; filter: blur(8px); }
+			}
+			@keyframes ghost-2 {
+				0%, 100% { transform: translate(0, 0) scale(1); opacity: 0; filter: blur(0); }
+				30% { transform: translate(10px, -5px) scale(1.02); opacity: 0.4; filter: blur(3px); }
+				70% { transform: translate(22px, -12px) scale(1.05); opacity: 0; filter: blur(8px); }
 			}
 
 			.hero .slogan {
@@ -457,12 +501,6 @@ const fields = [
 				.hero h1 {
 					font-size: 84px;
 				}
-				.cat-tail {
-					width: 160px;
-					height: 160px;
-					bottom: -25px;
-					left: 55px;
-				}
 				.hero .slogan {
 					font-size: 24px;
 				}
@@ -552,34 +590,8 @@ const fields = [
 					<div>
 						<p class="eyebrow">PERSONAL LAB · 个人实验室</p>
 						<h1>
-							<span class="letter-r">
-								R
-								<!-- 猫咪尾巴 -->
-								<svg class="cat-tail" viewBox="0 0 120 120" aria-hidden="true">
-									<defs>
-										<linearGradient id="tail-grad" x1="0%" y1="100%" x2="100%" y2="0%">
-											<stop offset="0%" stop-color="#ff9a9e" />
-											<stop offset="100%" stop-color="#fecfef" />
-										</linearGradient>
-										<filter id="fluffy" x="-20%" y="-20%" width="140%" height="140%">
-											<feGaussianBlur stdDeviation="1.5" result="blur" />
-											<feMerge>
-												<feMergeNode in="blur" />
-												<feMergeNode in="SourceGraphic" />
-											</feMerge>
-										</filter>
-									</defs>
-									<g filter="url(#fluffy)">
-										<!-- 尾巴主体 -->
-										<path d="M10,100 C20,60 50,20 90,20 C110,20 115,40 100,55 C80,75 40,60 25,100" fill="none" stroke="url(#tail-grad)" stroke-width="14" stroke-linecap="round" />
-										<!-- 毛发高光 -->
-										<path d="M10,100 C20,60 50,20 90,20 C110,20 115,40 100,55 C80,75 40,60 25,100" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity="0.5" />
-										<!-- 边缘绒毛细节 -->
-										<path d="M20,85 C30,50 50,30 80,30" fill="none" stroke="#fecfef" stroke-width="2" stroke-linecap="round" stroke-dasharray="2 10" opacity="0.9"/>
-										<path d="M30,90 C40,65 60,40 90,40" fill="none" stroke="#ffb3c6" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 12" opacity="0.8"/>
-									</g>
-								</svg>
-							</span>EOG
+							<!-- 使用 data-text 实现残影特效 -->
+							<span class="glitch-text" data-text="REOG">REOG</span>
 						</h1>
 						<p class="slogan">把复杂的事，做成简单可靠的系统。</p>
 						<p class="sub">工程 · 产品 · 长期主义。在这里记录我如何思考、构建与复盘。</p>
