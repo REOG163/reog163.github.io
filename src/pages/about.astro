@@ -1,432 +1,512 @@
 ---
 import BaseHead from '../components/BaseHead.astro';
-import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { SITE_TITLE } from '../consts';
+import Header from '../components/Header.astro';
 
-// ===== 在这里添加你的作品，复制一段 { ... } 即可 =====
-// 优先显示 video，其次 image，都没有则显示动态 SVG 封面
-const projects = [
-	{
-		title: '本站：REOG 个人网站',
-		desc: '基于 Astro 构建的中文个人博客，支持深色模式、站内搜索、标签分类、RSS 订阅与评论，通过 GitHub Actions 自动部署到 GitHub Pages。',
-		tags: ['Astro', 'GitHub Actions', 'GitHub Pages', 'Giscus'],
-		status: '运行中',
-		// 为你准备的默认酷炫视频（网络加载），你可以换成自己放在 public 里的视频，比如 '/my-video.mp4'
-		video: 'https://assets.mixkit.co/videos/preview/mixkit-abstract-technology-blue-network-connections-32899-large.mp4',
-		image: '', 
-		links: [
-			{ label: '访问网站', href: 'https://reog163.github.io' },
-			{ label: '查看源码', href: 'https://github.com/REOG163/reog163.github.io' },
-		],
-	},
+// ===== 在这里修改你的联系信息 =====
+const NAME = 'REOG';
+const EMAIL = 'reogadg@gmail.com';
+const WEBSITE = 'https://reog163.github.io'; // ← 改成你自己的网站地址
+// ================================
+
+const title = `关于 ${NAME}`;
+const description = `${NAME} 的个人介绍、工作方式与联系方式。`;
+
+const habits = [
+	{ t: '先定义问题', d: '动手前，把目标、约束和验收标准写清楚。清晰的问题，是一半的答案。' },
+	{ t: '追求可持续', d: '比起一时的爆发，更看重能长期稳定运转的系统与节奏。' },
+	{ t: '用事实说话', d: '观点必须能被验证。数据、实验与复盘，优先于直觉和口号。' },
+	{ t: '公开地学习', d: '把过程写下来，既是整理自己，也让别人少走弯路。' },
 ];
-// ==================================================
 
-const palettes = [
-	['#14204a', '#3b5bdb', '#5eead4'],
-	['#1d2f6b', '#7c5cff', '#8fa8ff'],
-	['#0b3b4a', '#14b8a6', '#a7f3d0'],
+const doing = [
+	{ t: '构建', d: '把想法做成真正能用的网站、工具与自动化流程。' },
+	{ t: '研究', d: '持续关注系统设计、AI 工具与效率方法，筛出真正有效的部分。' },
+	{ t: '写作', d: '在博客里沉淀实践与思考，保持清晰、简短、可复用。' },
 ];
 ---
 
+<!doctype html>
 <html lang="zh-CN">
 	<head>
-		<BaseHead title={`作品集 | ${SITE_TITLE}`} description="我做过的项目与作品" />
+		<BaseHead title={title} description={description} />
 		<style>
-			main.pj {
+			main.about {
 				width: 100%;
-				max-width: 960px;
+				max-width: none;
+				margin: 0;
+				padding: 0;
+				font-size: 16px;
+				line-height: 1.8;
+				color: #0f172a;
+			}
+			.wrap {
+				width: 100%;
+				max-width: 880px;
 				margin: 0 auto;
-				padding: 28px 18px 56px;
+				padding: 0 20px;
 				box-sizing: border-box;
 			}
-			.label {
-				margin: 0 0 4px;
-				font-size: 13px;
-				letter-spacing: 0.18em;
-				font-weight: 600;
-				color: var(--accent);
-			}
-			h1 {
-				margin: 0 0 6px;
-				font-size: 30px;
-				color: rgb(var(--black));
-			}
-			.lead {
-				margin: 0 0 24px;
-				font-size: 16px;
-				color: rgb(var(--gray));
+
+			/* Hero */
+			.hero {
+				background: linear-gradient(160deg, #0b1020 0%, #14204a 60%, #1d2f6b 100%);
+				color: #fff;
+				text-align: center;
+				padding: 48px 0 44px;
+				overflow: hidden;
 			}
 			
-			.grid {
-				display: grid;
-				grid-template-columns: 1fr;
-				gap: 18px;
-			}
-
-			/* 基础卡片样式 + 入场动画 */
-			.card {
+			/* 头像与星环区域 */
+			.avatar-container {
+				position: relative;
+				width: 200px;
+				height: 200px;
+				margin: 0 auto 20px;
 				display: flex;
-				flex-direction: column;
-				overflow: hidden;
-				border-radius: 14px;
-				border: 1px solid rgba(var(--gray), 0.3);
-				background: rgba(var(--gray-light), 0.35);
-				position: relative;
-				transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease, border-color 0.4s ease;
-				animation: cardIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+				align-items: center;
+				justify-content: center;
 			}
 
-			@keyframes cardIn {
-				from { opacity: 0; transform: translateY(30px) scale(0.98); }
-				to { opacity: 1; transform: translateY(0) scale(1); }
-			}
-
-			.card:hover {
-				transform: translateY(-6px);
-				border-color: rgba(94, 234, 212, 0.5);
-				box-shadow: 0 16px 32px -10px rgba(0, 0, 0, 0.1);
-			}
-			:global(html[data-theme='dark']) .card:hover {
-				box-shadow: 0 16px 32px -10px rgba(0, 0, 0, 0.6), 0 0 24px rgba(94, 234, 212, 0.15);
-				border-color: #5eead4;
-			}
-
-			/* 悬浮高光扫过 */
-			.card::after {
-				content: '';
+			/* 你的头像：完美贴合内环 */
+			.avatar-img {
 				position: absolute;
-				top: 0; left: -150%;
-				width: 50%; height: 100%;
-				background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-				transform: skewX(-25deg);
-				transition: left 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
-				pointer-events: none;
-				z-index: 10;
-			}
-			.card:hover::after {
-				left: 150%;
-			}
-			:global(html[data-theme='dark']) .card::after {
-				background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+				width: 80%; /* 恰好等于 SVG 内环的 160px/200px */
+				height: 80%;
+				object-fit: cover;
+				z-index: 2;
+				border-radius: 50%; /* 把方形 JPEG 裁成圆形 */
+				/* 去掉变暗的正片叠底，还原真实颜色 */
+				background-color: #fff; 
+				/* 加一点淡淡的青蓝色光晕，和星环呼应 */
+				box-shadow: 0 0 20px rgba(94, 234, 212, 0.2), inset 0 0 10px rgba(0,0,0,0.1);
 			}
 
-			/* 封面区域 */
-			.cover-wrap {
-				width: 100%;
-				aspect-ratio: 2 / 1;
-				overflow: hidden;
-				background: #0b1020;
-				position: relative;
-			}
-			.cover {
-				display: block;
+			/* 旋转的星环 */
+			.orbit-svg {
+				position: absolute;
+				inset: 0;
 				width: 100%;
 				height: 100%;
-				object-fit: cover;
-				transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+				z-index: 1;
 			}
-			.card:hover .cover {
-				transform: scale(1.06);
+			
+			.spin {
+				transform-origin: 100px 100px;
+				animation: spin 20s linear infinite;
 			}
-
-			/* ========== 原 SVG 动效保留（当没有视频/图片时显示） ========== */
-			.orbit-rings circle {
-				transform-origin: 320px 100px;
-				animation: radar-pulse 4s ease-out infinite;
+			.spin-reverse {
+				transform-origin: 100px 100px;
+				animation: spin 30s linear infinite reverse;
 			}
-			.orbit-rings circle:nth-child(2) { animation-delay: 1.3s; }
-			.orbit-rings circle:nth-child(3) { animation-delay: 2.6s; }
-
-			@keyframes radar-pulse {
-				0% { transform: scale(0.8); opacity: 0; stroke-width: 2px;}
-				20% { opacity: 0.4; }
-				100% { transform: scale(1.2); opacity: 0; stroke-width: 0.5px;}
+			@keyframes spin {
+				to {
+					transform: rotate(360deg);
+				}
 			}
-
-			.orbit-dot {
-				animation: dot-float 5s ease-in-out infinite;
-			}
-			@keyframes dot-float {
-				0%, 100% { transform: translate(0, 0); filter: drop-shadow(0 0 4px currentColor); }
-				50% { transform: translate(15px, -15px); filter: drop-shadow(0 0 10px currentColor); }
+			@media (prefers-reduced-motion: reduce) {
+				.spin, .spin-reverse {
+					animation: none;
+				}
 			}
 
-			.orbit-number {
-				animation: number-float 6s ease-in-out infinite;
-			}
-			@keyframes number-float {
-				0%, 100% { transform: translateY(0); opacity: 0.9; }
-				50% { transform: translateY(-6px); opacity: 1; text-shadow: 0 0 15px rgba(255,255,255,0.3); }
-			}
-
-			.cover-bg {
-				animation: bg-pulse 8s ease-in-out infinite alternate;
-			}
-			@keyframes bg-pulse {
-				0% { filter: brightness(1); }
-				100% { filter: brightness(1.2); }
-			}
-			/* ================================= */
-
-			.body {
-				padding: 16px 18px 18px;
-				display: flex;
-				flex-direction: column;
-				gap: 8px;
-				flex: 1;
-			}
-			.head {
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-				gap: 8px;
+			.tag {
+				margin: 0 0 6px;
+				font-size: 13px;
+				letter-spacing: 0.2em;
+				color: #8fa8ff;
 			}
 
-			/* 重点文字：黄金流光特效 */
-			.card h2, .soon b {
+			/* 黄金渐变 REOG */
+			.hero h1 {
 				margin: 0;
-				font-size: 19px;
-				line-height: 1.4;
+				font-size: 48px;
+				line-height: 1.15;
+				letter-spacing: 0.05em;
 				font-weight: 800;
-				letter-spacing: 0.5px;
+				/* 黄金质感渐变 */
 				background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #b38728 50%, #fbf5b7 75%, #aa771c 100%);
 				background-size: 200% auto;
 				-webkit-background-clip: text;
 				background-clip: text;
 				-webkit-text-fill-color: transparent;
-				color: transparent;
+				color: transparent; /* 后备方案 */
+				/* 阴影增强立体金属感 */
+				filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6));
 				animation: shine 4s linear infinite;
-				filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2));
 			}
 
 			@keyframes shine {
-				to { background-position: 200% center; }
+				to {
+					background-position: 200% center;
+				}
 			}
 
-			/* 状态标签优化 */
-			.status {
-				flex: none;
-				font-size: 12px;
-				padding: 2px 10px;
-				border-radius: 999px;
-				background: rgba(94, 234, 212, 0.15);
-				color: #0f9d8a;
-				border: 1px solid rgba(94, 234, 212, 0.3);
-				box-shadow: 0 0 10px rgba(94, 234, 212, 0.05);
+			.hero .tagline {
+				margin: 12px auto 0;
+				max-width: 520px;
+				font-size: 17px;
+				line-height: 1.6;
+				color: #d6defc;
+			}
+
+			/* 联系方式条 */
+			.contact-bar {
+				display: flex;
+				flex-direction: column;
+				gap: 12px;
+				margin: 26px auto 0;
+				max-width: 520px;
+			}
+			.chip {
 				display: flex;
 				align-items: center;
-				gap: 6px;
+				gap: 12px;
+				padding: 12px 16px;
+				border-radius: 12px;
+				background: rgba(255, 255, 255, 0.1);
+				border: 1px solid rgba(255, 255, 255, 0.28);
+				color: #fff;
+				text-decoration: none;
+				text-align: left;
+			}
+			.chip svg {
+				flex: none;
+				width: 22px;
+				height: 22px;
+			}
+			.chip small {
+				display: block;
+				font-size: 12px;
+				color: #9fb2f5;
+				line-height: 1.3;
+			}
+			.chip b {
+				display: block;
+				font-size: 15px;
+				line-height: 1.4;
+				word-break: break-all;
 				font-weight: 600;
 			}
-			.status::before {
-				content: '';
-				width: 6px;
-				height: 6px;
-				border-radius: 50%;
-				background: #0f9d8a;
-				box-shadow: 0 0 6px #0f9d8a;
-				animation: blink 2s infinite ease-in-out;
+
+			/* Sections */
+			.block {
+				padding: 52px 0 4px;
 			}
-			@keyframes blink {
-				0%, 100% { opacity: 1; transform: scale(1); }
-				50% { opacity: 0.4; transform: scale(0.8); }
+			.label {
+				margin: 0 0 6px;
+				font-size: 13px;
+				letter-spacing: 0.18em;
+				font-weight: 600;
+				color: #3b5bdb;
+			}
+			.block h2 {
+				margin: 0 0 14px;
+				font-size: 26px;
+				line-height: 1.3;
+				color: #0f172a;
+			}
+			.block p.text {
+				margin: 0 0 12px;
+				color: #334155;
 			}
 
-			:global(html[data-theme='dark']) .status {
-				color: #5eead4;
-				border-color: rgba(94, 234, 212, 0.4);
+			.grid {
+				display: grid;
+				grid-template-columns: 1fr;
+				gap: 14px;
+				margin-top: 18px;
 			}
-			:global(html[data-theme='dark']) .status::before {
-				background: #5eead4;
-				box-shadow: 0 0 6px #5eead4;
+			.item {
+				padding: 20px;
+				border-radius: 14px;
+				border: 1px solid #e2e8f0;
+				background: #fff;
 			}
-
-			.card p {
+			.item svg {
+				width: 26px;
+				height: 26px;
+				margin-bottom: 8px;
+			}
+			.item h3 {
+				margin: 0 0 4px;
+				font-size: 17px;
+				color: #0f172a;
+			}
+			.item p {
 				margin: 0;
 				font-size: 15px;
-				line-height: 1.75;
-				color: rgb(var(--gray-dark));
-			}
-			.tags {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 6px;
-			}
-			.tags span {
-				font-size: 12px;
-				padding: 2px 10px;
-				border-radius: 6px;
-				background: rgba(var(--gray), 0.1);
-				color: rgb(var(--gray-dark));
-				transition: all 0.2s ease;
-				border: 1px solid transparent;
-			}
-			.card:hover .tags span {
-				background: rgba(var(--gray), 0.15);
-				border-color: rgba(var(--gray), 0.3);
-			}
-			.links {
-				display: flex;
-				gap: 14px;
-				margin-top: auto;
-				padding-top: 10px;
-			}
-			.links a {
-				font-size: 14px;
-				font-weight: 600;
-				color: var(--accent);
-				text-decoration: none;
-				transition: opacity 0.2s;
-			}
-			.links a:hover {
-				opacity: 0.8;
+				line-height: 1.7;
+				color: #475569;
 			}
 
-			/* 筹备中卡片 */
-			.soon {
-				align-items: center;
-				justify-content: center;
+			/* 引言 */
+			.quote {
+				margin: 52px 0 0;
+				padding: 44px 0;
 				text-align: center;
-				border-style: dashed;
-				border-width: 2px;
-				padding: 36px 20px;
-				background: transparent;
-				border-color: rgba(var(--gray), 0.4);
-				transition: all 0.4s ease;
+				background: #0b1020;
+				color: #e6ebff;
 			}
-			.soon:hover {
-				background: rgba(var(--gray-light), 0.2);
-				border-color: rgba(94, 234, 212, 0.6);
-			}
-			:global(html[data-theme='dark']) .soon {
-				border-color: #26335c;
-			}
-			:global(html[data-theme='dark']) .soon:hover {
-				border-color: #5eead4;
-				background: rgba(26, 36, 64, 0.6);
-				box-shadow: 0 0 30px rgba(94, 234, 212, 0.08);
+			.quote p {
+				margin: 0 auto;
+				max-width: 600px;
+				font-size: 19px;
+				line-height: 1.8;
+				font-weight: 600;
 			}
 
-			.soon-icon {
-				margin-bottom: 12px;
-				color: var(--accent);
-				animation: float 3s ease-in-out infinite;
-				display: flex;
-				justify-content: center;
+			/* 底部联系 */
+			.reach {
+				padding: 52px 0 64px;
+				text-align: center;
 			}
-			@keyframes float {
-				0%, 100% { transform: translateY(0); }
-				50% { transform: translateY(-8px); }
+			.reach h2 {
+				margin: 0 0 6px;
+				font-size: 26px;
 			}
-
-			.soon span {
-				font-size: 14px;
-				color: rgb(var(--gray));
-				margin-top: 4px;
+			.reach p {
+				margin: 0 0 22px;
+				color: #475569;
+			}
+			.reach-grid {
+				display: grid;
+				grid-template-columns: 1fr;
+				gap: 12px;
+				max-width: 560px;
+				margin: 0 auto;
+			}
+			.reach-card {
+				display: block;
+				padding: 18px;
+				border-radius: 14px;
+				background: #f1f5ff;
+				border: 1px solid #dbe4ff;
+				text-decoration: none;
+				color: #0f172a;
+			}
+			.reach-card small {
+				display: block;
+				font-size: 12px;
+				letter-spacing: 0.12em;
+				color: #3b5bdb;
+			}
+			.reach-card b {
+				display: block;
+				margin-top: 2px;
+				font-size: 16px;
+				word-break: break-all;
+			}
+			.copy {
+				margin-top: 14px;
+				padding: 10px 22px;
+				border: 0;
+				border-radius: 10px;
+				background: #14204a;
+				color: #fff;
+				font-size: 15px;
+				font-weight: 600;
+				cursor: pointer;
 			}
 
 			@media (min-width: 720px) {
-				.grid {
+				.hero {
+					padding: 72px 0 60px;
+				}
+				.hero h1 {
+					font-size: 64px;
+				}
+				.contact-bar {
+					flex-direction: row;
+					max-width: 640px;
+				}
+				.chip {
+					flex: 1;
+				}
+				.grid.two {
 					grid-template-columns: repeat(2, 1fr);
 				}
-			}
-
-			:global(html[data-theme='dark']) .card {
-				background: rgba(26, 36, 64, 0.95);
-				border-color: #26335c;
-			}
-
-			/* 针对减少动效偏好，隐藏视频 */
-			@media (prefers-reduced-motion: reduce) {
-				.cover-wrap video {
-					display: none;
+				.grid.three {
+					grid-template-columns: repeat(3, 1fr);
+				}
+				.reach-grid {
+					grid-template-columns: 1fr 1fr;
+				}
+				.avatar-container {
+					width: 240px;
+					height: 240px;
 				}
 			}
+
+			/* 深色模式 */
+			:global(html[data-theme='dark']) main.about { color: #e2e8f0; }
+			:global(html[data-theme='dark']) .block h2,
+			:global(html[data-theme='dark']) .item h3,
+			:global(html[data-theme='dark']) .reach h2 { color: #f1f5f9; }
+			:global(html[data-theme='dark']) .block p.text,
+			:global(html[data-theme='dark']) .item p,
+			:global(html[data-theme='dark']) .reach p { color: #aab6d3; }
+			:global(html[data-theme='dark']) .item { background: #111a33; border-color: #26335c; }
+			:global(html[data-theme='dark']) .label,
+			:global(html[data-theme='dark']) .reach-card small { color: #8fa8ff; }
+			:global(html[data-theme='dark']) .reach-card { background: #14204a; border-color: #26335c; color: #f1f5f9; }
+			:global(html[data-theme='dark']) .quote { background: #070b18; }
+			:global(html[data-theme='dark']) .copy { background: #8fa8ff; color: #0b1020; }
 		</style>
 	</head>
 	<body>
 		<Header />
-		<main class="pj">
-			<p class="label">PROJECTS · 作品集</p>
-			<h1>我做过的东西</h1>
-			<p class="lead">每个项目都是一次完整的实践：从想法到上线。</p>
+		<main class="about">
+			<!-- Hero + 联系方式 -->
+			<section class="hero">
+				<div class="wrap">
+					<!-- 头像与星环容器 -->
+					<div class="avatar-container" aria-hidden="true">
+						<!-- 修改了图片名称为 IMG_8747.jpeg -->
+						<img src="/IMG_8747.jpeg" alt="Avatar" class="avatar-img" />
+						
+						<!-- 星环 -->
+						<svg class="orbit-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+							<defs>
+								<linearGradient id="ag" x1="0" y1="0" x2="1" y2="1">
+									<stop offset="0%" stop-color="#8fa8ff" />
+									<stop offset="100%" stop-color="#5eead4" />
+								</linearGradient>
+							</defs>
+							
+							<!-- 外圈虚线星轨 -->
+							<circle cx="100" cy="100" r="94" fill="none" stroke="url(#ag)" stroke-width="1.5" stroke-dasharray="12 8" opacity="0.6" />
+							
+							<!-- 内圈极细实线 (头像宽高刚好 80%，即占 160，这里半径为 80，完美贴合) -->
+							<circle cx="100" cy="100" r="80" fill="none" stroke="url(#ag)" stroke-width="1.5" opacity="0.5" />
 
-			<div class="grid">
-				{
-					projects.map((p, i) => {
-						const c = palettes[i % palettes.length];
-						return (
-							<div class="card" style={`animation-delay: ${i * 0.15}s;`}>
-								<div class="cover-wrap">
-									{/* 优先级 1：视频 */}
-									{p.video ? (
-										<video 
-											class="cover" 
-											src={p.video} 
-											autoplay 
-											muted 
-											loop 
-											playsinline 
-										/>
-									/* 优先级 2：图片 */
-									) : p.image ? (
-										<img class="cover" src={p.image} alt={p.title} loading="lazy" />
-									/* 优先级 3：动态 SVG */
-									) : (
-										<svg class="cover" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-											<defs>
-												<linearGradient id={`g${i}`} x1="0" y1="0" x2="1" y2="1">
-													<stop offset="0" stop-color={c[0]} />
-													<stop offset="1" stop-color={c[1]} />
-												</linearGradient>
-											</defs>
-											
-											<rect width="400" height="200" fill={`url(#g${i})`} class="cover-bg" />
-											
-											<g fill="none" stroke="#fff" stroke-opacity="0.3" class="orbit-rings">
-												<circle cx="320" cy="100" r="90" />
-												<circle cx="320" cy="100" r="56" />
-												<circle cx="320" cy="100" r="24" />
-											</g>
-											
-											<circle cx="230" cy="100" r="6" fill={c[2]} class="orbit-dot" style={`color: ${c[2]};`} />
-											
-											<text x="28" y="116" font-size="44" font-weight="800" fill="#fff" font-family="system-ui, sans-serif" letter-spacing="2" class="orbit-number">
-												{String(i + 1).padStart(2, '0')}
-											</text>
-										</svg>
-									)}
-								</div>
-								<div class="body">
-									<div class="head">
-										<h2>{p.title}</h2>
-										{p.status && <span class="status">{p.status}</span>}
-									</div>
-									<p>{p.desc}</p>
-									<div class="tags">{p.tags.map((t) => <span>{t}</span>)}</div>
-									<div class="links">
-										{p.links.map((l) => (
-											<a href={l.href} target="_blank" rel="noopener">{l.label} →</a>
-										))}
-									</div>
-								</div>
-							</div>
-						);
-					})
-				}
-				<div class="card soon" style="animation-delay: 0.4s;">
-					<div class="soon-icon">
-						<svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-							<path d="M12 5v14M5 12h14"/>
+							<!-- 第一组：顺时针旋转的星环与发光点 -->
+							<g class="spin">
+								<circle cx="100" cy="6" r="5" fill="#5eead4" filter="drop-shadow(0 0 6px #5eead4)" />
+								<circle cx="194" cy="100" r="3.5" fill="#fff" filter="drop-shadow(0 0 4px #fff)" />
+							</g>
+
+							<!-- 第二组：逆时针旋转的隐藏小点 -->
+							<g class="spin-reverse">
+								<circle cx="20" cy="100" r="2.5" fill="#8fa8ff" filter="drop-shadow(0 0 5px #8fa8ff)" />
+							</g>
 						</svg>
 					</div>
-					<b>下一个作品筹备中</b>
-					<span>有新项目上线后会在这里更新</span>
+
+					<p class="tag">ABOUT · 关于我</p>
+					<h1>{NAME}</h1>
+					<p class="tagline">做事讲逻辑，写字求简洁。用工程的方式，把想法落地成可靠的成果。</p>
+
+					<div class="contact-bar">
+						<a class="chip" href={`mailto:${EMAIL}`}>
+							<svg viewBox="0 0 24 24" fill="none" stroke="#8fa8ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+								<rect x="3" y="5" width="18" height="14" rx="2" />
+								<path d="m3 7 9 6 9-6" />
+							</svg>
+							<span><small>邮箱</small><b>{EMAIL}</b></span>
+						</a>
+						<a class="chip" href={WEBSITE} target="_blank" rel="noopener">
+							<svg viewBox="0 0 24 24" fill="none" stroke="#5eead4" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+								<circle cx="12" cy="12" r="9" />
+								<path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9S14.500 18.300 12 21c-2.500-2.700-3.800-5.700-3.800-9S9.500 5.700 12 3Z" />
+							</svg>
+							<span><small>个人网站</small><b>{WEBSITE.replace(/^https?:\/\//, '')}</b></span>
+						</a>
+					</div>
 				</div>
-			</div>
+			</section>
+
+			<!-- 简介 -->
+			<section class="block">
+				<div class="wrap">
+					<p class="label">INTRO · 简介</p>
+					<h2>我是谁</h2>
+					<p class="text">我是 {NAME}，一个喜欢把复杂问题拆解清楚、再亲手做出来的人。</p>
+					<p class="text">我相信，好的作品来自清晰的思考与持续的打磨，而不是一时的灵感。所以我习惯把想法写下来、做成原型、再用结果修正方向。</p>
+					<p class="text">这个博客是我的公开笔记：记录实践、整理方法，也希望对同路的人有一点用。</p>
+				</div>
+			</section>
+
+			<!-- 做什么 -->
+			<section class="block">
+				<div class="wrap">
+					<p class="label">WHAT I DO · 我在做什么</p>
+					<h2>三件持续做的事</h2>
+					<div class="grid three">
+						{
+							doing.map((d) => (
+								<div class="item">
+									<svg viewBox="0 0 24 24" fill="none" stroke="#3b5bdb" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+										<path d="M12 3 3 8l9 5 9-5-9-5Z" />
+										<path d="m3 13 9 5 9-5" />
+									</svg>
+									<h3>{d.t}</h3>
+									<p>{d.d}</p>
+								</div>
+							))
+						}
+					</div>
+				</div>
+			</section>
+
+			<!-- 工作方式 -->
+			<section class="block">
+				<div class="wrap">
+					<p class="label">HOW I WORK · 工作方式</p>
+					<h2>我的做事习惯</h2>
+					<div class="grid two">
+						{
+							habits.map((h) => (
+								<div class="item">
+									<h3>{h.t}</h3>
+									<p>{h.d}</p>
+								</div>
+							))
+						}
+					</div>
+				</div>
+			</section>
+
+			<!-- 引言 -->
+			<section class="quote">
+				<div class="wrap">
+					<p>少一点喧哗，多一点交付。时间会替认真的人说话。</p>
+				</div>
+			</section>
+
+			<!-- 底部联系 -->
+			<section class="reach">
+				<div class="wrap">
+					<h2>保持联系</h2>
+					<p>合作、交流或只是打个招呼，都欢迎来信。</p>
+					<div class="reach-grid">
+						<a class="reach-card" href={`mailto:${EMAIL}`}>
+							<small>EMAIL · 邮箱</small>
+							<b>{EMAIL}</b>
+						</a>
+						<a class="reach-card" href={WEBSITE} target="_blank" rel="noopener">
+							<small>WEBSITE · 个人网站</small>
+							<b>{WEBSITE.replace(/^https?:\/\//, '')}</b>
+						</a>
+					</div>
+					<button class="copy" id="copy-email" data-email={EMAIL}>复制邮箱</button>
+				</div>
+			</section>
 		</main>
 		<Footer />
+
+		<script>
+			const btn = document.getElementById('copy-email');
+			btn?.addEventListener('click', async () => {
+				const email = btn.getAttribute('data-email') || '';
+				try {
+					await navigator.clipboard.writeText(email);
+					btn.textContent = '已复制 ✓';
+					setTimeout(() => (btn.textContent = '复制邮箱'), 2000);
+				} catch {
+					btn.textContent = email;
+				}
+			});
+		</script>
 	</body>
 </html>
