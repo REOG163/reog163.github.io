@@ -5,13 +5,16 @@ import Footer from '../components/Footer.astro';
 import { SITE_TITLE } from '../consts';
 
 // ===== 在这里添加你的作品，复制一段 { ... } 即可 =====
+// 优先显示 video，其次 image，都没有则显示动态 SVG 封面
 const projects = [
 	{
 		title: '本站：REOG 个人网站',
 		desc: '基于 Astro 构建的中文个人博客，支持深色模式、站内搜索、标签分类、RSS 订阅与评论，通过 GitHub Actions 自动部署到 GitHub Pages。',
 		tags: ['Astro', 'GitHub Actions', 'GitHub Pages', 'Giscus'],
 		status: '运行中',
-		image: '',
+		// 为你准备的默认酷炫视频（网络加载），你可以换成自己放在 public 里的视频，比如 '/my-video.mp4'
+		video: 'https://assets.mixkit.co/videos/preview/mixkit-abstract-technology-blue-network-connections-32899-large.mp4',
+		image: '', 
 		links: [
 			{ label: '访问网站', href: 'https://reog163.github.io' },
 			{ label: '查看源码', href: 'https://github.com/REOG163/reog163.github.io' },
@@ -128,8 +131,7 @@ const palettes = [
 				transform: scale(1.06);
 			}
 
-			/* ========== 封面内部动效 ========== */
-			/* 1. 雷达波纹扩散 */
+			/* ========== 原 SVG 动效保留（当没有视频/图片时显示） ========== */
 			.orbit-rings circle {
 				transform-origin: 320px 100px;
 				animation: radar-pulse 4s ease-out infinite;
@@ -143,7 +145,6 @@ const palettes = [
 				100% { transform: scale(1.2); opacity: 0; stroke-width: 0.5px;}
 			}
 
-			/* 2. 小圆点漂浮 */
 			.orbit-dot {
 				animation: dot-float 5s ease-in-out infinite;
 			}
@@ -152,7 +153,6 @@ const palettes = [
 				50% { transform: translate(15px, -15px); filter: drop-shadow(0 0 10px currentColor); }
 			}
 
-			/* 3. 数字漂浮 + 光影变化 */
 			.orbit-number {
 				animation: number-float 6s ease-in-out infinite;
 			}
@@ -161,7 +161,6 @@ const palettes = [
 				50% { transform: translateY(-6px); opacity: 1; text-shadow: 0 0 15px rgba(255,255,255,0.3); }
 			}
 
-			/* 封面渐变背景的光影过渡 */
 			.cover-bg {
 				animation: bg-pulse 8s ease-in-out infinite alternate;
 			}
@@ -338,6 +337,13 @@ const palettes = [
 				background: rgba(26, 36, 64, 0.95);
 				border-color: #26335c;
 			}
+
+			/* 针对减少动效偏好，隐藏视频 */
+			@media (prefers-reduced-motion: reduce) {
+				.cover-wrap video {
+					display: none;
+				}
+			}
 		</style>
 	</head>
 	<body>
@@ -354,8 +360,20 @@ const palettes = [
 						return (
 							<div class="card" style={`animation-delay: ${i * 0.15}s;`}>
 								<div class="cover-wrap">
-									{p.image ? (
+									{/* 优先级 1：视频 */}
+									{p.video ? (
+										<video 
+											class="cover" 
+											src={p.video} 
+											autoplay 
+											muted 
+											loop 
+											playsinline 
+										/>
+									/* 优先级 2：图片 */
+									) : p.image ? (
 										<img class="cover" src={p.image} alt={p.title} loading="lazy" />
+									/* 优先级 3：动态 SVG */
 									) : (
 										<svg class="cover" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
 											<defs>
@@ -365,20 +383,16 @@ const palettes = [
 												</linearGradient>
 											</defs>
 											
-											{/* 动态渐变背景 */}
 											<rect width="400" height="200" fill={`url(#g${i})`} class="cover-bg" />
 											
-											{/* 雷达波纹圆环 */}
 											<g fill="none" stroke="#fff" stroke-opacity="0.3" class="orbit-rings">
 												<circle cx="320" cy="100" r="90" />
 												<circle cx="320" cy="100" r="56" />
 												<circle cx="320" cy="100" r="24" />
 											</g>
 											
-											{/* 漂浮的青色光点 */}
 											<circle cx="230" cy="100" r="6" fill={c[2]} class="orbit-dot" style={`color: ${c[2]};`} />
 											
-											{/* 漂浮的数字 */}
 											<text x="28" y="116" font-size="44" font-weight="800" fill="#fff" font-family="system-ui, sans-serif" letter-spacing="2" class="orbit-number">
 												{String(i + 1).padStart(2, '0')}
 											</text>
