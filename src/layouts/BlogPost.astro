@@ -30,6 +30,15 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 	<head>
 		<BaseHead title={title} description={description} image={heroImage} />
 		<style>
+			:global(html) {
+				scroll-padding-top: 80px;
+			}
+			@media (prefers-reduced-motion: no-preference) {
+				:global(html) {
+					scroll-behavior: smooth;
+				}
+			}
+
 			main.post {
 				width: 100%;
 				max-width: 720px;
@@ -38,19 +47,48 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 				box-sizing: border-box;
 				text-align: left;
 			}
+
+			/* ===== 封面 ===== */
+			.cover-wrap {
+				position: relative;
+				margin-bottom: 20px;
+				border-radius: 16px;
+				overflow: hidden;
+				box-shadow: 0 12px 32px -14px rgba(0, 0, 0, 0.32), 0 2px 8px -4px rgba(0, 0, 0, 0.16);
+				background: rgb(var(--gray-light));
+			}
 			.cover {
 				width: 100%;
 				height: auto;
-				border-radius: 14px;
 				display: block;
-				margin-bottom: 18px;
+				transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
 			}
+			.cover-wrap:hover .cover {
+				transform: scale(1.035);
+			}
+			@media (prefers-reduced-motion: reduce) {
+				.cover,
+				.cover-wrap:hover .cover {
+					transition: none;
+					transform: none;
+				}
+			}
+
+			/* ===== 元信息 ===== */
 			.meta {
 				display: flex;
 				flex-wrap: wrap;
-				gap: 4px 14px;
+				align-items: center;
+				gap: 6px 12px;
 				font-size: 14px;
 				color: rgb(var(--gray));
+			}
+			.meta > .dot {
+				width: 3px;
+				height: 3px;
+				border-radius: 50%;
+				background: currentColor;
+				opacity: 0.5;
 			}
 			.listen-btn {
 				display: inline-flex;
@@ -66,6 +104,7 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 				font-size: 15px;
 				font-weight: 600;
 				cursor: pointer;
+				transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
 			}
 			.listen-btn[hidden] {
 				display: none;
@@ -77,6 +116,11 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 			}
 			.listen-btn:hover {
 				background: rgba(245, 198, 58, 0.25);
+				transform: translateY(-1px);
+				box-shadow: 0 6px 16px -8px rgba(217, 165, 32, 0.7);
+			}
+			.listen-btn:active {
+				transform: translateY(0);
 			}
 			:global(html[data-theme='dark']) .listen-btn {
 				color: #f5c63a;
@@ -98,12 +142,21 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 				color: var(--accent);
 				font-weight: 600;
 			}
+
+			/* ===== 标题 ===== */
 			h1.title {
-				margin: 10px 0 12px;
+				margin: 12px 0 14px;
 				font-size: 30px;
 				line-height: 1.35;
+				letter-spacing: -0.01em;
 				color: rgb(var(--black));
+				background: linear-gradient(120deg, rgb(var(--black)) 55%, var(--accent) 140%);
+				-webkit-background-clip: text;
+				background-clip: text;
+				-webkit-text-fill-color: transparent;
 			}
+
+			/* ===== 标签 ===== */
 			.tags {
 				display: flex;
 				flex-wrap: wrap;
@@ -112,46 +165,100 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 			}
 			.tags a {
 				font-size: 13px;
-				padding: 2px 10px;
+				padding: 3px 12px;
 				border-radius: 999px;
 				background: rgb(var(--gray-light));
 				color: rgb(var(--gray-dark));
 				text-decoration: none;
+				transition: transform 0.15s ease, background 0.2s ease, color 0.2s ease;
 			}
+			.tags a:hover {
+				background: var(--accent);
+				color: #fff;
+				transform: translateY(-2px);
+			}
+			:global(html[data-theme='dark']) .tags a:hover {
+				color: #0b1020;
+			}
+
+			/* ===== 目录 ===== */
 			.toc {
 				margin: 0 0 22px;
 				padding: 12px 16px;
 				border: 1px solid rgba(var(--gray), 0.3);
-				border-radius: 12px;
+				border-radius: 14px;
 				font-size: 15px;
+				background: rgba(var(--gray-light), 0.5);
+				transition: border-color 0.2s ease;
 			}
 			.toc[hidden] {
 				display: none;
 			}
+			.toc[open] {
+				border-color: rgba(var(--gray), 0.45);
+			}
 			.toc summary {
 				cursor: pointer;
 				font-weight: 600;
+				list-style: none;
+				display: flex;
+				align-items: center;
+				gap: 6px;
+				user-select: none;
+			}
+			.toc summary::-webkit-details-marker {
+				display: none;
+			}
+			.toc summary::after {
+				content: '';
+				margin-left: auto;
+				width: 8px;
+				height: 8px;
+				border-right: 2px solid currentColor;
+				border-bottom: 2px solid currentColor;
+				transform: rotate(45deg);
+				transition: transform 0.25s ease;
+				opacity: 0.6;
+			}
+			.toc[open] summary::after {
+				transform: rotate(-135deg);
 			}
 			.toc ul {
 				margin: 10px 0 0;
 				padding: 0;
 				list-style: none;
+				border-left: 2px solid rgba(var(--gray), 0.25);
 			}
 			.toc li {
-				margin: 6px 0;
+				margin: 0;
 				line-height: 1.5;
 			}
-			.toc li.l3 {
-				padding-left: 16px;
+			.toc li a {
+				display: block;
+				padding: 5px 12px;
+				margin-left: -2px;
+				border-left: 2px solid transparent;
 				font-size: 14px;
-			}
-			.toc a {
 				color: rgb(var(--gray-dark));
 				text-decoration: none;
+				transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
 			}
-			.toc a:hover {
+			.toc li.l3 a {
+				padding-left: 28px;
+				font-size: 13.5px;
+				opacity: 0.85;
+			}
+			.toc li a:hover {
 				color: var(--accent);
 			}
+			.toc li a.active {
+				color: var(--accent);
+				border-left-color: var(--accent);
+				background: linear-gradient(90deg, rgba(245, 198, 58, 0.14), transparent);
+				font-weight: 600;
+			}
+
+			/* ===== 正文 ===== */
 			.prose {
 				font-size: 17px;
 				line-height: 1.95;
@@ -161,19 +268,55 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 				font-size: 24px;
 				margin: 2em 0 0.6em;
 				scroll-margin-top: 76px;
+				position: relative;
 			}
 			.prose :global(h3) {
 				font-size: 20px;
 				margin: 1.6em 0 0.5em;
 				scroll-margin-top: 76px;
+				position: relative;
+			}
+			.prose :global(h2 a.anchor),
+			.prose :global(h3 a.anchor) {
+				display: inline-block;
+				margin-left: 8px;
+				font-size: 0.7em;
+				color: var(--accent);
+				text-decoration: none;
+				opacity: 0;
+				transition: opacity 0.2s ease;
+				vertical-align: middle;
+			}
+			.prose :global(h2:hover a.anchor),
+			.prose :global(h3:hover a.anchor) {
+				opacity: 0.8;
 			}
 			.prose :global(p) {
 				margin: 0 0 1.1em;
+			}
+			.prose :global(a) {
+				color: var(--accent);
+				text-decoration: none;
+				background-image: linear-gradient(currentColor, currentColor);
+				background-size: 0 1.5px;
+				background-position: 0 100%;
+				background-repeat: no-repeat;
+				transition: background-size 0.25s ease;
+			}
+			.prose :global(a:hover) {
+				background-size: 100% 1.5px;
 			}
 			.prose :global(img) {
 				max-width: 100%;
 				height: auto;
 				border-radius: 10px;
+				transition: box-shadow 0.25s ease, filter 0.25s ease;
+			}
+			.prose :global(img.zoomable) {
+				cursor: zoom-in;
+			}
+			.prose :global(img.zoomable:hover) {
+				box-shadow: 0 8px 24px -10px rgba(0, 0, 0, 0.35);
 			}
 			.prose :global(table) {
 				display: block;
@@ -193,22 +336,78 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 				border-left: 4px solid var(--accent);
 				color: rgb(var(--gray));
 			}
+			.prose :global(hr) {
+				border: 0;
+				height: 1px;
+				margin: 2em 0;
+				background: linear-gradient(90deg, transparent, rgba(var(--gray), 0.5), transparent);
+			}
 			.prose :global(pre) {
-				padding: 14px;
-				border-radius: 10px;
+				position: relative;
+				padding: 16px;
+				border-radius: 12px;
 				overflow-x: auto;
 				font-size: 14px;
 				line-height: 1.6;
+				background: rgb(var(--gray-light));
+				border: 1px solid rgba(var(--gray), 0.18);
 			}
+			.prose :global(pre code) {
+				background: none;
+				padding: 0;
+			}
+			.prose :global(:not(pre) > code) {
+				padding: 1px 6px;
+				border-radius: 6px;
+				background: rgb(var(--gray-light));
+				font-size: 0.9em;
+			}
+			:global(.code-copy) {
+				position: absolute;
+				top: 10px;
+				right: 10px;
+				padding: 4px 10px;
+				border: 1px solid rgba(var(--gray), 0.35);
+				border-radius: 7px;
+				background: rgba(var(--gray-light), 0.9);
+				color: rgb(var(--gray-dark));
+				font-size: 12px;
+				font-weight: 500;
+				cursor: pointer;
+				opacity: 0;
+				transform: translateY(-2px);
+				transition: opacity 0.2s ease, transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+			}
+			.prose :global(pre:hover .code-copy),
+			:global(.code-copy):focus-visible {
+				opacity: 1;
+				transform: none;
+			}
+			:global(.code-copy):hover {
+				color: var(--accent);
+				border-color: var(--accent);
+			}
+			:global(.code-copy.done) {
+				color: #22a06b;
+				border-color: #22a06b;
+			}
+
+			/* ===== 分享 ===== */
 			.share-mini {
 				margin-left: auto;
-				padding: 0;
+				padding: 2px 8px;
 				border: 0;
+				border-radius: 6px;
 				background: none;
 				font: inherit;
 				font-size: 14px;
 				color: var(--accent);
 				cursor: pointer;
+				transition: background 0.2s ease, transform 0.15s ease;
+			}
+			.share-mini:hover {
+				background: rgba(245, 198, 58, 0.16);
+				transform: translateY(-1px);
 			}
 			.share-end {
 				display: flex;
@@ -216,9 +415,10 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 				justify-content: space-between;
 				gap: 12px;
 				margin-top: 36px;
-				padding: 14px 18px;
-				border-radius: 12px;
-				background: rgb(var(--gray-light));
+				padding: 16px 18px;
+				border-radius: 14px;
+				background: linear-gradient(120deg, rgba(245, 198, 58, 0.14), rgba(245, 198, 58, 0.04));
+				border: 1px solid rgba(245, 198, 58, 0.28);
 				font-size: 15px;
 				color: rgb(var(--gray-dark));
 			}
@@ -236,19 +436,42 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 				font-weight: 600;
 				cursor: pointer;
 				flex: none;
+				transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
+				box-shadow: 0 6px 16px -8px var(--accent);
+			}
+			.share-btn:hover {
+				transform: translateY(-1px);
+				filter: brightness(1.06);
+				box-shadow: 0 10px 22px -8px var(--accent);
+			}
+			.share-btn:active {
+				transform: translateY(0) scale(0.97);
 			}
 			:global(html[data-theme='dark']) .share-btn {
 				color: #0b1020;
 			}
+
+			/* ===== 阅读进度 ===== */
 			#progress {
 				position: fixed;
 				top: 0;
 				left: 0;
 				height: 3px;
 				width: 0;
-				background: var(--accent);
+				background: linear-gradient(90deg, var(--accent), #ff9f43, var(--accent));
+				background-size: 200% 100%;
+				animation: flow 2.6s linear infinite;
 				z-index: 100;
+				border-radius: 0 3px 3px 0;
+				box-shadow: 0 0 12px rgba(245, 198, 58, 0.55);
 			}
+			@keyframes flow {
+				to {
+					background-position: 200% 0;
+				}
+			}
+
+			/* ===== 回到顶部 ===== */
 			.totop {
 				position: fixed;
 				right: 18px;
@@ -265,19 +488,44 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 				justify-content: center;
 				opacity: 0;
 				pointer-events: none;
-				transform: translateY(8px);
-				transition: opacity 0.2s, transform 0.2s;
+				transform: translateY(8px) scale(0.9);
+				transition: opacity 0.25s ease, transform 0.25s ease;
 				z-index: 60;
-				box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+				box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
 			}
 			.totop.show {
 				opacity: 1;
 				pointer-events: auto;
 				transform: none;
 			}
+			.totop:hover {
+				filter: brightness(1.06);
+			}
+			.totop-ring {
+				position: absolute;
+				inset: 0;
+				transform: rotate(-90deg);
+			}
+			.totop-track {
+				stroke: currentColor;
+				opacity: 0.22;
+			}
+			.totop-fill {
+				stroke: #fff;
+				transition: stroke-dashoffset 0.1s linear;
+			}
+			.totop-icon {
+				position: relative;
+				z-index: 1;
+			}
 			:global(html[data-theme='dark']) .totop {
 				color: #0b1020;
 			}
+			:global(html[data-theme='dark']) .totop-fill {
+				stroke: #0b1020;
+			}
+
+			/* ===== 上下篇 ===== */
 			.pn {
 				display: grid;
 				grid-template-columns: 1fr;
@@ -285,27 +533,45 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 				margin-top: 40px;
 			}
 			.pn a {
+				position: relative;
 				display: block;
 				padding: 14px 16px;
 				border-radius: 12px;
 				border: 1px solid rgba(var(--gray), 0.3);
 				text-decoration: none;
 				color: inherit;
+				overflow: hidden;
+				transition: border-color 0.22s ease, transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+			}
+			.pn a::before {
+				content: '';
+				position: absolute;
+				inset: 0;
+				background: linear-gradient(120deg, rgba(245, 198, 58, 0.12), transparent 60%);
+				opacity: 0;
+				transition: opacity 0.25s ease;
 			}
 			.pn a:hover {
 				border-color: var(--accent);
+				transform: translateY(-2px);
+				box-shadow: 0 10px 22px -14px rgba(0, 0, 0, 0.4);
+			}
+			.pn a:hover::before {
+				opacity: 1;
 			}
 			.pn small {
 				display: block;
 				font-size: 13px;
 				color: var(--accent);
-				margin-bottom: 2px;
+				margin-bottom: 3px;
+				position: relative;
 			}
 			.pn b {
 				display: block;
 				font-size: 16px;
 				line-height: 1.5;
 				color: rgb(var(--black));
+				position: relative;
 			}
 			.pn .next {
 				text-align: right;
@@ -321,6 +587,86 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 					display: block;
 				}
 			}
+
+			/* ===== 图片灯箱 ===== */
+			.lightbox {
+				position: fixed;
+				inset: 0;
+				z-index: 9999;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				padding: 24px;
+				background: rgba(6, 10, 18, 0.86);
+				backdrop-filter: blur(8px);
+				-webkit-backdrop-filter: blur(8px);
+				opacity: 0;
+				pointer-events: none;
+				transition: opacity 0.28s ease;
+			}
+			.lightbox.show {
+				opacity: 1;
+				pointer-events: auto;
+			}
+			.lightbox[hidden] {
+				display: none;
+			}
+			.lightbox img {
+				max-width: 100%;
+				max-height: 100%;
+				border-radius: 10px;
+				box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.8);
+				transform: scale(0.94);
+				transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+			}
+			.lightbox.show img {
+				transform: scale(1);
+			}
+			.lightbox-close {
+				position: absolute;
+				top: 18px;
+				right: 20px;
+				width: 42px;
+				height: 42px;
+				border: 0;
+				border-radius: 50%;
+				background: rgba(255, 255, 255, 0.12);
+				color: #fff;
+				font-size: 22px;
+				line-height: 1;
+				cursor: pointer;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				transition: background 0.2s ease, transform 0.2s ease;
+			}
+			.lightbox-close:hover {
+				background: rgba(255, 255, 255, 0.24);
+				transform: rotate(90deg);
+			}
+
+			/* ===== 入场动画 ===== */
+			@media (prefers-reduced-motion: no-preference) {
+				main.post > article > .cover-wrap,
+				main.post > article > .meta,
+				main.post > article > h1.title,
+				main.post > article > .tags {
+					animation: fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+				}
+				main.post > article > .meta { animation-delay: 0.04s; }
+				main.post > article > h1.title { animation-delay: 0.08s; }
+				main.post > article > .tags { animation-delay: 0.12s; }
+			}
+			@keyframes fade-up {
+				from {
+					opacity: 0;
+					transform: translateY(10px);
+				}
+				to {
+					opacity: 1;
+					transform: none;
+				}
+			}
 		</style>
 	</head>
 	<body>
@@ -328,7 +674,11 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 		<Header />
 		<main class="post">
 			<article>
-				{heroImage && <Image class="cover" width={1020} height={510} src={heroImage} alt="" />}
+				{heroImage && (
+					<div class="cover-wrap">
+						<Image class="cover" width={1020} height={510} src={heroImage} alt="" />
+					</div>
+				)}
 				<div class="meta">
 					{pinned && (
 						<span class="pin">
@@ -337,8 +687,15 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 						</span>
 					)}
 					{category && <span class="cat">{category}</span>}
+					{(pinned || category) && <span class="dot" aria-hidden="true"></span>}
 					<span>{fmt(pubDate)}</span>
-					{updatedDate && <span>更新于 {fmt(updatedDate)}</span>}
+					{updatedDate && (
+						<>
+							<span class="dot" aria-hidden="true"></span>
+							<span>更新于 {fmt(updatedDate)}</span>
+						</>
+					)}
+					<span class="dot" aria-hidden="true"></span>
 					<span id="reading-time"></span>
 					<button class="share-mini" type="button" data-share data-share-scope="article" aria-label="分享这篇文章">分享</button>
 				</div>
@@ -394,35 +751,53 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 			<Comments />
 		</main>
 		<button class="totop" id="totop" type="button" aria-label="回到顶部">
-			<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 15 6-6 6 6" /></svg>
+			<svg class="totop-ring" viewBox="0 0 44 44" aria-hidden="true">
+				<circle class="totop-track" cx="22" cy="22" r="20" fill="none" stroke-width="2.5" />
+				<circle class="totop-fill" cx="22" cy="22" r="20" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="125.66" stroke-dashoffset="125.66" />
+			</svg>
+			<svg class="totop-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 15 6-6 6 6" /></svg>
 		</button>
+		<div class="lightbox" id="lightbox" hidden>
+			<button class="lightbox-close" type="button" aria-label="关闭">×</button>
+			<img id="lightbox-img" alt="" />
+		</div>
 		<Listen />
 		<Footer />
 
 		<script>
+			const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 			const prose = document.getElementById('prose');
+			const heads: HTMLElement[] = [];
+			let tocLinks: HTMLAnchorElement[] = [];
+			let headingTops: number[] = [];
+
 			if (prose) {
-				// 阅读时间：中文按字数，英文按词数，约 400 单位/分钟
+				// ===== 阅读时间：中文按字数，英文按词数，约 400 单位/分钟 =====
 				const text = prose.textContent || '';
 				const zh = (text.match(/[\u4e00-\u9fa5]/g) || []).length;
 				const en = (text.replace(/[\u4e00-\u9fa5]/g, ' ').match(/[A-Za-z0-9]+/g) || []).length;
 				const mins = Math.max(1, Math.round((zh + en) / 400));
 				const rt = document.getElementById('reading-time');
 				if (rt) rt.textContent = `约 ${mins} 分钟读完`;
+				const eta = document.getElementById('listen-eta');
+				if (eta) eta.textContent = `约 ${mins} 分钟`;
 
-				// 目录：收集 h2 / h3，至少 3 个标题才显示
-				const heads = Array.from(prose.querySelectorAll<HTMLElement>('h2, h3'));
-				if (heads.length >= 3) {
+				// ===== 目录：收集 h2 / h3，至少 3 个标题才显示 =====
+				const allHeads = Array.from(prose.querySelectorAll<HTMLElement>('h2, h3'));
+				if (allHeads.length >= 3) {
 					const list = document.getElementById('toc-list');
-					heads.forEach((h, i) => {
+					allHeads.forEach((h, i) => {
 						if (!h.id) h.id = 'section-' + i;
+						heads.push(h);
 						const li = document.createElement('li');
 						if (h.tagName === 'H3') li.className = 'l3';
 						const a = document.createElement('a');
 						a.href = '#' + h.id;
 						a.textContent = h.textContent || '';
+						a.dataset.target = h.id;
 						li.appendChild(a);
 						list?.appendChild(li);
+						tocLinks.push(a);
 					});
 					const toc = document.getElementById('toc') as HTMLDetailsElement | null;
 					if (toc) {
@@ -430,20 +805,151 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 						if (window.innerWidth >= 720) toc.open = true;
 					}
 				}
+
+				// ===== 标题锚点 =====
+				heads.forEach((h) => {
+					const a = document.createElement('a');
+					a.className = 'anchor';
+					a.href = '#' + h.id;
+					a.setAttribute('aria-label', '复制该标题链接');
+					a.textContent = '#';
+					a.addEventListener('click', (e) => {
+						e.preventDefault();
+						const url = location.origin + location.pathname + '#' + h.id;
+						if (navigator.clipboard?.writeText) {
+							navigator.clipboard.writeText(url).catch(() => {});
+						}
+						history.replaceState(null, '', '#' + h.id);
+						a.textContent = '✓';
+						setTimeout(() => (a.textContent = '#'), 1200);
+					});
+					h.appendChild(a);
+				});
+
+				// ===== 代码复制按钮 =====
+				prose.querySelectorAll('pre').forEach((pre) => {
+					const btn = document.createElement('button');
+					btn.type = 'button';
+					btn.className = 'code-copy';
+					btn.textContent = '复制';
+					btn.addEventListener('click', async (e) => {
+						e.stopPropagation();
+						const code = pre.querySelector('code');
+						const raw = (code ? code.innerText : pre.innerText) || '';
+						try {
+							if (navigator.clipboard?.writeText) {
+								await navigator.clipboard.writeText(raw);
+							} else {
+								const ta = document.createElement('textarea');
+								ta.value = raw;
+								document.body.appendChild(ta);
+								ta.select();
+								document.execCommand('copy');
+								ta.remove();
+							}
+							btn.textContent = '已复制';
+							btn.classList.add('done');
+						} catch {
+							btn.textContent = '复制失败';
+						}
+						setTimeout(() => {
+							btn.textContent = '复制';
+							btn.classList.remove('done');
+						}, 1500);
+					});
+					pre.appendChild(btn);
+				});
+
+				// ===== 图片灯箱 =====
+				const lightbox = document.getElementById('lightbox')!;
+				const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement;
+				const lightboxClose = lightbox.querySelector('.lightbox-close') as HTMLButtonElement;
+				const openLightbox = (src: string, alt: string) => {
+					lightboxImg.src = src;
+					lightboxImg.alt = alt;
+					lightbox.hidden = false;
+					requestAnimationFrame(() => lightbox.classList.add('show'));
+					document.body.style.overflow = 'hidden';
+				};
+				const closeLightbox = () => {
+					lightbox.classList.remove('show');
+					document.body.style.overflow = '';
+					setTimeout(() => {
+						lightbox.hidden = true;
+						lightboxImg.src = '';
+					}, reduceMotion ? 0 : 280);
+				};
+				prose.querySelectorAll<HTMLImageElement>('img').forEach((img) => {
+					img.classList.add('zoomable');
+					img.addEventListener('click', () => {
+						if (img.currentSrc || img.src) openLightbox(img.currentSrc || img.src, img.alt);
+					});
+				});
+				lightboxClose?.addEventListener('click', closeLightbox);
+				lightbox?.addEventListener('click', (e) => {
+					if (e.target === lightbox) closeLightbox();
+				});
+				document.addEventListener('keydown', (e) => {
+					if (e.key === 'Escape' && !lightbox.hidden) closeLightbox();
+				});
+
+				// ===== 目录高亮测量 =====
+				const measureHeadings = () => {
+					headingTops = heads.map((h) => h.getBoundingClientRect().top + window.scrollY);
+				};
+				measureHeadings();
+				if (document.fonts?.ready) document.fonts.ready.then(measureHeadings).catch(() => {});
+				window.addEventListener('resize', measureHeadings, { passive: true });
+				setTimeout(measureHeadings, 600);
 			}
 
-			// 阅读进度条 + 回到顶部
+			// ===== 阅读进度条 + 回到顶部 + 目录高亮 =====
 			const bar = document.getElementById('progress');
 			const top = document.getElementById('totop');
+			const ring = top?.querySelector('.totop-fill') as SVGCircleElement | null;
+			const RING_LEN = 2 * Math.PI * 20;
+			let lastActive = -1;
+
+			function updateToc() {
+				if (!tocLinks.length) return;
+				const y = window.scrollY + 110;
+				let active = 0;
+				for (let i = 0; i < headingTops.length; i++) {
+					if (headingTops[i] <= y) active = i;
+					else break;
+				}
+				if (active === lastActive) return;
+				tocLinks.forEach((a, i) => a.classList.toggle('active', i === active));
+				lastActive = active;
+			}
+
 			function onScroll() {
 				const doc = document.documentElement;
 				const max = doc.scrollHeight - doc.clientHeight;
-				const pct = max > 0 ? (window.scrollY / max) * 100 : 0;
-				if (bar) bar.style.width = Math.min(100, pct) + '%';
+				const pct = max > 0 ? Math.min(100, Math.max(0, (window.scrollY / max) * 100)) : 0;
+				if (bar) bar.style.width = pct + '%';
 				top?.classList.toggle('show', window.scrollY > 600);
+				if (ring) {
+					ring.style.strokeDashoffset = String(RING_LEN - (RING_LEN * pct) / 100);
+				}
+				updateToc();
 			}
-			window.addEventListener('scroll', onScroll, { passive: true });
-			top?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+			let ticking = false;
+			window.addEventListener(
+				'scroll',
+				() => {
+					if (ticking) return;
+					ticking = true;
+					requestAnimationFrame(() => {
+						onScroll();
+						ticking = false;
+					});
+				},
+				{ passive: true },
+			);
+			window.addEventListener('resize', onScroll, { passive: true });
+			top?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' }));
 			onScroll();
 		</script>
 	</body>
