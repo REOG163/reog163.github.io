@@ -4,7 +4,6 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { SITE_TITLE } from '../consts';
 
-// ===== 在这里添加你的作品，复制一段 { ... } 即可 =====
 const projects = [
 	{
 		title: '本站：REOG 个人网站',
@@ -19,13 +18,6 @@ const projects = [
 		],
 	},
 ];
-// ==================================================
-
-const palettes = [
-	['#14204a', '#3b5bdb', '#5eead4'],
-	['#1d2f6b', '#7c5cff', '#8fa8ff'],
-	['#0b3b4a', '#14b8a6', '#a7f3d0'],
-];
 ---
 
 <html lang="zh-CN">
@@ -38,9 +30,6 @@ const palettes = [
 				inherits: false;
 			}
 
-			/* =======================================
-			   基础布局与卡片样式
-			   ======================================= */
 			main.pj {
 				width: 100%; max-width: 960px; margin: 0 auto; padding: 28px 18px 56px; box-sizing: border-box;
 			}
@@ -50,105 +39,55 @@ const palettes = [
 			
 			.grid { display: grid; grid-template-columns: 1fr; gap: 18px; }
 
+			/* 卡片容器 */
 			.card {
 				display: flex; flex-direction: column; overflow: hidden; border-radius: 14px;
 				border: 1px solid rgba(var(--gray), 0.3); background: rgba(var(--gray-light), 0.35);
 				position: relative; 
 				transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease;
-				animation: cardIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
-			}
-
-			@keyframes cardIn {
-				from { opacity: 0; transform: translateY(30px) scale(0.98); }
-				to { opacity: 1; transform: translateY(0) scale(1); }
 			}
 
 			/* =======================================
-			   赛博能量流光边框核心实现
+			   🚀 高对比度极光黄金流光 (绝对方块可见)
 			   ======================================= */
 			.card::before {
 				content: '';
 				position: absolute;
-				inset: 0;
-				border-radius: 14px;
-				padding: 2px; /* 控制能量流的粗细 */
-				/* 三色狂暴渐变：红色能量、金色高光、青色冷却液 */
+				inset: -1px; /* 稍微外扩一点 */
+				border-radius: 15px;
+				padding: 3px; /* 流光更粗，更能看清 */
 				background: conic-gradient(
 					from var(--angle),
-					rgba(255, 30, 30, 0.8) 0%, 
-					#ffcc00 15%,
-					#5eead4 30%,
-					rgba(var(--gray), 0.1) 50%,
-					rgba(var(--gray), 0.1) 80%,
-					#ff1a33 95%,
-					rgba(255, 30, 30, 0.8) 100%
+					rgba(191, 149, 63, 0.1) 0%,
+					rgba(191, 149, 63, 0.1) 60%,
+					#bf953f 80%,
+					#ffffff 90%, /* 刺眼的纯白高光 */
+					#bf953f 100%
 				);
 				-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
 				-webkit-mask-composite: xor;
 				mask-composite: exclude;
 				pointer-events: none;
-				animation: spin-edge 4s linear infinite;
-				z-index: 5;
-				opacity: 0.8;
-				transition: opacity 0.3s, padding 0.3s, filter 0.3s;
-				filter: drop-shadow(0 0 4px rgba(255, 50, 50, 0.5));
+				animation: spin-edge 2.5s linear infinite;
+				z-index: 10;
+				transition: filter 0.3s ease;
 			}
 
 			@keyframes spin-edge {
 				to { --angle: 360deg; }
 			}
 
-			/* 深色模式下的基础底纹微调 */
-			:global(html[data-theme='dark']) .card::before {
-				background: conic-gradient(
-					from var(--angle),
-					rgba(255, 30, 30, 1) 0%, 
-					#ffcc00 15%,
-					#5eead4 30%,
-					rgba(38, 51, 92, 0.5) 50%,
-					rgba(38, 51, 92, 0.5) 80%,
-					#ff1a33 95%,
-					rgba(255, 30, 30, 1) 100%
-				);
-			}
-
-			/* 悬浮：能量过载（加粗、加速、爆光） */
+			/* 悬浮时更亮 */
 			.card:hover::before {
-				padding: 3px;
-				opacity: 1;
-				animation-duration: 1.5s;
-				filter: drop-shadow(0 0 15px rgba(255, 30, 30, 0.8)) drop-shadow(0 0 30px rgba(255, 204, 0, 0.4));
+				filter: drop-shadow(0 0 10px #fcf6ba) drop-shadow(0 0 20px #bf953f);
+				padding: 4px;
 			}
-
-			/* 战术四角装饰线 */
-			.card .corners {
-				position: absolute; inset: 0; pointer-events: none; z-index: 6; overflow: hidden; border-radius: 14px;
-			}
-			.card .corners::before,
-			.card .corners::after {
-				content: ''; position: absolute; width: 20px; height: 20px;
-				border: 2px solid rgba(255, 255, 255, 0.3); transition: all 0.3s ease;
-			}
-			/* 左上角 */
-			.card .corners::before { top: 0; left: 0; border-right: none; border-bottom: none; }
-			/* 右下角 */
-			.card .corners::after { bottom: 0; right: 0; border-left: none; border-top: none; }
-			/* 悬浮时角标变亮变红 */
-			.card:hover .corners::before,
-			.card:hover .corners::after {
-				border-color: #ff1a33; box-shadow: 0 0 10px #ff1a33;
-			}
-
-			/* 卡片悬浮整体反馈 */
 			.card:hover {
-				transform: translateY(-6px); 
-				box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(255, 30, 30, 0.1);
-			}
-			:global(html[data-theme='dark']) .card:hover {
-				box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.8), inset 0 0 30px rgba(255, 30, 30, 0.15); 
+				transform: translateY(-4px); 
+				box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.4);
 			}
 
-			/* 封面区域 */
+			/* 封面 */
 			.cover-wrap {
 				width: 100%; aspect-ratio: 2 / 1; overflow: hidden; background: #0b1020; position: relative;
 			}
@@ -172,56 +111,33 @@ const palettes = [
 			@keyframes float-up { 0% { transform: translateY(0); opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(-80px); opacity: 0; } }
 
 			/* =======================================
-			   卡片内的真实重击印章 (Meteor Strike)
+			   卡片右下角：印章 (加上了极其醒目的脉冲提示)
 			   ======================================= */
 			.seal-stamp-wrapper {
-				position: absolute; bottom: 15px; right: 18px; width: 95px; height: 95px; z-index: 50;
-				cursor: pointer; pointer-events: auto !important; 
-				opacity: 0;
-				animation: meteor-strike 1.2s cubic-bezier(0.1, 1.5, 0.2, 1) 1s forwards; 
+				position: absolute; bottom: 15px; right: 18px; width: 95px; height: 95px; 
+				z-index: 999; /* 保证在最顶层 */
+				cursor: pointer; 
+				animation: float-seal 3s ease-in-out infinite;
+				transition: transform 0.3s ease;
 			}
+			
+			/* 悬浮放大 */
 			.seal-stamp-wrapper:hover {
-				transform: scale(1.15) rotate(-5deg); filter: brightness(1.3) drop-shadow(0 0 20px rgba(255, 50, 50, 0.8));
+				transform: scale(1.15) rotate(-5deg); 
+				filter: drop-shadow(0 0 25px rgba(255, 50, 50, 0.9));
 			}
 
-			@keyframes meteor-strike {
-				0% { transform: scale(6) translateY(-400px) rotate(-35deg); opacity: 0; filter: blur(20px); }
-				20% { filter: blur(5px); }
-				40% { transform: scale(0.85) translateY(10px) rotate(8deg); opacity: 1; filter: blur(0); } 
-				45% { transform: scale(1.15) translateY(-15px) rotate(-3deg); } 
-				55% { transform: scale(0.95) translateY(5px) rotate(2deg); }
-				65% { transform: scale(1.05) translateY(-2px) rotate(0deg); }
-				80%, 100% { transform: scale(1) translateY(0) rotate(0deg); opacity: 1; }
-			}
-
-			.card.shake {
-				animation: camera-shake 0.6s cubic-bezier(.36,.07,.19,.97) both 1.3s;
-			}
-			@keyframes camera-shake {
-				10%, 90% { transform: translate3d(-2px, 1px, 0) rotate(-1deg); }
-				20%, 80% { transform: translate3d(4px, -2px, 0) rotate(1deg); }
-				30%, 50%, 70% { transform: translate3d(-6px, 3px, 0) rotate(-2deg); }
-				40%, 60% { transform: translate3d(6px, -3px, 0) rotate(2deg); }
-			}
-
-			.seal-shockwave {
-				position: absolute; inset: 0; border-radius: 50%;
-				border: 4px solid rgba(255, 20, 20, 0.9); box-shadow: 0 0 40px rgba(255, 20, 20, 0.8), inset 0 0 20px rgba(255, 20, 20, 0.5);
-				animation: mega-shockwave 1.2s cubic-bezier(0.1, 0.8, 0.3, 1) 1.3s backwards; opacity: 0; pointer-events: none;
-			}
-			@keyframes mega-shockwave {
-				0% { transform: scale(0.2); opacity: 1; border-width: 15px; }
-				100% { transform: scale(3); opacity: 0; border-width: 0px; }
+			/* 提示你可以点的脉冲红光 */
+			@keyframes float-seal {
+				0%, 100% { transform: translateY(0); filter: drop-shadow(0 10px 15px rgba(0,0,0,0.8)) drop-shadow(0 0 5px rgba(255,0,0,0.2)); }
+				50% { transform: translateY(-5px); filter: drop-shadow(0 15px 20px rgba(0,0,0,0.8)) drop-shadow(0 0 20px rgba(255,0,0,0.6)); }
 			}
 
 			.seal-stamp-wrapper svg {
 				width: 100%; height: 100%; pointer-events: none;
-				filter: drop-shadow(0 8px 16px rgba(0,0,0,0.9)) drop-shadow(0 0 5px rgba(200, 30, 30, 0.6));
 			}
 
-			/* =======================================
-			   内容区
-			   ======================================= */
+			/* 内容区 */
 			.body { padding: 16px 18px 90px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
 			.head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 
@@ -230,11 +146,10 @@ const palettes = [
 				margin: 0; font-size: 19px; line-height: 1.4; font-weight: 800; letter-spacing: 0.5px;
 				background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #b38728 50%, #fbf5b7 75%, #aa771c 100%);
 				background-size: 200% auto; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
-				animation: shine 4s linear infinite; filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2));
+				animation: shine 4s linear infinite;
 			}
 			@keyframes shine { to { background-position: 200% center; } }
 
-			/* 状态标签 */
 			.status {
 				flex: none; font-size: 12px; padding: 2px 10px; border-radius: 999px;
 				background: rgba(94, 234, 212, 0.15); color: #0f9d8a; border: 1px solid rgba(94, 234, 212, 0.3);
@@ -242,8 +157,6 @@ const palettes = [
 			}
 			.status::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #0f9d8a; box-shadow: 0 0 6px #0f9d8a; animation: blink 2s infinite ease-in-out; }
 			@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-			:global(html[data-theme='dark']) .status { color: #5eead4; border-color: rgba(94, 234, 212, 0.4); }
-			:global(html[data-theme='dark']) .status::before { background: #5eead4; box-shadow: 0 0 6px #5eead4; }
 
 			.card p { margin: 0; font-size: 15px; line-height: 1.75; color: rgb(var(--gray-dark)); }
 			.tags { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -252,126 +165,74 @@ const palettes = [
 			.links a { font-size: 14px; font-weight: 600; color: var(--accent); text-decoration: none; }
 			.links a:hover { opacity: 0.8; }
 
-			/* 筹备中卡片 (不要流光边框，保持低调) */
+			/* 筹备中 */
 			.soon {
 				align-items: center; justify-content: center; text-align: center;
 				border-style: dashed; border-width: 2px; padding: 36px 20px; background: transparent; border-color: rgba(var(--gray), 0.4);
 			}
-			.soon::before { display: none; } /* 隐藏能量流光 */
-			.soon:hover { background: rgba(var(--gray-light), 0.2); border-color: rgba(94, 234, 212, 0.6); }
-			:global(html[data-theme='dark']) .soon { border-color: #26335c; }
-			:global(html[data-theme='dark']) .soon:hover { border-color: #5eead4; background: rgba(26, 36, 64, 0.6); }
-			.soon-icon { margin-bottom: 12px; color: var(--accent); animation: float 3s ease-in-out infinite; display: flex; justify-content: center; }
-			@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+			.soon::before { display: none; } 
 			.soon span { font-size: 14px; color: rgb(var(--gray)); margin-top: 4px; }
 
 			@media (min-width: 720px) { .grid { grid-template-columns: repeat(2, 1fr); } }
-			:global(html[data-theme='dark']) .card { background: rgba(26, 36, 64, 0.95); border-color: #26335c; }
 
 			/* =======================================
-			   终极全屏检视 Modal (Cinematic VFX)
+			   💥 终极全屏检视 Modal (纯净版，保证能弹出来)
 			   ======================================= */
 			.modal-overlay {
-				position: fixed; inset: 0; background: rgba(0, 0, 0, 0.98);
-				z-index: 99999; display: flex; align-items: center; justify-content: center;
-				opacity: 0; visibility: hidden; transition: all 0.5s ease;
-				perspective: 2000px; overflow: hidden;
+				position: fixed; 
+				inset: 0; 
+				background: rgba(0, 0, 0, 0.95);
+				z-index: 999999; /* 凌驾于一切 */
+				display: flex; 
+				align-items: center; 
+				justify-content: center;
+				opacity: 0; 
+				visibility: hidden; 
+				transition: all 0.5s ease;
 			}
-			.modal-overlay.active { opacity: 1; visibility: visible; }
-
-			.modal-bg-energy {
-				position: absolute; inset: 0;
-				background: 
-					radial-gradient(circle at center, rgba(200, 20, 30, 0.25) 0%, transparent 70%),
-					linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-					linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-				background-size: 100% 100%, 60px 60px, 60px 60px;
-				opacity: 0; transform: scale(1.5);
-				transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+			
+			/* 用类名控制显示 */
+			.modal-overlay.active { 
+				opacity: 1; 
+				visibility: visible; 
 			}
-			.modal-overlay.active .modal-bg-energy { opacity: 1; transform: scale(1); animation: grid-pulse 3s infinite alternate; }
-			@keyframes grid-pulse { from { background-size: 100% 100%, 60px 60px, 60px 60px; } to { background-size: 100% 100%, 70px 70px, 70px 70px; } }
 
+			/* 神光射线 */
 			.modal-god-rays {
-				position: absolute; width: 400vw; height: 400vw; top: 50%; left: 50%;
-				transform: translate(-50%, -50%) scale(0); z-index: 1; opacity: 0;
+				position: absolute; width: 300vw; height: 300vw; top: 50%; left: 50%;
+				transform: translate(-50%, -50%) scale(0.5); z-index: 1; opacity: 0;
 				background: repeating-conic-gradient(
 					from 0deg,
-					rgba(255, 30, 30, 0.2) 0deg 2deg,
-					transparent 2deg 10deg
+					rgba(212, 175, 55, 0.2) 0deg 2deg,
+					transparent 2deg 15deg
 				);
-				mask-image: radial-gradient(circle, black 5%, transparent 50%);
-				-webkit-mask-image: radial-gradient(circle, black 5%, transparent 50%);
 			}
 			.modal-overlay.active .modal-god-rays { animation: rays-burst 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards, spin-god-rays 40s linear infinite; }
 			@keyframes rays-burst { 0% { transform: translate(-50%, -50%) scale(0); opacity: 0; } 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
 			@keyframes spin-god-rays { 100% { transform: translate(-50%, -50%) rotate(360deg); } }
 
-			.modal-shockwave-ring {
-				position: absolute; top: 50%; left: 50%; width: 10px; height: 10px;
-				border-radius: 50%; border: 8px solid rgba(255, 255, 255, 1); z-index: 2;
-				transform: translate(-50%, -50%) scale(0); opacity: 0;
-				box-shadow: 0 0 100px #ff1a33, inset 0 0 100px #ff1a33;
-			}
-			.modal-overlay.active .modal-shockwave-ring { animation: mega-wave 1.2s cubic-bezier(0.1, 0.9, 0.2, 1) 0.3s forwards; }
-			@keyframes mega-wave {
-				0% { transform: translate(-50%, -50%) scale(0); opacity: 1; border-width: 30px; }
-				100% { transform: translate(-50%, -50%) scale(120); opacity: 0; border-width: 1px; }
-			}
-
-			.modal-lens-flare {
-				position: absolute; inset: -100px; z-index: 5; pointer-events: none;
-				background: radial-gradient(circle at 25% 25%, rgba(255,255,255,0.9) 0%, transparent 15%),
-							linear-gradient(45deg, transparent 45%, rgba(255, 50, 50, 0.4) 50%, transparent 55%);
-				mix-blend-mode: screen; opacity: 0;
-			}
-			.modal-overlay.active .modal-lens-flare { animation: flare-flash 1s ease-out 0.5s forwards; }
-			@keyframes flare-flash { 0% { opacity: 0; transform: scale(0.5); } 30% { opacity: 1; transform: scale(1.2); } 100% { opacity: 0.7; transform: scale(1); } }
-
+			/* 核心放大 */
 			.modal-content {
-				width: 90vw; height: 90vw; max-width: 700px; max-height: 700px; position: relative; z-index: 10;
-				transform: scale(0.01) rotateZ(90deg) rotateX(80deg) translateZ(-3000px);
-				opacity: 0; filter: blur(30px) brightness(2);
-				transition: all 1.2s cubic-bezier(0.1, 1.5, 0.2, 1);
+				width: 90vw; height: 90vw; max-width: 600px; max-height: 600px; position: relative; z-index: 10;
+				transform: scale(0.1) rotateZ(90deg); /* 初始很小且在翻滚 */
+				opacity: 0;
+				transition: all 0.8s cubic-bezier(0.1, 1.5, 0.2, 1);
 			}
 			.modal-overlay.active .modal-content {
-				transform: scale(1) rotateZ(0deg) rotateX(10deg) rotateY(-10deg) translateZ(0);
-				opacity: 1; filter: blur(0) brightness(1);
-				animation: final-hover-3d 5s ease-in-out infinite alternate 1.2s;
-			}
-			@keyframes final-hover-3d {
-				0% { transform: scale(1) rotateX(10deg) rotateY(-10deg) translateY(0); }
-				100% { transform: scale(1.03) rotateX(15deg) rotateY(15deg) translateY(-15px); }
+				transform: scale(1) rotateZ(0deg);
+				opacity: 1;
 			}
 
 			.modal-content svg {
 				width: 100%; height: 100%;
-				filter: drop-shadow(0 40px 80px rgba(255, 0, 0, 0.8)) drop-shadow(0 0 200px rgba(255, 50, 50, 0.5));
+				filter: drop-shadow(0 0 40px rgba(255, 0, 0, 0.6)) drop-shadow(0 0 100px rgba(212, 175, 55, 0.3));
 			}
-
-			.modal-particle {
-				position: absolute; background: #fff; border-radius: 50%; pointer-events: none; z-index: 3;
-				box-shadow: 0 0 10px #fff, 0 0 30px #ff2a40, 0 0 50px #ff2a40; opacity: 0;
-			}
-			.modal-overlay.active .modal-particle { animation: particle-fly var(--dur, 2s) ease-out forwards; }
-			@keyframes particle-fly {
-				0% { transform: translate(0, 0) scale(1); opacity: 1; filter: brightness(2); }
-				100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
-			}
-
 			.gold-blade { animation: spin 4s linear infinite; transform-origin: 200px 200px; }
-			.gem-core-pulse { animation: core-lava 2s ease-in-out infinite alternate; }
-			@keyframes core-lava { 0% { opacity: 0.5; filter: drop-shadow(0 0 20px rgba(255, 0, 0, 0.8)); } 100% { opacity: 1; filter: drop-shadow(0 0 60px rgba(255, 100, 100, 1)); } }
 
 			.modal-close-hint {
-				position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%);
-				font-size: 13px; color: rgba(255,255,255,0.6);
-				letter-spacing: 4px; font-family: monospace; z-index: 20; opacity: 0; transition: opacity 0.5s;
-				cursor: pointer; padding: 10px 20px; border: 1px solid rgba(255,255,255,0.2); border-radius: 30px;
-				background: rgba(0,0,0,0.5); backdrop-filter: blur(5px);
+				position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+				color: #aaa; font-size: 14px; cursor: pointer; letter-spacing: 2px;
 			}
-			.modal-overlay.active .modal-close-hint { opacity: 1; transition-delay: 2s; }
-			.modal-close-hint:hover { color: #fff; border-color: #fff; background: rgba(255,255,255,0.1); }
 		</style>
 	</head>
 	<body>
@@ -386,14 +247,13 @@ const palettes = [
 					projects.map((p, i) => {
 						const c = palettes[i % palettes.length];
 						return (
-							<div class="card" id="project-card">
-								<div class="corners"></div>
+							<div class="card">
 								
 								<div class="cover-wrap">
 									{p.video ? (
-										<video class="cover js-video" src={p.video} autoplay muted loop playsinline preload="metadata" />
+										<video class="cover" src={p.video} autoplay muted loop playsinline preload="metadata" />
 									) : p.image ? (
-										<img class="cover" src={p.image} alt={p.title} style="background: #0b1020;" />
+										<img class="cover" src={p.image} alt={p.title} />
 									) : (
 										<svg class="cover" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
 											<defs>
@@ -404,11 +264,6 @@ const palettes = [
 												<linearGradient id="num-grad" x1="0" y1="0" x2="1" y2="1">
 													<stop offset="0%" stop-color="#ffffff" />
 													<stop offset="100%" stop-color="#5eead4" />
-												</linearGradient>
-												<linearGradient id="scan-grad" x1="0" y1="0" x2="0" y2="1">
-													<stop offset="0%" stop-color="rgba(94, 234, 212, 0)" />
-													<stop offset="50%" stop-color="rgba(94, 234, 212, 0.5)" />
-													<stop offset="100%" stop-color="rgba(94, 234, 212, 0)" />
 												</linearGradient>
 											</defs>
 											<rect width="400" height="200" class="tech-bg" />
@@ -426,10 +281,6 @@ const palettes = [
 											<g class="core-ring ring-slow"><circle cx="320" cy="100" r="85" fill="none" stroke="rgba(94, 234, 212, 0.3)" stroke-width="4" stroke-dasharray="2 10" /></g>
 											<g class="core-ring ring-reverse"><circle cx="320" cy="100" r="65" fill="none" stroke="#8fa8ff" stroke-width="1.5" stroke-dasharray="15 5" /><circle cx="320" cy="35" r="4" fill="#8fa8ff" filter="drop-shadow(0 0 6px #8fa8ff)" /></g>
 											<g class="core-ring ring-fast"><circle cx="320" cy="100" r="50" fill="none" stroke="#5eead4" stroke-width="1" /><circle cx="270" cy="100" r="3" fill="#5eead4" filter="drop-shadow(0 0 8px #5eead4)" /></g>
-											<rect x="250" y="60" width="140" height="4" fill="url(#scan-grad)" class="scanner" />
-											<circle cx="280" cy="130" r="1.5" fill="#fff" class="particle" style="animation-delay: 0s;" />
-											<circle cx="350" cy="140" r="2" fill="#5eead4" class="particle" style="animation-delay: 1.5s;" />
-											<circle cx="310" cy="150" r="1" fill="#8fa8ff" class="particle" style="animation-delay: 3s;" />
 											<text x="30" y="135" font-size="90" font-weight="900" fill="url(#num-grad)" class="big-number">{String(i + 1).padStart(2, '0')}</text>
 										</svg>
 									)}
@@ -449,9 +300,13 @@ const palettes = [
 									</div>
 								</div>
 
+								{/* 🚀 采用内联 onclick 暴力触发，防止任何 JS 失效 */}
 								{!p.video && !p.image && (
-									<div class="seal-stamp-wrapper js-open-seal" title="点击全屏检视">
-										<div class="seal-shockwave"></div>
+									<div 
+										class="seal-stamp-wrapper" 
+										title="点击全屏检视"
+										onclick="document.getElementById('seal-modal').classList.add('active'); document.body.style.overflow='hidden';"
+									>
 										<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
 											<defs>
 												<linearGradient id="ink-gold-sm" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -460,20 +315,13 @@ const palettes = [
 													<stop offset="100%" stop-color="#5c4300"/>
 												</linearGradient>
 												<path id="text-arc-sm" d="M 40, 100 A 60,60 0 1,1 160, 100" fill="none" />
-												<filter id="rough-ink" x="-20%" y="-20%" width="140%" height="140%">
-													<feTurbulence type="fractalNoise" baseFrequency="0.08" numOctaves="3" result="noise" />
-													<feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G" />
-												</filter>
 											</defs>
-											<g filter="url(#rough-ink)">
-												<circle cx="100" cy="100" r="85" fill="none" stroke="#9b111e" stroke-width="6" opacity="0.95"/>
-												<circle cx="100" cy="100" r="75" fill="none" stroke="#9b111e" stroke-width="2" opacity="0.6"/>
-												<text font-size="13" fill="#9b111e" font-family="Georgia, serif" letter-spacing="3" opacity="0.8">
-													<textPath href="#text-arc-sm" startOffset="50%" text-anchor="middle">REOG • AUTHENTIC •</textPath>
-												</text>
-												<polygon points="100,30 115,85 170,100 115,115 100,170 85,115 30,100 85,85" fill="none" stroke="#9b111e" stroke-width="1.5" opacity="0.4"/>
-												<text x="100" y="135" text-anchor="middle" font-size="80" font-weight="900" fill="url(#ink-gold-sm)" font-family="Georgia, 'Times New Roman', serif" stroke="#9b111e" stroke-width="2" paint-order="stroke fill">R</text>
-											</g>
+											<circle cx="100" cy="100" r="85" fill="none" stroke="#9b111e" stroke-width="6" opacity="0.95"/>
+											<circle cx="100" cy="100" r="75" fill="none" stroke="#9b111e" stroke-width="2" opacity="0.6"/>
+											<text font-size="13" fill="#9b111e" font-family="Georgia, serif" letter-spacing="3" opacity="0.8">
+												<textPath href="#text-arc-sm" startOffset="50%" text-anchor="middle">REOG • AUTHENTIC •</textPath>
+											</text>
+											<text x="100" y="135" text-anchor="middle" font-size="80" font-weight="900" fill="url(#ink-gold-sm)" font-family="Georgia, 'Times New Roman', serif" stroke="#9b111e" stroke-width="2" paint-order="stroke fill">R</text>
 										</svg>
 									</div>
 								)}
@@ -494,22 +342,13 @@ const palettes = [
 		</main>
 		<Footer />
 
-		<div class="modal-overlay" id="seal-modal">
-			<div class="modal-bg-energy"></div>
+		{/* 全屏弹窗 */}
+		<div 
+			class="modal-overlay" 
+			id="seal-modal"
+			onclick="this.classList.remove('active'); document.body.style.overflow='';"
+		>
 			<div class="modal-god-rays"></div>
-			<div class="modal-shockwave-ring"></div>
-			<div class="modal-lens-flare"></div>
-			
-			<div class="modal-particle" style="width: 8px; height: 8px; --tx: -400px; --ty: -300px; top: 50%; left: 50%; animation-delay: 0.1s; --dur: 1.5s;"></div>
-			<div class="modal-particle" style="width: 12px; height: 12px; --tx: 500px; --ty: -200px; top: 50%; left: 50%; animation-delay: 0.2s; background:#ffcc00; --dur: 2s;"></div>
-			<div class="modal-particle" style="width: 5px; height: 5px; --tx: -600px; --ty: 400px; top: 50%; left: 50%; animation-delay: 0.15s; --dur: 1.8s;"></div>
-			<div class="modal-particle" style="width: 15px; height: 15px; --tx: 300px; --ty: 500px; top: 50%; left: 50%; animation-delay: 0.3s; background:#ff2a40; --dur: 2.2s;"></div>
-			<div class="modal-particle" style="width: 6px; height: 6px; --tx: 100px; --ty: -600px; top: 50%; left: 50%; animation-delay: 0.05s; background:#ffcc00; --dur: 1.6s;"></div>
-			<div class="modal-particle" style="width: 10px; height: 10px; --tx: -300px; --ty: -500px; top: 50%; left: 50%; animation-delay: 0.4s; --dur: 2.5s;"></div>
-			<div class="modal-particle" style="width: 4px; height: 4px; --tx: 600px; --ty: 300px; top: 50%; left: 50%; animation-delay: 0.25s; --dur: 1.2s;"></div>
-			<div class="modal-particle" style="width: 9px; height: 9px; --tx: -500px; --ty: 100px; top: 50%; left: 50%; animation-delay: 0.35s; background:#ff2a40; --dur: 1.9s;"></div>
-
-			<div class="modal-close-hint">[ 点击任意位置关闭 ]</div>
 
 			<div class="modal-content">
 				<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
@@ -528,83 +367,30 @@ const palettes = [
 							<stop offset="75%" stop-color="#d4af37" />
 							<stop offset="100%" stop-color="#fff5cc" />
 						</linearGradient>
-						<path id="arc-lg" d="M 200, 20 A 180,180 0 1,1 199.9, 20" fill="none" />
-						<filter id="glow">
-							<feGaussianBlur stdDeviation="6" result="coloredBlur"/>
-							<feMerge>
-								<feMergeNode in="coloredBlur"/>
-								<feMergeNode in="SourceGraphic"/>
-							</feMerge>
-						</filter>
 					</defs>
 					<g>
 						<circle cx="200" cy="200" r="195" fill="#030509" stroke="#22180a" stroke-width="8" />
 						<circle cx="200" cy="200" r="175" fill="none" stroke="url(#gold-metal)" stroke-width="12" stroke-dasharray="4 18" opacity="0.7" />
-						<text font-size="22" fill="#d4af37" font-family="monospace" font-weight="900" letter-spacing="12" filter="drop-shadow(0 0 8px #ffcc00)">
-							<textPath href="#arc-lg" startOffset="50%" text-anchor="middle">
-								REOG • AUTHENTIC SEAL • EST. 2024 •
-							</textPath>
-						</text>
-						<circle cx="200" cy="200" r="135" fill="none" stroke="url(#gold-metal)" stroke-width="8" filter="url(#glow)"/>
+						<circle cx="200" cy="200" r="135" fill="none" stroke="url(#gold-metal)" stroke-width="8" filter="drop-shadow(0 0 10px #d4af37)"/>
 						<circle cx="200" cy="200" r="128" fill="none" stroke="#9b111e" stroke-width="3" />
 						<circle cx="200" cy="200" r="120" fill="url(#gem-core)" />
-						<g opacity="0.7">
-							<polygon points="200,80 290,140 290,260 200,320 110,260 110,140" fill="none" stroke="#ff6b81" stroke-width="3"/>
-							<polygon points="200,80 290,140 200,200" fill="rgba(255,255,255,0.4)"/>
-							<polygon points="200,80 110,140 200,200" fill="rgba(255,50,50,0.5)"/>
-							<polygon points="200,320 290,260 200,200" fill="rgba(100,0,0,0.6)"/>
-							<polygon points="200,320 110,260 200,200" fill="rgba(50,0,0,0.8)"/>
-							<polygon points="290,140 290,260 200,200" fill="rgba(255,150,150,0.2)"/>
-							<polygon points="110,140 110,260 200,200" fill="rgba(255,150,150,0.2)"/>
-							<polygon points="200,110 260,200 200,290 140,200" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
-						</g>
-						<circle cx="140" cy="140" r="60" fill="rgba(255,255,255,0.25)" filter="blur(20px)" />
-						<circle cx="140" cy="140" r="20" fill="rgba(255,255,255,0.6)" filter="blur(5px)" />
-						<circle cx="200" cy="200" r="120" fill="url(#gem-core)" opacity="0.8" class="gem-core-pulse" mix-blend-mode="screen" />
+						
+						<circle cx="140" cy="140" r="60" fill="rgba(255,255,255,0.2)" filter="blur(20px)" />
+						
 						<text x="200" y="265" text-anchor="middle" font-size="170" font-weight="900" fill="url(#gold-metal)" font-family="Georgia, 'Times New Roman', serif" 
 							filter="drop-shadow(0px 15px 25px rgba(0,0,0,1)) drop-shadow(0px 0px 30px rgba(255,215,0,0.6))">
 							R
 						</text>
+
 						<g class="gold-blade">
 							<circle cx="200" cy="200" r="175" fill="none" stroke="url(#gold-metal)" stroke-width="10" stroke-dasharray="120 800" stroke-linecap="round" />
 							<circle cx="200" cy="200" r="175" fill="none" stroke="#ffffff" stroke-width="4" stroke-dasharray="30 890" stroke-linecap="round" opacity="0.9"/>
-							<circle cx="200" cy="200" r="175" fill="none" stroke="#ff1a33" stroke-width="6" stroke-dasharray="200 800" stroke-linecap="round" opacity="0.5" transform="rotate(180 200 200)"/>
 						</g>
 					</g>
 				</svg>
 			</div>
+			
+			<div class="modal-close-hint">[ 点击任意位置关闭 ]</div>
 		</div>
-
-		<script>
-			document.addEventListener('astro:page-load', () => {
-				const videos = document.querySelectorAll('.js-video');
-				videos.forEach((video: any) => {
-					video.playbackRate = 0.6; 
-					video.play().catch((err: any) => console.log(err));
-				});
-
-				const cards = document.querySelectorAll('.card');
-				cards.forEach(card => {
-					setTimeout(() => {
-						card.classList.add('shake');
-					}, 1300);
-				});
-
-				const modal = document.getElementById('seal-modal');
-				if (modal) {
-					document.body.addEventListener('click', (e) => {
-						const target = e.target as HTMLElement;
-						if (target.closest('.js-open-seal')) {
-							modal.classList.add('active');
-							document.body.style.overflow = 'hidden'; 
-						}
-						if (target === modal || target.closest('.modal-overlay')) {
-							modal.classList.remove('active');
-							document.body.style.overflow = '';
-						}
-					});
-				}
-			});
-		</script>
 	</body>
 </html>
