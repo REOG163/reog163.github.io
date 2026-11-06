@@ -6,6 +6,7 @@ import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Comments from '../components/Comments.astro';
+import Listen from '../components/Listen.astro';
 
 type Props = CollectionEntry<'blog'>['data'];
 
@@ -50,6 +51,35 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 				gap: 4px 14px;
 				font-size: 14px;
 				color: rgb(var(--gray));
+			}
+			.listen-btn {
+				display: inline-flex;
+				align-items: center;
+				gap: 8px;
+				margin: 0 0 16px;
+				padding: 8px 16px;
+				border: 1px solid rgba(217, 165, 32, 0.8);
+				border-radius: 999px;
+				background: rgba(245, 198, 58, 0.12);
+				color: #9a6b00;
+				font: inherit;
+				font-size: 15px;
+				font-weight: 600;
+				cursor: pointer;
+			}
+			.listen-btn[hidden] {
+				display: none;
+			}
+			.listen-btn small {
+				font-size: 13px;
+				font-weight: 400;
+				opacity: 0.8;
+			}
+			.listen-btn:hover {
+				background: rgba(245, 198, 58, 0.25);
+			}
+			:global(html[data-theme='dark']) .listen-btn {
+				color: #f5c63a;
 			}
 			.pin {
 				display: inline-flex;
@@ -322,6 +352,10 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 						</div>
 					)
 				}
+				<button class="listen-btn" id="listen-open" type="button" data-listen-open>
+					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15v-3a8 8 0 0 1 16 0v3" /><rect x="3" y="14" width="4" height="7" rx="1.5" /><rect x="17" y="14" width="4" height="7" rx="1.5" /></svg>
+					听文章 <small id="listen-eta"></small>
+				</button>
 				<details id="toc" class="toc" hidden>
 					<summary>目录</summary>
 					<ul id="toc-list"></ul>
@@ -362,6 +396,7 @@ const next: any = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 		<button class="totop" id="totop" type="button" aria-label="回到顶部">
 			<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 15 6-6 6 6" /></svg>
 		</button>
+		<Listen />
 		<Footer />
 
 		<script>
