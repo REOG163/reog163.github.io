@@ -1,6 +1,6 @@
 ---
 // src/components/Snow.astro
-// 主页掉落少量像素猫爪（轻量、可关闭、尊重减少动效偏好）
+// 主页掉落少量像素猫爪：落地后堆积在屏幕底部，点击自然消散
 ---
 
 <div class="snow" id="snow" aria-hidden="true"></div>
@@ -16,50 +16,73 @@
 
   .snow .paw {
     position: absolute;
-    top: 0;
     width: 20px;
     height: 20px;
-    /* 12x10 像素猫爪：4 个趾垫 + 1 个掌垫 */
+    pointer-events: auto;
+    cursor: pointer;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 10' shape-rendering='crispEdges'%3E%3Cg fill='%23ffffff'%3E%3Crect x='0' y='1' width='2' height='2'/%3E%3Crect x='3' y='0' width='2' height='2'/%3E%3Crect x='6' y='0' width='2' height='2'/%3E%3Crect x='9' y='1' width='2' height='2'/%3E%3Crect x='3' y='4' width='6' height='1'/%3E%3Crect x='1' y='5' width='10' height='1'/%3E%3Crect x='1' y='6' width='10' height='1'/%3E%3Crect x='2' y='7' width='8' height='1'/%3E%3Crect x='4' y='8' width='4' height='1'/%3E%3C/g%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;
+    opacity: var(--o, 0.5);
+    transform-origin: 50% 80%;
+    will-change: transform, opacity;
+    animation: paw-fall var(--dur, 12s) cubic-bezier(0.45, 0.05, 0.9, 0.6) forwards;
     filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.35));
-    will-change: transform;
-    animation-name: paw-fall;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
+    -webkit-tap-highlight-color: transparent;
   }
 
-  .snow .paw.wobble {
-    animation-name: paw-fall-wobble;
+  /* 扩大点击热区，手机也好点 */
+  .snow .paw::after {
+    content: '';
+    position: absolute;
+    inset: -6px;
+  }
+
+  .snow .paw:hover {
+    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.75)) brightness(1.25);
   }
 
   @keyframes paw-fall {
-    from {
-      transform: translate3d(0, -10vh, 0) rotate(-10deg);
+    0% {
+      transform: translate3d(0, -110vh, 0) rotate(var(--r0, -12deg));
     }
-    to {
-      transform: translate3d(0, 110vh, 0) rotate(10deg);
+    92% {
+      transform: translate3d(var(--dx, 0px), 0, 0) rotate(var(--r1, 12deg));
+    }
+    96% {
+      transform: translate3d(var(--dx, 0px), -3px, 0) rotate(var(--r1, 12deg));
+    }
+    100% {
+      transform: translate3d(var(--dx, 0px), 0, 0) rotate(var(--r1, 12deg));
     }
   }
 
-  @keyframes paw-fall-wobble {
+  /* 已经落地：点击后像被吹散一样淡出 */
+  .snow .paw.pop {
+    animation: paw-pop 0.42s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
+  }
+
+  @keyframes paw-pop {
     0% {
-      transform: translate3d(0, -10vh, 0) rotate(-15deg);
+      transform: translate3d(var(--dx, 0px), 0, 0) scale(1) rotate(var(--r1, 12deg));
+      opacity: var(--o, 0.5);
     }
     25% {
-      transform: translate3d(22px, 20vh, 0) rotate(8deg);
-    }
-    50% {
-      transform: translate3d(-16px, 50vh, 0) rotate(-6deg);
-    }
-    75% {
-      transform: translate3d(18px, 80vh, 0) rotate(12deg);
+      transform: translate3d(var(--dx, 0px), 0, 0) scale(0.72) rotate(var(--r1, 12deg));
+      opacity: var(--o, 0.5);
     }
     100% {
-      transform: translate3d(0, 110vh, 0) rotate(-15deg);
+      transform: translate3d(var(--dx, 0px), -16px, 0) scale(1.35) rotate(var(--r1, 12deg));
+      opacity: 0;
     }
+  }
+
+  /* 还在半空被点：原地淡出，不跳位置 */
+  .snow .paw.fade {
+    animation-play-state: paused;
+    opacity: 0 !important;
+    transition: opacity 0.25s ease;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -73,8 +96,6 @@
   function initSnow() {
     const root = document.getElementById('snow');
     if (!root) return;
-
-    // 已经初始化过就跳过（防止 View Transitions 重复添加）
     if (root.dataset.ready === '1') return;
     root.dataset.ready = '1';
 
@@ -83,29 +104,84 @@
       return;
     }
 
-    const COUNT = 18; // 少量猫爪
-    const frag = document.createDocumentFragment();
+    // ===== 可调参数 =====
+    const MAX_PAWS = 24;      // 屏幕内最多同时存在多少只（含下落中的）
+    const SPAWN_MIN = 1600;   // 生成间隔下限（ms）
+    const SPAWN_MAX = 3600;   // 生成间隔上限（ms）
+    const STACK_HEIGHT = 56;  // 底部堆积区高度（px），越大越往上堆
+    // ====================
 
-    for (let i = 0; i < COUNT; i++) {
-      const paw = document.createElement('span');
-      paw.className = 'paw' + (Math.random() > 0.5 ? ' wobble' : '');
+    let timer = null;
 
-      const size = 16 + Math.random() * 14; // 16~30px，像素画太小会糊
-      const left = Math.random() * 98;
-      const duration = 14 + Math.random() * 16; // 14~30s，飘得比雪慢一些
-      const delay = -Math.random() * duration;
+    function dismiss(el) {
+      if (!el || el.dataset.leaving === '1') return;
+      el.dataset.leaving = '1';
+      el.style.animationDelay = '0s'; // 防止内联 delay 影响 pop 动画
 
-      paw.style.width = size + 'px';
-      paw.style.height = size + 'px';
-      paw.style.left = left + '%';
-      paw.style.opacity = String(0.45 + Math.random() * 0.45);
-      paw.style.animationDuration = duration + 's';
-      paw.style.animationDelay = delay + 's';
-
-      frag.appendChild(paw);
+      if (el.dataset.landed === '1') {
+        // 已落地：缩放 + 上浮 + 淡出
+        el.classList.add('pop');
+        el.addEventListener(
+          'animationend',
+          (e) => {
+            if (e.animationName === 'paw-pop') el.remove();
+          },
+          { once: true }
+        );
+        setTimeout(() => el.remove(), 700); // 兜底
+      } else {
+        // 还在半空：暂停下落 + 原地淡出
+        el.classList.add('fade');
+        setTimeout(() => el.remove(), 300);
+      }
     }
 
-    root.appendChild(frag);
+    function makePaw(delayMs) {
+      const el = document.createElement('span');
+      el.className = 'paw';
+
+      const size = 18 + Math.random() * 12; // 18~30px，像素画别太小
+      el.style.width = size + 'px';
+      el.style.height = size + 'px';
+      el.style.left = Math.random() * 94 + '%';
+      // pow 让落点更偏向最底部，形成“贴着底边堆积”的层次
+      el.style.bottom = Math.pow(Math.random(), 1.7) * STACK_HEIGHT + 'px';
+      el.style.setProperty('--o', (0.35 + Math.random() * 0.35).toFixed(2));
+      el.style.setProperty('--r0', (-14 + Math.random() * 28).toFixed(1) + 'deg');
+      el.style.setProperty('--r1', (-18 + Math.random() * 36).toFixed(1) + 'deg');
+      el.style.setProperty('--dx', ((Math.random() * 2 - 1) * 22).toFixed(1) + 'px');
+      el.style.setProperty('--dur', (8 + Math.random() * 8).toFixed(1) + 's');
+
+      if (delayMs) el.style.animationDelay = `-${delayMs}ms`;
+
+      el.addEventListener('animationend', (e) => {
+        if (e.animationName === 'paw-fall') el.dataset.landed = '1';
+      });
+      el.addEventListener('click', () => dismiss(el));
+
+      return el;
+    }
+
+    function spawn() {
+      if (!root.isConnected) return; // 页面切换后旧实例自动停
+
+      const living = Array.from(root.children).filter(
+        (el) => el.dataset.leaving !== '1'
+      );
+      if (living.length >= MAX_PAWS) dismiss(living[0]); // 超限：最早的一只优雅退场
+
+      root.appendChild(makePaw(0));
+
+      timer = setTimeout(
+        spawn,
+        SPAWN_MIN + Math.random() * (SPAWN_MAX - SPAWN_MIN)
+      );
+    }
+
+    // 首屏先放 3 只“已经在路上”的，避免一开始空荡荡
+    [6200, 3400, 1200].forEach((d) => root.appendChild(makePaw(d)));
+
+    timer = setTimeout(spawn, 1200);
   }
 
   initSnow();
